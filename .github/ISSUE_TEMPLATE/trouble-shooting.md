@@ -10,7 +10,7 @@ assignees: ''
 i<!--  .github/ISSUE_TEMPLATE/trobleshooting.md  -->
 
 ---
-name: ✨ Troble Shooting
+name: ✨ Trouble Shooting
 about: 문제를 해결했던 기록을 남겨봐요.
 title: "[Trouble Shooting] <기능 요약>"
 labels: bug
@@ -21,7 +21,7 @@ assignees: ''
  ex. [FEAT] searchPublicCourse -->
 
 <!-- 라벨 라벨로 담당자를 표시
- ex. Hoyoung027 -->
+ ex. leerura -->
 
 <!-- assignees은 자기 자신에 해당하는지 팀에 해당하는지에 따라 작성 -->
 
