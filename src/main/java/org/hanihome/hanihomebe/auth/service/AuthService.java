@@ -3,7 +3,7 @@ package org.hanihome.hanihomebe.auth.service;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.auth.util.GoogleOAuthUtils;
-import org.hanihome.hanihomebe.auth.dto.LoginResponseDto;
+import org.hanihome.hanihomebe.auth.dto.LoginResponseDTO;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.auth.token.RefreshToken;
@@ -25,7 +25,7 @@ public class AuthService {
     private final JwtUtils jwtUtils;
 
     @Transactional
-    public LoginResponseDto googleLogin(String idToken) {
+    public LoginResponseDTO googleLogin(String idToken) {
         GoogleIdToken.Payload payload = googleOAuthUtils.verify(idToken);
         if (payload == null) {
             throw new IllegalArgumentException("유효하지 않은 토큰");
@@ -64,7 +64,7 @@ public class AuthService {
                         }
                 );
 
-        return new LoginResponseDto(accessToken, refreshToken);
+        return new LoginResponseDTO(accessToken, refreshToken);
     }
 
 }

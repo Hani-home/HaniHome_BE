@@ -21,7 +21,7 @@ assignees: ''
  ex. [FEAT] searchPublicCourse -->
 
 <!-- 라벨 라벨로 담당자를 표시
- ex. Hoyoung027 -->
+ ex. leerura -->
 
 <!-- assignees은 자기 자신에 해당하는지 팀에 해당하는지에 따라 작성 -->
 

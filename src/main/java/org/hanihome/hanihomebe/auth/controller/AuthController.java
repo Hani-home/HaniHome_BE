@@ -1,8 +1,8 @@
 package org.hanihome.hanihomebe.auth.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.auth.dto.GoogleLoginRequestDto;
-import org.hanihome.hanihomebe.auth.dto.LoginResponseDto;
+import org.hanihome.hanihomebe.auth.dto.GoogleLoginRequestDTO;
+import org.hanihome.hanihomebe.auth.dto.LoginResponseDTO;
 import org.hanihome.hanihomebe.auth.service.AuthService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -22,8 +22,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/google-login")
-    public ResponseEntity<Void> googleLogin(@RequestBody GoogleLoginRequestDto dto) {
-        LoginResponseDto tokens = authService.googleLogin(dto.getIdToken());
+    public ResponseEntity<Void> googleLogin(@RequestBody GoogleLoginRequestDTO dto) {
+        LoginResponseDTO tokens = authService.googleLogin(dto.getIdToken());
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", tokens.getRefreshToken())
                 .httpOnly(true)
