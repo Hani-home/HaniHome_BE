@@ -32,14 +32,12 @@ public class AuthService {
         }
 
         String email = payload.getEmail();
-        String name = (String) payload.get("name");
         String googleId = payload.getSubject();
 
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> {
                     Member newMember = Member.builder()
                             .email(email)
-                            .nickname(name)
                             .password("GOOGLE")
                             .socialProvider("Google")
                             .googleId(googleId)
