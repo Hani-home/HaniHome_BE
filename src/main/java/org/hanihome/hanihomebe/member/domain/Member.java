@@ -32,7 +32,10 @@ public class Member {
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(length = 15)
+    private String name;
+
+    @Column(length = 30)
     private String nickname;
 
     @Column(length = 100, nullable = false)
@@ -51,12 +54,14 @@ public class Member {
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @Column(length = 20)
+    @Column(name = "phone_number" ,length = 20)
     private String phoneNumber;
 
-    @Enumerated(EnumType.STRING)
     @Column(length = 10)
-    private Gender gender;
+    private String gender;
+
+    @Column(name = "profile_image", length = 1000)
+    private String profileImage;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
