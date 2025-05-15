@@ -17,6 +17,7 @@ public class WebConfig {
                         .allowedOrigins("http://localhost:3000") // 프론트 주소
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
+                        .exposedHeaders("Authorization")
                         .allowCredentials(true); // ✅ 쿠키 전송 허용
             }
         };

@@ -70,5 +70,15 @@ public class JwtUtils {
                 .getBody();
     }
 
+    public long getRemainingValidity(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getExpiration().getTime() - System.currentTimeMillis();
+    }
+
 
 }
