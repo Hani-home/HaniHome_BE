@@ -2,18 +2,19 @@ package org.hanihome.hanihomebe.auth.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.auth.token.RefreshToken;
+import org.hanihome.hanihomebe.auth.token.RefreshTokenRepository;
 import org.hanihome.hanihomebe.auth.util.GoogleOAuthUtils;
 import org.hanihome.hanihomebe.auth.dto.LoginResponseDTO;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
-import org.hanihome.hanihomebe.auth.token.RefreshToken;
-import org.hanihome.hanihomebe.auth.token.RefreshTokenRepository;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.hanihome.hanihomebe.auth.util.JwtUtils;
 import org.hanihome.hanihomebe.member.domain.Role;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -49,18 +50,11 @@ public class AuthService {
         String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());
 
-        refreshTokenRepository.findByMemberId(member.getId())
-                .ifPresentOrElse(
-                        token -> token.setToken(refreshToken),
-                        () -> {
-                            RefreshToken newToken = RefreshToken.builder()
-                                    .memberId(member.getId())
-                                    .token(refreshToken)
-                                    .expiryDate(LocalDateTime.now().plusDays(7))
-                                    .build();
-                            refreshTokenRepository.save(newToken);
-                        }
-                );
+        RefreshToken tokenEntity = RefreshToken.builder()
+                .token(refreshToken)
+                .memberId(member.getId())
+                .build();
+        refreshTokenRepository.save(tokenEntity);
 
         return new LoginResponseDTO(accessToken, refreshToken);
     }
