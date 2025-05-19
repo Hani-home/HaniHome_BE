@@ -1,0 +1,50 @@
+[33mcommit 08d7c835fbbbe913b8318fbea7e396889803b18b[m[33m ([m[1;36mHEAD -> [m[1;32mfeature/#6-redis[m[33m)[m
+Author: LEE <sw09112@yonsei.ac.kr>
+Date:   Thu May 15 12:38:57 2025 +0900
+
+    [FEAT] redis 연결, 로그인 시 리프레시 토큰 redis 등록 로그아웃 시 액세스 토큰 블랙리스트 등록, 리프레시 토큰 redis에서 삭제
+
+[33mcommit 853c2a48dd28ba7ac8de299fc154acc2e41a8c4e[m[33m ([m[1;31morigin/feature/#3-google-social-login[m[33m)[m
+Author: LEE <sw09112@yonsei.ac.kr>
+Date:   Mon May 12 19:38:45 2025 +0900
+
+    [FEAT] Google Social Login
+
+[33mcommit 420bd5a6eb70639dd4bc87c662d4298ba8ab1859[m[33m ([m[1;31morigin/refactor/#1-Dto-DTO[m[33m, [m[1;31morigin/dev[m[33m, [m[1;32mrefactor/#1-Dto-DTO[m[33m, [m[1;32mdev[m[33m)[m
+Merge: 0bc9d86 f83dbcc
+Author: LEE <sw09112@yonsei.ac.kr>
+Date:   Sun May 11 20:52:01 2025 +0900
+
+    Merge branch 'main' of https://github.com/Hani-home/HaniHome_BE into dev
+
+[33mcommit 0bc9d86113e09d4bd0a4612c817bb666b1d10d05[m
+Author: LEE <sw09112@yonsei.ac.kr>
+Date:   Sun May 11 20:51:50 2025 +0900
+
+    test
+
+[33mcommit f83dbccd09736d29d53da699e72b429643985556[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: Lee Seokwon <116480651+leerura@users.noreply.github.com>
+Date:   Sun May 11 20:50:50 2025 +0900
+
+    Update issue templates
+
+[33mcommit 9cef4d9d91b5ae888022e0b8f01dc737726f8cd3[m[33m ([m[1;32mmain[m[33m)[m
+Author: Lee Seokwon <116480651+leerura@users.noreply.github.com>
+Date:   Sun May 11 20:43:14 2025 +0900
+
+    Create PULL_REQUEST_TEMPLATE.md
+    
+    이슈 템플릿 작성
+
+[33mcommit d7e8cb9ec8b195e86d47132f903fbc948cc66fd1[m
+Author: Lee Seokwon <116480651+leerura@users.noreply.github.com>
+Date:   Sun May 11 20:41:24 2025 +0900
+
+    Update issue templates
+
+[33mcommit 03d2591aaa5f4075622ed6548455d3d340d5c07d[m
+Author: LEE <sw09112@yonsei.ac.kr>
+Date:   Sun May 11 18:53:34 2025 +0900
+
+    Initial commit

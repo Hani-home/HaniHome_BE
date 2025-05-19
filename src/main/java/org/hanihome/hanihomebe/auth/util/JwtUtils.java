@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -12,11 +13,22 @@ import java.util.Date;
 
 @Component
 public class JwtUtils {
-    private static final String SECRET_KEY = "a-very-very-long-and-secure-secret-key-must-be-at-least-32-characters";
-    private static final long ACCESS_TOKEN_EXPIRATION_MS = 1000*60*60; //1시간
-    private static final long REFRESH_TOKEN_EXPIRATION_MS = 1000L * 60 * 60*24; //1일
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    private final long ACCESS_TOKEN_EXPIRATION_MS;
+    private final long REFRESH_TOKEN_EXPIRATION_MS;
+
+    private final Key key;
+
+    public JwtUtils(
+            @Value("${JWT_SECRET_KEY}") String secretKey,
+            @Value("${JWT_ACCESS}") long accessTokenExp,
+            @Value("${JWT_REFRESH_EXP}") long refreshTokenExp
+    ){
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        this.ACCESS_TOKEN_EXPIRATION_MS = accessTokenExp;
+        this.REFRESH_TOKEN_EXPIRATION_MS = refreshTokenExp;
+
+    }
 
     public String generateAccessToken(Long userId, String role) {
         Date now = new Date();
