@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Duration;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -30,9 +30,10 @@ public class AuthController {
     private final BlacklistService blacklistService;
     private final JwtUtils jwtUtils;
 
-    @PostMapping("/google-login")
-    public ResponseEntity<Void> googleLogin(@RequestBody GoogleLoginRequestDTO dto) {
-        LoginResponseDTO tokens = authService.googleLogin(dto.getIdToken());
+
+    @PostMapping("/social/login")
+    public ResponseEntity<LoginResponseDTO> googleCodeLogin(@RequestBody GoogleLoginRequestDTO dto) {
+        LoginResponseDTO tokens = authService.googleCodeLogin(dto.getCode());
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", tokens.getRefreshToken())
                 .httpOnly(true)
@@ -45,7 +46,7 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokens.getAccessToken())
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .build();
+                .body(tokens);
     }
 
     @PostMapping("/logout")

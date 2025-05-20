@@ -24,6 +24,10 @@ class HaniHomeBeApplicationTests {
         System.setProperty("JWT_ACCESS_EXP", dotenv.get("JWT_ACCESS_EXP"));
         System.setProperty("JWT_REFRESH_EXP", dotenv.get("JWT_REFRESH_EXP"));
 
+        System.setProperty("GOOGLE_CLIENT_ID", dotenv.get("GOOGLE_CLIENT_ID"));
+        System.setProperty("GOOGLE_CLIENT_SECRET", dotenv.get("GOOGLE_CLIENT_SECRET"));
+        System.setProperty("GOOGLE_REDIRECT_URI", dotenv.get("GOOGLE_REDIRECT_URI"));
+
 
 
     }
