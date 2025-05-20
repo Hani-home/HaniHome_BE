@@ -21,7 +21,7 @@ public class JwtUtils {
 
     public JwtUtils(
             @Value("${JWT_SECRET_KEY}") String secretKey,
-            @Value("${JWT_ACCESS}") long accessTokenExp,
+            @Value("${JWT_ACCESS_EXP}") long accessTokenExp,
             @Value("${JWT_REFRESH_EXP}") long refreshTokenExp
     ){
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
