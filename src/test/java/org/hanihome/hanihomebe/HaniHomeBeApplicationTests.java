@@ -20,6 +20,12 @@ class HaniHomeBeApplicationTests {
         System.setProperty("DOCKER_SPRING_DATASOURCE_URL", dotenv.get("DOCKER_SPRING_DATASOURCE_URL"));
         System.setProperty("SPRING_PROFILES_ACTIVE", dotenv.get("SPRING_PROFILES_ACTIVE"));
 
+        System.setProperty("JWT_SECRET_KEY", dotenv.get("JWT_SECRET_KEY"));
+        System.setProperty("JWT_ACCESS_EXP", dotenv.get("JWT_ACCESS_EXP"));
+        System.setProperty("JWT_REFRESH_EXP", dotenv.get("JWT_REFRESH_EXP"));
+
+
+
     }
 
 
