@@ -52,7 +52,8 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken, @RequestHeader("Authorization") String authHeader, HttpServletResponse response) {
         if(refreshToken != null){
-            refreshTokenService.deleteByToken(refreshToken);
+            Long userId = jwtUtils.getUserIdFromToken(refreshToken);
+            refreshTokenService.deleteByToken(userId);
         }
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

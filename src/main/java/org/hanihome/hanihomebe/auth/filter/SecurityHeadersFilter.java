@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.config;
+package org.hanihome.hanihomebe.auth.filter;
 
 
 import jakarta.servlet.Filter;

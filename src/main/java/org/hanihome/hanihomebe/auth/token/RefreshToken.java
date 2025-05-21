@@ -17,9 +17,11 @@ import org.springframework.data.redis.core.RedisHash;
 public class RefreshToken {
 
     @Id
-    private String token; // Redis 키 (UUID 또는 JWT 자체)
+    private Long memberId; //Redis키 리프레시 토큰 재발급할 때 memberId로 찾는 게 더 효율적인 거 같음
 
-    private Long memberId;
+    private String token;
+
+
 
 
 }
