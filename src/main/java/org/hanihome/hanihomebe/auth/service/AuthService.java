@@ -61,8 +61,6 @@ public class AuthService {
             결과 프론트에 전달
          */
 
-
-
         //HTTP 요청을 보내기 위한 Spring class
         RestTemplate restTemplate = new RestTemplate();
 
@@ -130,13 +128,7 @@ public class AuthService {
             member = optionalMember.get();
             isNewUser = false; // 기존 유저
         } else {
-            member = Member.builder()
-                    .email(email)
-                    .password("GOOGLE")
-                    .socialProvider("Google")
-                    .googleId(googleId)
-                    .role(Role.GUEST)
-                    .build();
+            member = Member.fromGoogleSignUp(email, googleId);
             memberRepository.save(member);
             isNewUser = true; // 신규 유저
         }
@@ -146,10 +138,7 @@ public class AuthService {
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());
 
         //리프레시 토큰은 redis에 저장
-        RefreshToken tokenEntity = RefreshToken.builder()
-                .memberId(member.getId())
-                .token(refreshToken)
-                .build();
+        RefreshToken tokenEntity = RefreshToken.of(member.getId(), refreshToken);
         refreshTokenRepository.save(tokenEntity);
 
         // 토큰이랑 신규유저여부 담아서 프론트에 전달
