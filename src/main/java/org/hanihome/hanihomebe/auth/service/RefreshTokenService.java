@@ -12,7 +12,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public void deleteByToken(String token) {
-        refreshTokenRepository.deleteById(token);
+    public void deleteByToken(Long userId) {
+        refreshTokenRepository.deleteById(userId);
     }
 }

@@ -147,12 +147,39 @@ public class AuthService {
 
         //리프레시 토큰은 redis에 저장
         RefreshToken tokenEntity = RefreshToken.builder()
-                .token(refreshToken)
                 .memberId(member.getId())
+                .token(refreshToken)
                 .build();
         refreshTokenRepository.save(tokenEntity);
 
         // 토큰이랑 신규유저여부 담아서 프론트에 전달
         return new LoginResponseDTO(accessToken, refreshToken, isNewUser);
+    }
+
+    public String reissueAccessToken(String refreshToken) {
+
+        if(!jwtUtils.validateToken(refreshToken)) {
+            throw new RuntimeException("리프레시 토큰이 유효하지 않음");
+        }
+
+        Long userId = jwtUtils.getUserIdFromToken(refreshToken);
+
+        //한 UserId에 대해 저장된 RefreshToken이 여러 개인 경우도 고려하는 게 나으려나...?
+        RefreshToken storedToken = refreshTokenRepository.findByMemberId(userId)
+                .orElseThrow(()-> new RuntimeException("저장된 리프레시 토큰이 없음"));
+
+        if(!storedToken.getToken().equals(refreshToken)) {
+            throw new RuntimeException("리프레시 토큰이 일치하지 않음");
+        }
+
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 멤버가 존재하지 않음"));
+
+        String role = member.getRole().name();
+
+        return jwtUtils.generateAccessToken(member.getId(), role);
+
+
+
     }
 }
