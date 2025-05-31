@@ -22,6 +22,14 @@ public class RefreshToken {
     private String token;
 
 
+    public static RefreshToken of(Long memberId, String token) {
+        return RefreshToken.builder()
+                .memberId(memberId)
+                .token(token)
+                .build();
+    }
+
+
 
 
 }

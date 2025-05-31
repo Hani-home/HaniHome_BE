@@ -70,4 +70,14 @@ public class Member {
     @UpdateTimestamp
     @Column(name = "updated_at" )
     private LocalDateTime updatedAt;
+
+    public static Member fromGoogleSignUp(String email, String googleId) {
+        return Member.builder()
+                .email(email)
+                .password("GOOGLE")
+                .socialProvider("Google")
+                .googleId(googleId)
+                .role(Role.GUEST)
+                .build();
+    }
 }
