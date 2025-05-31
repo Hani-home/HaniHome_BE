@@ -138,7 +138,12 @@ public class AuthService {
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());
 
         //리프레시 토큰은 redis에 저장
-        RefreshToken tokenEntity = RefreshToken.of(member.getId(), refreshToken);
+
+        RefreshToken tokenEntity = RefreshToken.builder()
+                .memberId(member.getId())
+                .token(refreshToken)
+                .build();
+
         refreshTokenRepository.save(tokenEntity);
 
         // 토큰이랑 신규유저여부 담아서 프론트에 전달
