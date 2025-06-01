@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.auth.service;
+package org.hanihome.hanihomebe.security.auth.application.jwt.blacklist;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

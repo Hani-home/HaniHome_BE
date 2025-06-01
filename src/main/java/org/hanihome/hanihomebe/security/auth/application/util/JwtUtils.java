@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.auth.util;
+package org.hanihome.hanihomebe.security.auth.application.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -7,7 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.hanihome.hanihomebe.auth.domain.CustomUserDetails;
+import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

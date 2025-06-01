@@ -1,12 +1,12 @@
-package org.hanihome.hanihomebe.auth.filter;
+package org.hanihome.hanihomebe.security.auth.application.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.hanihome.hanihomebe.auth.service.AuthService;
-import org.hanihome.hanihomebe.auth.util.JwtUtils;
+import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
+import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.filter.OncePerRequestFilter;

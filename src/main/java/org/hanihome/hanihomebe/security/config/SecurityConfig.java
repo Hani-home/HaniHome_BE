@@ -1,10 +1,10 @@
-package org.hanihome.hanihomebe.config;
+package org.hanihome.hanihomebe.security.config;
 
 
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.auth.filter.JwtAuthenticationFilter;
-import org.hanihome.hanihomebe.auth.service.AuthService;
-import org.hanihome.hanihomebe.auth.util.JwtUtils;
+import org.hanihome.hanihomebe.security.auth.application.filter.JwtAuthenticationFilter;
+import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
+import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;

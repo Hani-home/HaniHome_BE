@@ -1,8 +1,7 @@
-package org.hanihome.hanihomebe.auth.service;
+package org.hanihome.hanihomebe.security.auth.application.jwt.refresh;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.auth.token.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 
 @Service

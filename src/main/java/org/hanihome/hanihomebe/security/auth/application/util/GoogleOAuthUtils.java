@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.auth.util;
+package org.hanihome.hanihomebe.security.auth.application.util;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
