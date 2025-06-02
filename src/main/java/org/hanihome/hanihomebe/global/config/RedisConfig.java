@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.config;
+package org.hanihome.hanihomebe.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
