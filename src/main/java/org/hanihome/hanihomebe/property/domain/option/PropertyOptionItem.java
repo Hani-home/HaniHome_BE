@@ -1,16 +1,14 @@
 package org.hanihome.hanihomebe.property.domain.option;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hanihome.hanihomebe.property.domain.Property;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
 @Builder
 @Getter
@@ -25,4 +23,9 @@ public class PropertyOptionItem {
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "option_item_id")
     private OptionItem optionItem;
 
+    private String optionItemName;
+
+    public void setProperty(Property property) {
+        this.property = property;
+    }
 }
