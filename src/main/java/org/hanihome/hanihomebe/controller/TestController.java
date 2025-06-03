@@ -3,7 +3,11 @@ package org.hanihome.hanihomebe.controller;
 
 import org.hanihome.hanihomebe.auth.dto.LoginResponseDTO;
 import org.hanihome.hanihomebe.auth.service.AuthService;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.exception.ErrorResponseDTO;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,5 +30,10 @@ public class TestController {
     @GetMapping("/v1/admin/signin")
     public LoginResponseDTO signin() {
         return authService.adminLogin();
+    }
+
+    @GetMapping("/v1/admin/exception")
+    public String exception() {
+        throw new CustomException(ServiceCode.NOT_DEFINED_ERROR);
     }
 }
