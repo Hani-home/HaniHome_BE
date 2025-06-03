@@ -75,6 +75,9 @@
         // Lombok + MapStruct 호환
         implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
+        // dotenv
+        testImplementation 'io.github.cdimascio:dotenv-java:3.0.0'
+
 
     }
 

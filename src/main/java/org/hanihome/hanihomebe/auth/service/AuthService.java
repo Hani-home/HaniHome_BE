@@ -178,8 +178,25 @@ public class AuthService {
         String role = member.getRole().name();
 
         return jwtUtils.generateAccessToken(member.getId(), role);
+    }
 
+    // 테스트용 로그인 DB에 있는 ID:1 인 사용자를 가지고 토큰발급
+    @Transactional
+    public LoginResponseDTO adminLogin() {
 
+        Member member = memberRepository.findById(1L).orElseThrow(() -> new RuntimeException("DB에 한명의 Member는 필요합니다"));
+        //유저 정보 바탕으로 액세스 토큰, 리프레시 토큰 발급
+        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
+        String refreshToken = jwtUtils.generateRefreshToken(member.getId());
 
+        //리프레시 토큰은 redis에 저장
+        RefreshToken tokenEntity = RefreshToken.builder()
+                .memberId(member.getId())
+                .token(refreshToken)
+                .build();
+        refreshTokenRepository.save(tokenEntity);
+
+        // 토큰이랑 신규유저여부 담아서 프론트에 전달
+        return new LoginResponseDTO(accessToken, refreshToken, true);
     }
 }

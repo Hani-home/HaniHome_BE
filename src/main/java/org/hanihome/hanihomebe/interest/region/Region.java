@@ -2,7 +2,14 @@ package org.hanihome.hanihomebe.interest.region;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 /** ver1: 값타입 */
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 @Embeddable
 public class Region {
     // Australia

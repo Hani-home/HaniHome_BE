@@ -40,7 +40,10 @@ public class SecurityConfig {
                                 "/api/v1/auth/social/login",
                                 "/v3/api-docs/**",      // Swagger API docs
                                 "/swagger-ui/**",       // Swagger UI
-                                "/swagger-ui.html").permitAll()
+                                "/swagger-ui.html",
+                                "/health",
+                                "/api/v1/properties",
+                                "/api/v1/admin/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
