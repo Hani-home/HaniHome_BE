@@ -39,7 +39,7 @@ public class Member extends BaseEntity {
     @Column(length = 30)
     private String nickname;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = true) //TODO: 지금 당장은 password가 필수 값은 아니니까 일단 nullable 허용하겠습니다
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -58,8 +58,9 @@ public class Member extends BaseEntity {
     @Column(name = "phone_number" ,length = 20)
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 10)
-    private String gender;
+    private Gender gender;
 
     @Column(name = "profile_image", length = 1000)
     private String profileImage;
