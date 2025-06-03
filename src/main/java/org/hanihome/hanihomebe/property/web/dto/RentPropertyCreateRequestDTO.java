@@ -28,7 +28,7 @@ public record RentPropertyCreateRequestDTO(
         Region region,                              // 주소 정보 (Embedded 타입)
         List<String> photoUrls,                     // 매물 사진 URL 리스트
         BigDecimal weeklyCost,                      // 주 단위 비용
-        List<OptionItem> optionItems,       // 포함된 비용 항목 리스트
+        List<Long> optionItemIds,       // 포함된 비용 항목 리스트
         String costDescription,                     // 비용 설명 (TEXT)
         BigDecimal deposit,                         // 보증금
         BigDecimal keyDeposit,                      // 키 보증금
@@ -41,13 +41,13 @@ public record RentPropertyCreateRequestDTO(
         String description,                         // 매물 소개
         RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
         boolean isRealEstateIntervention            // (RentProperty 고유) 중개 여부
-) {
+)  implements PropertyCreateRequestDTO {
     public RentPropertyCreateRequestDTO {
         if (photoUrls == null) {
             photoUrls = new ArrayList<>();
         }
-        if (optionItems == null) {
-            optionItems = new ArrayList<>();
+        if (optionItemIds == null) {
+            optionItemIds = new ArrayList<>();
         }
         if (availableFrom == null) {
             availableFrom = new HashSet<>();
