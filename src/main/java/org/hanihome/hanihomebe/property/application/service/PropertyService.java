@@ -5,14 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.application.PropertyMapper;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
-import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
+import org.hanihome.hanihomebe.property.domain.option.OptionItem;
 import org.hanihome.hanihomebe.property.domain.option.PropertyOptionItem;
+import org.hanihome.hanihomebe.property.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.property.web.dto.*;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
@@ -23,10 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -37,51 +39,43 @@ public class PropertyService {
     private final ObjectMapper objectMapper;
     private final PropertyMapper propertyMapper;
     private final Validator validator;
+    private final OptionItemRepository optionItemRepository;
 
     //create
     /**
      * 1) RentProperty 생성 (부모 레포지토리로 저장)
      */
     @Transactional
-    public RentProperty createRentProperty(RentPropertyCreateRequestDTO dto){
+    public PropertyResponseDTO createProperty(PropertyCreateRequestDTO dto){
+        log.info("property 생성 로직 진입");
         Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다"));
 
-        RentProperty rentProperty = RentProperty.create(dto, findMember);
+        if(dto instanceof RentPropertyCreateRequestDTO){
 
-        // create PropertyOptionItem
-        dto.optionItems().forEach(optionItem -> {
-            PropertyOptionItem propertyOptionItem = PropertyOptionItem.builder()
-                    .property(rentProperty)
-                    .optionItem(optionItem)
-                    .optionItemName(optionItem.getItemName())
-                    .build();
-            rentProperty.addPropertyOptionItem(propertyOptionItem);
-        });
+            RentProperty rentProperty = RentProperty.create((RentPropertyCreateRequestDTO) dto, findMember);
 
+            // create PropertyOptionItem
+            addPropertyOptionItem(dto.optionItemIds(), rentProperty);
 
-        return (RentProperty) propertyRepository.save(rentProperty);    //RentProperty 테이블에도 JPA가 insert
+            RentProperty save = propertyRepository.save(rentProperty);//RentProperty 테이블에도 JPA가 insert
+            log.info("RentPrperty 생성 저장 성공");
+            return propertyMapper.toResponseDto(save);
+        } else if (dto instanceof SharePropertyCreateRequestDTO){
+            ShareProperty shareProperty = ShareProperty.create((SharePropertyCreateRequestDTO) dto, findMember);
+
+            // create PropertyOptionItem
+            addPropertyOptionItem(dto.optionItemIds(), shareProperty);
+
+            ShareProperty save = propertyRepository.save(shareProperty);
+            log.info("SharaProperty 생성 저장 성공");
+            return propertyMapper.toResponseDto(save);
+        }
+
+        throw new RuntimeException("매물 생성 실패: 해당하는 Property Subtype이 없습니다.");
     }
 
-    /**
-     * 2) ShareProperty 생성 (역시 부모 레포지토리 사용)
-     */
-    @Transactional
-    public ShareProperty createShareProperty(SharePropertyCreateRequestDTO dto) {
-        Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다"));
 
-        ShareProperty shareProperty = ShareProperty.create(dto, findMember);
 
-        // create PropertyOptionItem
-        dto.optionItems().forEach(optionItem -> {
-            PropertyOptionItem propertyOptionItem = PropertyOptionItem.builder()
-                    .property(shareProperty)
-                    .optionItem(optionItem)
-                    .optionItemName(optionItem.getItemName())
-                    .build();
-            shareProperty.addPropertyOptionItem(propertyOptionItem);
-        });
-        return (ShareProperty) propertyRepository.save(shareProperty);
-    }
 
     // read
     /**
@@ -90,24 +84,18 @@ public class PropertyService {
      */
     public List<PropertyResponseDTO> getAllProperties() {
         return propertyRepository.findAll().stream()
-                .map(property -> {
-                    if (property instanceof RentProperty) {
-                        return RentPropertyResponseDTO.from((RentProperty) property);
-                    } else if (property instanceof ShareProperty) {
-                        return SharePropertyResponseDTO.from((ShareProperty) property);
-                    } else {
-                        throw new RuntimeException("해당하는 매물 종류가 없음");
-                    }
-                })
+                .map(property -> propertyMapper.toResponseDto(property))
                 .collect(Collectors.toList());
     }
 
     /**
      * 4) 단일 Property 조회 (부모 타입으로 조회)
      */
-    public Property getPropertyById(Long id) {
-        return propertyRepository.findById(id)
+    public PropertyResponseDTO getPropertyById(Long id) {
+        Property findProperty = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found: " + id));
+
+        return propertyMapper.toResponseDto(findProperty);
     }
 
     //update
@@ -178,13 +166,25 @@ public class PropertyService {
      * 6) 삭제 예시
      */
     @Transactional
-    public void deleteProperty(Long id) {
+    public void deletePropertyById(Long id) {
         if (!propertyRepository.existsById(id)) {
             throw new RuntimeException("Property not found: " + id);
         }
         propertyRepository.deleteById(id);
     }
 
+
+    private void addPropertyOptionItem(List<Long> optionItemIds, Property property) {
+        optionItemIds.forEach(optionItemId -> {
+            OptionItem optionItem = optionItemRepository.findById(optionItemId).orElseThrow(() -> new RuntimeException("해당하는 선택목록 식별자가 없습니다."));
+            PropertyOptionItem propertyOptionItem = PropertyOptionItem.builder()
+                    .property(property)
+                    .optionItem(optionItem)
+                    .optionItemName(optionItem.getItemName())
+                    .build();
+            property.addPropertyOptionItem(propertyOptionItem);
+        });
+    }
 
 }
 
