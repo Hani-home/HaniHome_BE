@@ -131,7 +131,7 @@ public class JwtUtils {
         Long userId = Long.valueOf(getClaims(accessToken).getSubject());
         String role = getClaims(accessToken).get("role", String.class);
 
-        CustomUserDetails userDetails = new CustomUserDetails(userId, role);
+        CustomUserDetails userDetails = new CustomUserDetails(userId, role, null);
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }

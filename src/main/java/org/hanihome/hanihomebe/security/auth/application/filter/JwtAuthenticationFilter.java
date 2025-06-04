@@ -7,8 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
 import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -21,12 +23,14 @@ import java.io.IOException;
 3. 토큰이 없거나 유효하지 않다면 인증 실패 처리
  */
 // TODO: doFilterInternal이 너무 길어서 리팩터링 필요함
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final AuthService authService;
     private final RedisTemplate<String, String> redisTemplate;
 
+    @Autowired
     public JwtAuthenticationFilter(JwtUtils jwtUtils, AuthService authService, RedisTemplate<String, String> redisTemplate) {
         this.jwtUtils = jwtUtils;
         this.authService = authService;
@@ -43,7 +47,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return path.startsWith("/v3/api-docs")
                 || path.startsWith("/swagger-ui")
                 || path.equals("/swagger-ui.html")
-                || path.startsWith("/api/v1/auth/social/login"); // 필요하면 추가
+                || path.equals("/api/v1/members/signup")
+                || path.startsWith("/api/v1/auth/social/login")
+                || path.equals("/api/v1/auth/login"); // 필요하면 추가
 
     }
 
