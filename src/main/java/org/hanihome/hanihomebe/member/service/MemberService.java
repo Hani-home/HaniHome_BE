@@ -7,6 +7,7 @@ import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +37,27 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    //특정 멤버 조회
     public MemberResponseDTO getMemberById(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
         return MemberResponseDTO.CreateFrom(member);
+    }
+
+    @Transactional
+    public void updateMember(Long memberId, MemberUpdateRequestDTO memberUpdateRequestDTO) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+
+        //멤버도메인에 위임
+        member.updateMember(memberUpdateRequestDTO);
+    }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+
+        memberRepository.delete(member);
     }
 }

@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -87,5 +88,15 @@ public class Member {
                 .password(password)
                 .role(role)
                 .build();
+    }
+
+    //유저 정보 업데이트
+    public void updateMember(MemberUpdateRequestDTO memberUpdateRequestDTO) {
+        if (memberUpdateRequestDTO.getName() != null) this.name = memberUpdateRequestDTO.getName();
+        if (memberUpdateRequestDTO.getNickname() != null) this.nickname = memberUpdateRequestDTO.getNickname();
+        if (memberUpdateRequestDTO.getBirthDate() != null) this.birthDate = memberUpdateRequestDTO.getBirthDate();
+        if (memberUpdateRequestDTO.getPhoneNumber() != null) this.phoneNumber = memberUpdateRequestDTO.getPhoneNumber();
+        if (memberUpdateRequestDTO.getGender() != null) this.gender = memberUpdateRequestDTO.getGender();
+        if (memberUpdateRequestDTO.getProfileImage() != null) this.profileImage = memberUpdateRequestDTO.getProfileImage();
     }
 }
