@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.security.auth.web.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.web.dto.GoogleLoginRequestDTO;
+import org.hanihome.hanihomebe.security.auth.web.dto.LoginRequestDTO;
 import org.hanihome.hanihomebe.security.auth.web.dto.LoginResponseDTO;
 import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
 import org.hanihome.hanihomebe.security.auth.application.jwt.blacklist.BlacklistService;
@@ -70,6 +71,13 @@ public class AuthController {
         response.addHeader("Set-Cookie", cookie.toString());
 
         return ResponseEntity.ok("로그아웃 완료");
+    }
+
+    //테스트 유저용(일반 유저) 로그인
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        LoginResponseDTO response = authService.login(loginRequestDTO);
+        return ResponseEntity.ok(response);
     }
 
 

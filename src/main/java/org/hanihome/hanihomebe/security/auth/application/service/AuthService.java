@@ -2,17 +2,26 @@ package org.hanihome.hanihomebe.security.auth.application.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
+import org.hanihome.hanihomebe.security.auth.web.dto.LoginRequestDTO;
 import org.hanihome.hanihomebe.security.auth.web.dto.LoginResponseDTO;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshTokenRepository;
 import org.hanihome.hanihomebe.security.auth.application.util.GoogleOAuthUtils;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +35,7 @@ import org.springframework.http.MediaType;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
-
 
     @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
@@ -36,15 +43,31 @@ public class AuthService {
     @Value("${GOOGLE_CLIENT_SECRET}")
     private String clientSecret;
 
+
     @Value("${GOOGLE_REDIRECT_URI}")
     private String redirectUri;
-
 
 
     private final GoogleOAuthUtils googleOAuthUtils;
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtils jwtUtils;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthService(
+            GoogleOAuthUtils googleOAuthUtils,
+            MemberRepository memberRepository,
+            RefreshTokenRepository refreshTokenRepository,
+            JwtUtils jwtUtils,
+            @Lazy PasswordEncoder passwordEncoder
+
+    ) {
+        this.googleOAuthUtils = googleOAuthUtils;
+        this.memberRepository = memberRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtUtils = jwtUtils;
+        this.passwordEncoder = passwordEncoder;
+    }
 
 
     @Transactional
@@ -127,7 +150,7 @@ public class AuthService {
             member = optionalMember.get();
             isNewUser = false; // 기존 유저
         } else {
-            member = Member.fromGoogleSignUp(email, googleId);
+            member = Member.createFromGoogleSignUp(email, googleId);
             memberRepository.save(member);
             isNewUser = true; // 신규 유저
         }
@@ -147,6 +170,29 @@ public class AuthService {
 
         // 토큰이랑 신규유저여부 담아서 프론트에 전달
         return new LoginResponseDTO(accessToken, refreshToken, isNewUser);
+    }
+
+    //일반 로그인
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
+
+        Member member = memberRepository.findByEmail(loginRequestDTO.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저"));
+
+        if (!passwordEncoder.matches(loginRequestDTO.getPassword(), member.getPassword())) {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
+
+        //JWT 발급
+        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
+        String refreshToken = jwtUtils.generateRefreshToken(member.getId());
+
+        RefreshToken tokenEntity = RefreshToken.builder()
+                .memberId(member.getId())
+                .token(refreshToken)
+                .build();
+        refreshTokenRepository.save(tokenEntity);
+
+        return new LoginResponseDTO(accessToken, refreshToken, false);
     }
 
     public String reissueAccessToken(String refreshToken) {
@@ -171,8 +217,6 @@ public class AuthService {
         String role = member.getRole().name();
 
         return jwtUtils.generateAccessToken(member.getId(), role);
-
-
 
     }
 }

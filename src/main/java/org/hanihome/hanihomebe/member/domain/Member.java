@@ -71,13 +71,21 @@ public class Member {
     @Column(name = "updated_at" )
     private LocalDateTime updatedAt;
 
-    public static Member fromGoogleSignUp(String email, String googleId) {
+    public static Member createFromGoogleSignUp(String email, String googleId) {
         return Member.builder()
                 .email(email)
                 .password("GOOGLE")
                 .socialProvider("Google")
                 .googleId(googleId)
                 .role(Role.GUEST)
+                .build();
+    }
+
+    public static Member createFrom(String email, String password, Role role) {
+        return Member.builder()
+                .email(email)
+                .password(password)
+                .role(role)
                 .build();
     }
 }
