@@ -1,13 +1,13 @@
-package org.hanihome.hanihomebe.auth.controller;
+package org.hanihome.hanihomebe.security.auth.web.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.auth.dto.GoogleLoginRequestDTO;
-import org.hanihome.hanihomebe.auth.dto.LoginResponseDTO;
-import org.hanihome.hanihomebe.auth.service.AuthService;
-import org.hanihome.hanihomebe.auth.service.BlacklistService;
-import org.hanihome.hanihomebe.auth.service.RefreshTokenService;
-import org.hanihome.hanihomebe.auth.util.JwtUtils;
+import org.hanihome.hanihomebe.security.auth.web.dto.GoogleLoginRequestDTO;
+import org.hanihome.hanihomebe.security.auth.web.dto.LoginResponseDTO;
+import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
+import org.hanihome.hanihomebe.security.auth.application.jwt.blacklist.BlacklistService;
+import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshTokenService;
+import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;

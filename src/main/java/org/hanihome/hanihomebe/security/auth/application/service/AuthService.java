@@ -1,11 +1,11 @@
-package org.hanihome.hanihomebe.auth.service;
+package org.hanihome.hanihomebe.security.auth.application.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.auth.dto.LoginResponseDTO;
-import org.hanihome.hanihomebe.auth.token.RefreshToken;
-import org.hanihome.hanihomebe.auth.token.RefreshTokenRepository;
-import org.hanihome.hanihomebe.auth.util.GoogleOAuthUtils;
+import org.hanihome.hanihomebe.security.auth.web.dto.LoginResponseDTO;
+import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
+import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshTokenRepository;
+import org.hanihome.hanihomebe.security.auth.application.util.GoogleOAuthUtils;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.hanihome.hanihomebe.auth.util.JwtUtils;
-import org.hanihome.hanihomebe.member.domain.Role;
+import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 

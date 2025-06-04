@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.auth.domain;
+package org.hanihome.hanihomebe.security.auth.user.detail;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

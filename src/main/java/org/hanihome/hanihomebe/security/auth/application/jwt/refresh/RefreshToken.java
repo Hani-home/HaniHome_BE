@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.auth.token;
+package org.hanihome.hanihomebe.security.auth.application.jwt.refresh;
 
 import org.springframework.data.annotation.Id;
 import lombok.AllArgsConstructor;

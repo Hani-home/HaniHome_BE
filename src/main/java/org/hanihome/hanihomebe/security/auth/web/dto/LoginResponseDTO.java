@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.auth.dto;
+package org.hanihome.hanihomebe.security.auth.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
