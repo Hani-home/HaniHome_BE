@@ -1,0 +1,21 @@
+# Gradle 캐시
+.gradle/
+build/
+
+# IDE 설정
+*.iml
+.idea/
+.vscode/
+
+# OS 임시 파일
+*.DS_Store
+
+# 로그
+*.log
+
+# 환경파일 (중요: .env 노출 방지!)
+.env
+
+# Git
+.git/
+.gitignore

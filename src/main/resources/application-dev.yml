@@ -17,3 +17,6 @@ spring:
     redis:
       host: localhost
       port: ${SPRING_REDIS_PORT}
+
+  jackson:
+    time-zone: UTC
