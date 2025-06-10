@@ -1,11 +1,11 @@
 package org.hanihome.hanihomebe.controller;
 
 
-import org.hanihome.hanihomebe.auth.dto.LoginResponseDTO;
-import org.hanihome.hanihomebe.auth.service.AuthService;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.exception.ErrorResponseDTO;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
+import org.hanihome.hanihomebe.security.auth.web.dto.LoginResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
