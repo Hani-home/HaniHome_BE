@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.security.config;
+package org.hanihome.hanihomebe.global.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

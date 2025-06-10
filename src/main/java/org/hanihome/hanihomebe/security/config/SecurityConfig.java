@@ -1,9 +1,8 @@
-package org.hanihome.hanihomebe.global.config;
+package org.hanihome.hanihomebe.security.config;
 
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.application.filter.JwtAuthenticationFilter;
-import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
