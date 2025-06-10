@@ -19,3 +19,6 @@ spring:
       timeout: 5000
       host: redis
       port: ${REDIS_CONTAINER_PORT}
+
+  jackson:
+    time-zone: UTC
