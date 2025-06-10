@@ -17,7 +17,7 @@ import java.util.Set;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
+        property = "jsonDiscriminator"      // "jsonCriminator"라는 필드가 요청 바디에 필드로 포함되어있어야함
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = SharePropertyCreateRequestDTO.class, name = "SHARE"),

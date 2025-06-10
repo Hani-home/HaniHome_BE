@@ -99,10 +99,7 @@ public class PropertyService {
     }
 
     //update
-    /**
-     * 5) 업데이트 예시
-     *    - ID로 가져온 뒤, 실제 서브클래스인지 instanceof로 판별해 수정합니다.
-     */
+    /* json-patch(매물이 더 복잡해질 경우 고려 가능)
     @Transactional
     public PropertyResponseDTO patch(Long propertyId, JsonNode patchDocument) throws JsonPatchException, IOException {
         Property findProperty = propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found: " + propertyId));
@@ -149,6 +146,8 @@ public class PropertyService {
 
         throw new RuntimeException("해당하는 매물 종류가 없습니다");
     }
+    */
+
     @Transactional
     public PropertyResponseDTO patch(Long propertyId, PropertyPatchRequestDTO dto) {
         Property findProperty = propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found: " + propertyId));

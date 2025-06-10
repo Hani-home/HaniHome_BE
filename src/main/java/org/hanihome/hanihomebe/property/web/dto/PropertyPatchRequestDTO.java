@@ -1,5 +1,7 @@
 package org.hanihome.hanihomebe.property.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.enums.Capacity;
@@ -13,6 +15,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "jsonDiscriminator"      // "jsonCriminator"라는 필드가 요청 바디에 필드로 포함되어있어야함
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = SharePropertyPatchRequestDTO.class, name = "SHARE"),
+        @JsonSubTypes.Type(value = RentPropertyPatchRequestDTO.class, name = "RENT")
+})
 @Getter
 public abstract class PropertyPatchRequestDTO {
     private Capacity capacity;

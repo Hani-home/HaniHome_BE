@@ -1,13 +1,14 @@
 package org.hanihome.hanihomebe.property.web.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonpatch.JsonPatchException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.application.service.PropertyService;
+import org.hanihome.hanihomebe.property.web.dto.PropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,21 +16,37 @@ import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RestController("/api/v1")
+@RequestMapping("/api/v1")
+@RestController
 public class PropertyController {
     private final PropertyService propertyService;
 
-    @GetMapping("/properties")
-    public List<PropertyResponseDTO> getAll(){
-        return propertyService.getAllProperties();
+
+    //create
+    @PostMapping("/properties")
+    public PropertyResponseDTO createProperty(@RequestBody @Valid PropertyCreateRequestDTO dto) {
+        return propertyService.createProperty(dto);
     }
 
 
+    //read
+    @GetMapping("/properties")
+    public List<PropertyResponseDTO> getAll() {
+        return propertyService.getAllProperties();
+    }
+
+    @GetMapping("/properties/{propertyId}")
+    public PropertyResponseDTO getPropertyById(@PathVariable Long propertyId) {
+        return propertyService.getPropertyById(propertyId);
+    }
+
+    //update
 
     /**
      * contentType: application/json 아님. !! application/json-patch+json
-     * */
-    @PatchMapping(
+     */
+   /*
+   @PatchMapping(
             path = "/properties/{propertyId}",
             consumes = "application/json-patch+json",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,12 +54,16 @@ public class PropertyController {
         PropertyResponseDTO updated = propertyService.patch(propertyId, patchDocument);
         return ResponseEntity.ok(updated);
     }
-
+*/
     @PatchMapping("/properties/{propertyId}")
     public PropertyResponseDTO patch(@PathVariable("propertyId") Long propertyId, @RequestBody PropertyPatchRequestDTO dto) throws JsonPatchException, IOException {
-        PropertyResponseDTO responseDTO = propertyService.patch(propertyId, dto);
-        return responseDTO;
+        return propertyService.patch(propertyId, dto);
     }
 
 
+    //delete
+    @DeleteMapping("/properties/{propertyId}")
+    public void delete(@PathVariable("propertyId") Long propertyId) {
+        propertyService.deletePropertyById(propertyId);
+    }
 }
