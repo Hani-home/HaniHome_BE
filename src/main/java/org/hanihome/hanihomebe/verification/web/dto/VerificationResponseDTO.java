@@ -1,0 +1,21 @@
+package org.hanihome.hanihomebe.verification.web.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.hanihome.hanihomebe.verification.domain.VerificationStatus;
+import org.hanihome.hanihomebe.verification.domain.VerificationType;
+
+import java.time.LocalDateTime;
+
+@Getter
+@AllArgsConstructor
+public class VerificationResponseDTO {
+    private Long id;
+    private VerificationType type;
+    private VerificationStatus status;
+    private String documentImageUrl;
+    private String rejectionReason;
+    private LocalDateTime requestedAt;
+    private LocalDateTime approvedAt;
+    private LocalDateTime rejectedAt;
+}
