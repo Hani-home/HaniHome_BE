@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.property.domain.option;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 
 import javax.swing.text.html.Option;
 
@@ -25,6 +26,8 @@ public class OptionCategory {
     private CategoryCode categoryCode;
 
     private String name;
+
+    private PropertySuperType kind; // 어느 매물 유형이 가지는 옵션들
 
     public static OptionCategory create(CategoryCode categoryCode) {
         return OptionCategory.builder()

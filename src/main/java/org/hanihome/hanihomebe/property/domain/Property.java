@@ -5,13 +5,11 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Member;
-import org.hanihome.hanihomebe.property.domain.enums.Capacity;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.option.PropertyOptionItem;
 import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.SharePropertyPatchRequestDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -47,10 +45,6 @@ public abstract class Property {
     @Column(nullable = false, length = 10)
     private PropertySuperType kind;
 
-    /** 3. 수용인원 */
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private Capacity capacity;
 
     /** 4. 선호 성별 */
     @Enumerated(EnumType.STRING)
@@ -160,9 +154,6 @@ public abstract class Property {
     }
 
     protected void updateBase(PropertyPatchRequestDTO dto) {
-        if (dto.getCapacity() != null) {
-            this.capacity = dto.getCapacity();
-        }
         if (dto.getGenderPreference() != null) {
             this.genderPreference = dto.getGenderPreference();
         }

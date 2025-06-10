@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.property.domain.enums.CapacityRent;
+import org.hanihome.hanihomebe.property.domain.enums.Exposure;
+import org.hanihome.hanihomebe.property.domain.enums.RealEstateType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
 import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyPatchRequestDTO;
-
-import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @DiscriminatorValue("RENT")
@@ -20,18 +21,24 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @SuperBuilder @PrimaryKeyJoinColumn(name = "property_id")
 public class RentProperty extends Property {
 
-    /** 2. 매물 유형 */
+    /** 1. 매물 유형 */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private RentPropertySubType rentPropertySubType;
 
-    private boolean isRealEstateIntervention;
+    /** 2.  부동산 중개 여부*/
+    private RealEstateType isRealEstateIntervention;
+
+    /** 3. 거주 인원  */
+    private CapacityRent capacityRent;
+
+    /** 4. 남향,북향 */
+    private Exposure exposure;
 
     public static RentProperty create(RentPropertyCreateRequestDTO dto, Member member) {
         return RentProperty.builder()
                 .member(member)
                 .kind(dto.kind())
-                .capacity(dto.capacity())
                 .genderPreference(dto.genderPreference())
                 .region(dto.region())
                 .photoUrls(dto.photoUrls())
@@ -46,8 +53,10 @@ public class RentProperty extends Property {
                 .parkingOption(dto.parkingOption())
                 .viewingDates(dto.viewingDates())
                 .description(dto.description())
-                .isRealEstateIntervention(dto.isRealEstateIntervention())
-                .rentPropertySubType(dto.rentPropertySubType())
+                .rentPropertySubType(dto.rentPropertySubType())             // 고유필드 1
+                .isRealEstateIntervention(dto.isRealEstateIntervention())   // 고유필드 2
+                .capacityRent(dto.capacityRent())                           // 고유필드 3
+                .exposure(dto.exposure())                                   // 고유필드 4
                 .build();
     }
 
@@ -57,8 +66,8 @@ public class RentProperty extends Property {
         RentPropertyPatchRequestDTO rentDTO = (RentPropertyPatchRequestDTO) dto;
         // 자식 필드 업데이트
         if (rentDTO.getRentPropertySubType() != null) this.rentPropertySubType = rentDTO.getRentPropertySubType();
-        if (rentDTO.getIsRealEstateIntervention() != null)
-            this.isRealEstateIntervention = rentDTO.getIsRealEstateIntervention();
+        /*if (rentDTO.getIsRealEstateIntervention() != null)
+            this.isRealEstateIntervention = rentDTO.getIsRealEstateIntervention();*/
         // 부모 필드 업데이트
         super.updateBase(dto);
 
