@@ -7,7 +7,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum SharePropertySubType {
-    SECOND_ROOM("세컨드 룸"),MASTER_ROOM("마스터 룸"),LIVING_SHARE("거실 쉐어");
+    SECOND_ROOM("세컨드 룸")
+    ,MASTER_ROOM("마스터 룸")
+    ,LIVING_SHARE("거실 쉐어")
+    ;
 
     private final String name;
 }
