@@ -27,6 +27,11 @@ services: #컨테이너로 실행할 서비스들 정의, 여기선 백엔드랑
     networks:
       - hanihome-net
 
+
+  #ec2에선 nginx도 추가
+
+
+
 networks:
   hanihome-net: #네트워크 기본 방식 => 하니홈 백엔드 컨테이너에서 redi로 접근 가능
     driver: bridge

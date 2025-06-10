@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +19,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -26,7 +29,8 @@ import java.time.LocalDateTime;
 @Getter
 public class Member extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
 
@@ -39,7 +43,7 @@ public class Member extends BaseEntity {
     @Column(length = 30)
     private String nickname;
 
-    @Column(length = 100, nullable = true) //TODO: 지금 당장은 password가 필수 값은 아니니까 일단 nullable 허용하겠습니다
+    @Column(length = 100, nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -65,4 +69,34 @@ public class Member extends BaseEntity {
     @Column(name = "profile_image", length = 1000)
     private String profileImage;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Verification> verifications = new ArrayList<>();
+
+    public static Member createFromGoogleSignUp(String email, String googleId) {
+        return Member.builder()
+                .email(email)
+                .password("GOOGLE")
+                .socialProvider("Google")
+                .googleId(googleId)
+                .role(Role.GUEST)
+                .build();
+    }
+
+    public static Member createFrom(String email, String password, Role role) {
+        return Member.builder()
+                .email(email)
+                .password(password)
+                .role(role)
+                .build();
+    }
+
+    //유저 정보 업데이트
+    public void updateMember(MemberUpdateRequestDTO memberUpdateRequestDTO) {
+        if (memberUpdateRequestDTO.getName() != null) this.name = memberUpdateRequestDTO.getName();
+        if (memberUpdateRequestDTO.getNickname() != null) this.nickname = memberUpdateRequestDTO.getNickname();
+        if (memberUpdateRequestDTO.getBirthDate() != null) this.birthDate = memberUpdateRequestDTO.getBirthDate();
+        if (memberUpdateRequestDTO.getPhoneNumber() != null) this.phoneNumber = memberUpdateRequestDTO.getPhoneNumber();
+        if (memberUpdateRequestDTO.getGender() != null) this.gender = memberUpdateRequestDTO.getGender();
+        if (memberUpdateRequestDTO.getProfileImage() != null) this.profileImage = memberUpdateRequestDTO.getProfileImage();
+    }
 }
