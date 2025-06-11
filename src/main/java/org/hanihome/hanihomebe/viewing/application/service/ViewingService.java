@@ -8,6 +8,7 @@ import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
+import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingCreateDTO;
 import org.springframework.stereotype.Service;
@@ -49,8 +50,8 @@ public class ViewingService {
             throw new CustomException(ServiceCode.VIEWING_NUMBER_NOT_SATISFIED);
         }
         
-        // 2. 사용자의 기존 뷰잉 스케줄 조회
-        List<Viewing> existingViewings = viewingRepository.findByMemberAndMeetingDayAfter(findMember, LocalDateTime.now());
+        // 2. 사용자의 기존 다가오는 뷰잉 스케줄 조회
+        List<Viewing> existingViewings = viewingRepository.findByMemberAndMeetingDayAfterAndStatus(findMember, LocalDateTime.now(), ViewingStatus.REQUESTED);
         
         // 3. 시간대 중복 체크
         List<LocalDateTime> availableTimes = preferredTimes.stream()
