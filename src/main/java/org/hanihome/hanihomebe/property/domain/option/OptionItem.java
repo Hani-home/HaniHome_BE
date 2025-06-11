@@ -33,10 +33,12 @@ public class OptionItem {
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "parent_id")
     private OptionItem parent;
 
+/*
     // 계층구조 - 자식
     @Builder.Default
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
     private List<OptionItem> child = new ArrayList<>();
+*/
 
     @Builder.Default
     private boolean isActive = true;
@@ -72,9 +74,11 @@ public class OptionItem {
                 .build();
     }
 
+/*
     // 연관관계 편의 메서드
     public void addChild(OptionItem child) {
         this.child.add(child);
     }
+    */
 
 }
