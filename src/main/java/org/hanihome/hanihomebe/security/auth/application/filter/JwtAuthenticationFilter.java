@@ -47,9 +47,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return path.startsWith("/v3/api-docs")
                 || path.startsWith("/swagger-ui")
                 || path.equals("/swagger-ui.html")
-                || path.equals("/api/v1/members/signup")
                 || path.startsWith("/api/v1/auth/social/login")
-                || path.equals("/api/v1/auth/login"); // 필요하면 추가
+                || path.equals("/health")
+                || path.startsWith("/api/v1/admin"); // 필요하면 추가
 
     }
 
@@ -99,6 +99,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             } else {
+                /*TODO: 현재 토큰이 없는 경우, 다음 필터로 넘기지 않고 바로 UNAUTHORIZED응답을 내고 있음. 이렇게 하면 인증이 필요 없는 요청도 결국 이 필터에서 걸러짐. => 항상 this.shouldNotFilter()에 추가하고 SecurityConfig.permitALL()에도 추가해야함
+                        결국 번거로움. Security는 결국 마지막에 컨텍스트에 인증객체가 없으면 알아서 에러 response를 내므로 해당 필터에서는 그냥 토큰이 없어도 다음 필터로 넘기는게 나음.
+                        * */
                 SecurityContextHolder.clearContext();
                 setErrorResponse(response, "TOKEN_INVALID_OR_EXPIRED", "Access/Refresh token is missing or expired");
             }

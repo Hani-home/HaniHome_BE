@@ -1,19 +1,12 @@
 package org.hanihome.hanihomebe.member.domain;
 
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hanihome.hanihomebe.global.BaseEntity;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
 import org.hanihome.hanihomebe.verification.domain.Verification;
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,10 +22,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @Column(length = 100, nullable = false, unique = true)
@@ -63,23 +57,15 @@ public class Member {
     @Column(name = "phone_number" ,length = 20)
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 10)
-    private String gender;
+    private Gender gender;
 
     @Column(name = "profile_image", length = 1000)
     private String profileImage;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Verification> verifications = new ArrayList<>();
-
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at" )
-    private LocalDateTime updatedAt;
 
     public static Member createFromGoogleSignUp(String email, String googleId) {
         return Member.builder()

@@ -3,11 +3,8 @@ package org.hanihome.hanihomebe.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.application.filter.JwtAuthenticationFilter;
-import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
-import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,7 +33,10 @@ public class SecurityConfig {
                                 "/api/v1/members/signup",
                                 "/v3/api-docs/**",      // Swagger API docs
                                 "/swagger-ui/**",       // Swagger UI
-                                "/swagger-ui.html").permitAll()
+                                "/swagger-ui.html",
+                                "/health",
+                                "/api/v1/properties",
+                                "/api/v1/admin/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
