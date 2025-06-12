@@ -1,4 +1,8 @@
 spring:
+  config:
+    activate:
+      on-profile: docker
+
   datasource:
     url: ${DOCKER_SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -22,3 +26,13 @@ spring:
 
   jackson:
     time-zone: UTC
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    region:
+      static: ${S3_REGION}
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
