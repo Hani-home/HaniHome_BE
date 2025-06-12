@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.member.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.hanihome.hanihomebe.member.domain.Gender;
 import org.hanihome.hanihomebe.member.domain.Member;
 
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ public class MemberResponseDTO {
     private String profileImage;
     private LocalDate birthDate;
     private String phoneNumber;
-    private String gender;
+    private Gender gender;
     private LocalDateTime createdAt;
 
     public static MemberResponseDTO CreateFrom(Member member) {

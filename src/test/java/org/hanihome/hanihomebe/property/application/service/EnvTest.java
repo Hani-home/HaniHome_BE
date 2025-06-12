@@ -1,27 +1,29 @@
-package org.hanihome.hanihomebe;
+package org.hanihome.hanihomebe.property.application.service;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
 @SpringBootTest
-class HaniHomeBeApplicationTests {
+public class EnvTest {
+    @Value("${JWT_SECRET_KEY}")
+    String secretKey;
 
     @BeforeAll
     static void setupEnv() {
-        Dotenv dotenv = Dotenv.configure()
+        Dotenv env = Dotenv.configure()
                 .filename(".env.test")
                 .ignoreIfMissing()
                 .load();
-        dotenv.entries().forEach(entry -> {
+        env.entries().forEach(entry -> {
             System.setProperty(entry.getKey(), entry.getValue());
         });
     }
-    @Test
-    void hello() {
 
+    @Test
+    public void test() {
+        System.out.println("env load success, JWTSECRET_KEY: " + secretKey);
     }
 }

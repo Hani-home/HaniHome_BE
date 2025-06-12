@@ -2,28 +2,24 @@ package org.hanihome.hanihomebe.security.auth.application.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
-import org.hanihome.hanihomebe.security.auth.web.dto.LoginRequestDTO;
-import org.hanihome.hanihomebe.security.auth.web.dto.LoginResponseDTO;
+import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshTokenRepository;
 import org.hanihome.hanihomebe.security.auth.application.util.GoogleOAuthUtils;
-import org.hanihome.hanihomebe.member.domain.Member;
-import org.hanihome.hanihomebe.member.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
+import org.hanihome.hanihomebe.security.auth.web.dto.LoginRequestDTO;
+import org.hanihome.hanihomebe.security.auth.web.dto.LoginResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
+import org.hanihome.hanihomebe.member.domain.Role;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,15 +33,16 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
+
     @Value("${GOOGLE_CLIENT_ID}")
     private String clientId;
 
     @Value("${GOOGLE_CLIENT_SECRET}")
     private String clientSecret;
 
-
     @Value("${GOOGLE_REDIRECT_URI}")
     private String redirectUri;
+
 
 
     private final GoogleOAuthUtils googleOAuthUtils;
@@ -82,6 +79,8 @@ public class AuthService {
             유저 정보 바탕으로 토큰 생성
             결과 프론트에 전달
          */
+
+
 
         //HTTP 요청을 보내기 위한 Spring class
         RestTemplate restTemplate = new RestTemplate();
@@ -160,12 +159,10 @@ public class AuthService {
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());
 
         //리프레시 토큰은 redis에 저장
-
         RefreshToken tokenEntity = RefreshToken.builder()
                 .memberId(member.getId())
                 .token(refreshToken)
                 .build();
-
         refreshTokenRepository.save(tokenEntity);
 
         // 토큰이랑 신규유저여부 담아서 프론트에 전달
@@ -218,5 +215,27 @@ public class AuthService {
 
         return jwtUtils.generateAccessToken(member.getId(), role);
 
+
+
     }
+    // 테스트용 로그인 DB에 있는 ID:1 인 사용자를 가지고 토큰발급
+    @Transactional
+    public LoginResponseDTO adminLogin() {
+
+        Member member = memberRepository.findById(1L).orElseThrow(() -> new RuntimeException("DB에 한명의 Member는 필요합니다"));
+        //유저 정보 바탕으로 액세스 토큰, 리프레시 토큰 발급
+        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
+        String refreshToken = jwtUtils.generateRefreshToken(member.getId());
+
+        //리프레시 토큰은 redis에 저장
+        RefreshToken tokenEntity = RefreshToken.builder()
+                .memberId(member.getId())
+                .token(refreshToken)
+                .build();
+        refreshTokenRepository.save(tokenEntity);
+
+        // 토큰이랑 신규유저여부 담아서 프론트에 전달
+        return new LoginResponseDTO(accessToken, refreshToken, true);
+    }
+
 }
