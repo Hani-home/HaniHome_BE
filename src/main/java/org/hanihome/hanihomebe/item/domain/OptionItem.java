@@ -1,13 +1,10 @@
-package org.hanihome.hanihomebe.property.domain.option;
+package org.hanihome.hanihomebe.item.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -17,20 +14,23 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Builder
 @Getter
 @Table(name = "option_items",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"option_category_id","item_name"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"option_category_id", "parent_id", "item_name"}) // 유니크 제약조건
 )
 @Entity
 public class OptionItem {
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "option_item_id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY) @JoinColumn(name = "option_category_id")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "option_category_id")
     private OptionCategory optionCategory;
 
 
     // 계층구조 - 부모
-    @ManyToOne(fetch = LAZY) @JoinColumn(name = "parent_id")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "parent_id")
     private OptionItem parent;
 
 /*

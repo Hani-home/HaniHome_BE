@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.property.domain.option.CategoryCode;
 import org.hanihome.hanihomebe.property.domain.option.OptionCategory;
 import org.hanihome.hanihomebe.property.domain.option.OptionItem;
-import org.hanihome.hanihomebe.property.repository.OptionCategoryRepository;
-import org.hanihome.hanihomebe.property.repository.OptionItemRepository;
+import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
+import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
