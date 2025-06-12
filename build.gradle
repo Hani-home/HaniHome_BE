@@ -58,7 +58,7 @@
         implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
         //swagger
-        implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+        implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
         //validation
         implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -79,7 +79,7 @@
         testImplementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
         //s3
-        implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+        implementation 'software.amazon.awssdk:s3:2.27.3'
         implementation 'com.amazonaws:aws-java-sdk-s3:1.12.767'
         implementation 'software.amazon.awssdk:s3:2.27.3'
         implementation 'software.amazon.awssdk:s3control:2.27.3'
