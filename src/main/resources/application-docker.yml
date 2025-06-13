@@ -1,4 +1,8 @@
 spring:
+  config:
+    activate:
+      on-profile: docker
+
   datasource:
     url: ${DOCKER_SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -7,7 +11,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update     # 처음에는 update, 이후에는 validate 추천
+      ddl-auto: create     # 처음에는 update, 이후에는 validate 추천
     show-sql: true
     properties:
       hibernate:
@@ -22,3 +26,13 @@ spring:
 
   jackson:
     time-zone: UTC
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    region:
+      static: ${S3_REGION}
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
