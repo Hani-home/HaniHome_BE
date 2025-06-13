@@ -53,13 +53,13 @@ public class ViewingItemInitializer extends OptionItemInitializer {
         OptionCategory checklistCategory = super.saveCategory(CategoryCode.VIEWING_CAT2);
 
         // save items
-        // 상위 카테고리 항목들 생성
+        // 상위 아이템
         OptionItem locationParent = super.saveItemIfNotExists(checklistCategory, "위치 및 생활 인프라");
         OptionItem contractParent = super.saveItemIfNotExists(checklistCategory, "계약 조건 및 공과금 포함 여부");
         OptionItem housebaseParent = super.saveItemIfNotExists(checklistCategory, "집 구조 및 상태");
         OptionItem furnitureParent = super.saveItemIfNotExists(checklistCategory, "가구 및 가전 상태");
 
-        // 각 상위 카테고리 별 하위 아이템 추가
+        // 각 상위 아이템별 하위 아이템
         initializeLocationItems(checklistCategory, locationParent);
         initializeContractItems(checklistCategory, contractParent);
         initializeStructureItems(checklistCategory, housebaseParent);

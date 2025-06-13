@@ -39,13 +39,13 @@ public abstract class OptionItemInitializer {
 
 
     /**
-     * 중복없이 OptionItem 저장하기
+     * 중복없이 OptionItem 저장하기-부모아이템(category, itemName으로 조회 후, 없다면 OptionItem 생성 후 저장)
      * @param category :속하는 카테고리
      * @param itemName :대상 아이템
      * @return :저장된 아이템
      */
     protected OptionItem saveItemIfNotExists(OptionCategory category, String itemName) {
-        return itemRepository.findByOptionCategoryAndItemName(category, itemName)
+        return itemRepository.findByOptionCategoryAndParentIsNullAndItemName(category, itemName)
                 .orElseGet(() -> itemRepository.save(OptionItem.createDefault(category, itemName)));
     }
 
