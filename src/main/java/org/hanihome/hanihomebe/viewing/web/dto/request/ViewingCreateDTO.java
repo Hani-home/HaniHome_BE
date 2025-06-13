@@ -12,10 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class ViewingCreateDTO {
-    
-    @NotNull(message = "회원 ID는 필수입니다.")
-    private Long memberId;
-    
+
     @NotNull(message = "매물 ID는 필수입니다.")
     private Long propertyId;
     

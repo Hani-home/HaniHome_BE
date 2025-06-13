@@ -22,5 +22,5 @@ public interface ViewingRepository extends JpaRepository<Viewing, Long> {
     List<Viewing> findByMemberAndMeetingDayAfterAndStatus(Member member, LocalDateTime meetingDayAfter, ViewingStatus status);
 
 
-    Collection<Object> findByMemberId(Long memberId);
+    Collection<Viewing> findByMemberId(Long memberId);
 }

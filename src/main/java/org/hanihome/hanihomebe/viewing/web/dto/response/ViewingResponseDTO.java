@@ -17,14 +17,22 @@ import java.util.stream.Collectors;
 @Builder
 public class ViewingResponseDTO {
     private final Long id;
+
     private final Long memberId;
+
     private final Long propertyId;
+
     private final LocalDateTime meetingDay;
+
     private final ViewingStatus status;
+
     private final String cancelReason;
-    private final List<String> photoUrls;
-    private final String memo;
-    private final List<String> optionItemNames;
+
+    private final List<String> photoUrls; // 매물 노트 - 사진
+
+    private final String memo;            // 매물 노트 - 메모
+
+    private final List<String> optionItemNames; // 체크리스트
 
     /**
      * Viewing 엔티티를 DTO로 변환
