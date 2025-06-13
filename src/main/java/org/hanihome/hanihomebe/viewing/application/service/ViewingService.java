@@ -7,7 +7,6 @@ import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.OptionCategory;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
-import org.hanihome.hanihomebe.item.domain.ScopeCode;
 import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -18,11 +17,8 @@ import org.hanihome.hanihomebe.viewing.domain.Viewing;
 import org.hanihome.hanihomebe.viewing.domain.ViewingOptionItem;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
-import org.hanihome.hanihomebe.viewing.web.dto.ViewingChecklistRequestDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.ViewingChecklistResponseDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.ViewingNotesRequestDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.ViewingNotesResponseDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.*;
+import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
 import org.springframework.stereotype.Service;
@@ -103,7 +99,7 @@ public class ViewingService {
      * 뷰잉 취소
      */
     @Transactional
-    public void cancelViewing(ViewingCancelDTO dto) {
+    public void cancelViewing(ViewingCancelRequestDTO dto) {
         Viewing viewing = viewingRepository.findById(dto.getViewingId())
             .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
@@ -116,7 +112,16 @@ public class ViewingService {
 
         viewingRepository.save(viewing);
     }
-    
+
+    public ViewingCancelResponseDTO getCancelInfo(Long viewingId) {
+        Viewing findViewing = viewingRepository.findById(viewingId)
+                .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        List<Long> cancelReasonItemIds = getSelectedOptionItemIdsInCategory(findViewing, CategoryCode.VIEWING_CAT1);
+        log.info("cancelReasonItemIds: {}", cancelReasonItemIds);
+        return ViewingCancelResponseDTO.from(viewingId, cancelReasonItemIds, findViewing.getCancelReason());
+    }
+
     /**
      * 시간 중복 체크
      * 각 뷰잉 시간으로부터 30분 동안은 새로운 뷰잉을 잡을 수 없음
@@ -172,7 +177,7 @@ public class ViewingService {
     /**
      * 뷰잉 체크리스트에 사용자가 체크한 항목을 저장합니다
      * @param dto: 사용자가 체크한 아이템 식별자
-     * @return : 사용자가 체크한 아이템 식별자
+     * @return : 체크리스트에서 사용자가 체크한 아이템 식별자
      */
     @Transactional
     public ViewingChecklistResponseDTO uploadChecklist(ViewingChecklistRequestDTO dto) {

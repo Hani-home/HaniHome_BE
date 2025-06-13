@@ -58,7 +58,7 @@ public class Viewing extends BaseEntity {
     private String memo;
 
 
-    /** 체크리스트 */
+    /** 체크리스트 및 취소 사유*/
     @OneToMany(mappedBy = "viewing",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
@@ -92,6 +92,8 @@ public class Viewing extends BaseEntity {
     }
 
     // 연관관계 편의 메서드
+    // TODO: 현재는 옵션아이템을 하나씩 넣어주고 있음. but, 서로 다른 카테고리의 옵션 아이템이 동시에 존재하므로 수정이 어려움
+    //  => OptionItem을 변경하는 모든 요청은 해당 엔티티가 소유한 모든 옵션아이템의 식별자를 제공하고, 그것으로 PUT하는 거로 결정
     public void addViewingOptionItem(ViewingOptionItem viewingOptionItem) {
         viewingOptionItem.setViewing(this);
         this.viewingOptionItems.add(viewingOptionItem);

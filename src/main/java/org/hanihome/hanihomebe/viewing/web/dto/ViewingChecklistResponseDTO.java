@@ -1,8 +1,5 @@
 package org.hanihome.hanihomebe.viewing.web.dto;
 
-import org.hanihome.hanihomebe.item.domain.OptionItem;
-import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
-
 import java.util.List;
 
 
@@ -11,8 +8,8 @@ public record ViewingChecklistResponseDTO(
         List<Long> optionItemIds
 
 ) {
-    public static ViewingChecklistResponseDTO from(Long viewingId, List<Long> checklistItemIds) {
-        return new ViewingChecklistResponseDTO(viewingId, checklistItemIds);
+    public static ViewingChecklistResponseDTO from(Long viewingId, List<Long> optionItemIds) {
+        return new ViewingChecklistResponseDTO(viewingId, optionItemIds);
     }
 
 }

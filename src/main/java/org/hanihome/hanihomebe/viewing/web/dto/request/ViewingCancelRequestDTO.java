@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class ViewingCancelDTO {
+public class ViewingCancelRequestDTO {
     private Long viewingId;
     private List<Long> optionItemIds;
     private String reason;

@@ -3,11 +3,8 @@ package org.hanihome.hanihomebe.viewing.web.controller;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
-import org.hanihome.hanihomebe.viewing.web.dto.ViewingChecklistRequestDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.ViewingChecklistResponseDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.ViewingNotesRequestDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.ViewingNotesResponseDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.*;
+import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +39,14 @@ public class ViewingController {
 
     // cancel
     @PostMapping("/cancel")
-    public void cancelViewing(@RequestBody @Validated ViewingCancelDTO dto) {
+    public void cancelViewing(@RequestBody @Validated ViewingCancelRequestDTO dto) {
         viewingService.cancelViewing(dto);
+    }
+
+    // 취소 이유 데이터 조회
+    @GetMapping("/{viewingId}/cancel")
+    public ViewingCancelResponseDTO getCancelInfo(@PathVariable Long viewingId) {
+        return viewingService.getCancelInfo(viewingId);
     }
 
     // 뷰잉 - 매물 노트 업로드
@@ -59,8 +62,8 @@ public class ViewingController {
     }
 
     // 체크리스트 - 선택된 아이템 조회
-    @GetMapping("/checklists")
-    public ViewingChecklistResponseDTO getViewingChecklist(@RequestParam Long viewingId) {
+    @GetMapping("/{viewingId}/checklists")
+    public ViewingChecklistResponseDTO getViewingChecklist(@PathVariable Long viewingId) {
         return viewingService.getViewingChecklist(viewingId);
     }
 
