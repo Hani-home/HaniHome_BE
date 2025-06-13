@@ -7,7 +7,7 @@ import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
-import org.hanihome.hanihomebe.property.domain.option.PropertyOptionItem;
+import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
