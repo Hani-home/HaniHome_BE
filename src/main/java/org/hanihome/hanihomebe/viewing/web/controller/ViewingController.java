@@ -3,10 +3,13 @@ package org.hanihome.hanihomebe.viewing.web.controller;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingChecklistRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingChecklistResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingNotesRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingNotesResponseDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -42,4 +45,17 @@ public class ViewingController {
     public void cancelViewing(@RequestBody @Validated ViewingCancelDTO dto) {
         viewingService.cancelViewing(dto);
     }
+
+    // 뷰잉 - 매물 노트 업로드
+    @PostMapping("/property-notes")
+    public ViewingNotesResponseDTO uploadNotes(@RequestBody ViewingNotesRequestDTO dto) {
+        return viewingService.uploadViewingNotes(dto);
+    }
+
+    // 뷰잉 - 체크리스트
+    @PostMapping("/checklists")
+    public ViewingChecklistResponseDTO uploadChecklist(@RequestBody ViewingChecklistRequestDTO dto) {
+        return viewingService.uploadChecklist(dto);
+    }
+
 }
