@@ -4,19 +4,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
+import org.hanihome.hanihomebe.viewing.domain.ViewingOptionItem;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingChecklistRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingChecklistResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingNotesRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingNotesResponseDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.View;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -33,6 +39,7 @@ public class ViewingService {
     private final ViewingRepository viewingRepository;
     private final MemberRepository memberRepository;
     private final PropertyRepository propertyRepository;
+    private final OptionItemRepository optionItemRepository;
 
     /**
      * 뷰잉 생성
@@ -112,5 +119,43 @@ public class ViewingService {
             // newTime이 기존 뷰잉 시간의 30분 구간 내에 있는지 확인
             return !(newTime.isBefore(existingTimeStart) || newTime.isAfter(existingTimeEnd));
         });
-}
+    }
+
+
+
+    /**
+     * 매물 노트 수정
+     */
+    @Transactional
+    public ViewingNotesResponseDTO uploadViewingNotes(ViewingNotesRequestDTO dto) {
+        Viewing findViewing = viewingRepository.findById(dto.viewingId())
+            .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        findViewing.updateNote(dto.fileUrls(), dto.memo());
+        viewingRepository.save(findViewing);
+
+        return ViewingNotesResponseDTO.from(findViewing);
+    }
+
+    /**
+     * 뷰잉 체크리스트에 사용자가 체크한 항목을 저장합니다
+     * @param dto: 사용자가 체크한 아이템 식별자
+     * @return : 사용자가 체크한 아이템 식별자
+     */
+    @Transactional
+    public ViewingChecklistResponseDTO uploadChecklist(ViewingChecklistRequestDTO dto) {
+        Viewing findViewing = viewingRepository.findById(dto.viewingId())
+                .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        List<OptionItem> optionItems = optionItemRepository.findAllById(dto.optionItemIds());
+
+        optionItems.forEach(optionItem -> {
+            ViewingOptionItem viewingOptionItem = ViewingOptionItem.create(optionItem);
+            findViewing.addViewingOptionItem(viewingOptionItem);
+        });
+
+        viewingRepository.save(findViewing);
+
+        return ViewingChecklistResponseDTO.from(findViewing.getId(), optionItems);
+    }
 }
