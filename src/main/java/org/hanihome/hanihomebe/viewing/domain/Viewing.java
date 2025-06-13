@@ -54,8 +54,9 @@ public class Viewing extends BaseEntity {
     }
 
     /** 상태 변경 로직 등 도메인 메서드도 이곳에 추가 가능 */
-    public void cancel() {
+    public void cancel(String cancelReason) {
         this.status = ViewingStatus.CANCELLED;
+        this.cancelReason = cancelReason;
     }
 
     public void complete() {

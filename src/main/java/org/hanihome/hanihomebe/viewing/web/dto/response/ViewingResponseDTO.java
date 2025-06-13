@@ -38,6 +38,7 @@ public class ViewingResponseDTO {
      * Viewing 엔티티를 DTO로 변환
      */
     public static ViewingResponseDTO from(Viewing viewing) {
+/*
         List<String> photoUrls = viewing.getPhotoUrls() == null
                 ? List.of()
                 : List.copyOf(viewing.getPhotoUrls());
@@ -47,6 +48,7 @@ public class ViewingResponseDTO {
                 : viewing.getViewingOptionItems().stream()
                 .map(ViewingOptionItem::getOptionItemName)
                 .collect(Collectors.toList());
+*/
 
         return ViewingResponseDTO.builder()
                 .id(viewing.getId())
@@ -55,9 +57,9 @@ public class ViewingResponseDTO {
                 .meetingDay(viewing.getMeetingDay())
                 .status(viewing.getStatus())
                 .cancelReason(viewing.getCancelReason())
-                .photoUrls(photoUrls)
-                .memo(viewing.getMemo())
-                .optionItemNames(optionItemNames)
+//                .photoUrls(photoUrls)
+//                .memo(viewing.getMemo())
+//                .optionItemNames(optionItemNames)
                 .build();
     }
 }
