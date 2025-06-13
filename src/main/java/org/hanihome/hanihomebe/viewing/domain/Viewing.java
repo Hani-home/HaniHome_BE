@@ -44,7 +44,7 @@ public class Viewing extends BaseEntity {
     private ViewingStatus status;
 
     private String cancelReason;
-
+//    private List<Long> optionItemIds;
     /** 매물 노트 */
     // 1. 매물 사진
     @Builder.Default
@@ -79,9 +79,12 @@ public class Viewing extends BaseEntity {
     }
 
     /** 상태 변경 로직 등 도메인 메서드도 이곳에 추가 가능 */
-    public void cancel(String cancelReason) {
+    public void cancel(String cancelReason, List<ViewingOptionItem> cancelReasonItems) {
         this.status = ViewingStatus.CANCELLED;
         this.cancelReason = cancelReason;
+        cancelReasonItems.forEach(item -> {
+            addViewingOptionItem(item);
+        });
     }
 
     public void complete() {

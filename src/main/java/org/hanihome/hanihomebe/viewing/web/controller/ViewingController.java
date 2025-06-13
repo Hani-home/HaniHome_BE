@@ -52,10 +52,16 @@ public class ViewingController {
         return viewingService.uploadViewingNotes(dto);
     }
 
-    // 뷰잉 - 체크리스트
+    // 체크리스트 - 아이템 선택
     @PostMapping("/checklists")
     public ViewingChecklistResponseDTO uploadChecklist(@RequestBody ViewingChecklistRequestDTO dto) {
         return viewingService.uploadChecklist(dto);
+    }
+
+    // 체크리스트 - 선택된 아이템 조회
+    @GetMapping("/checklists")
+    public ViewingChecklistResponseDTO getViewingChecklist(@RequestParam Long viewingId) {
+        return viewingService.getViewingChecklist(viewingId);
     }
 
 }

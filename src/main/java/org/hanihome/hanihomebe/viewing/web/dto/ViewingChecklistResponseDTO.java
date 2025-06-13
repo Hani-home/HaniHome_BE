@@ -11,11 +11,8 @@ public record ViewingChecklistResponseDTO(
         List<Long> optionItemIds
 
 ) {
-    public static ViewingChecklistResponseDTO from(Long viewingId, List<OptionItem> optionItems) {
-        List<Long> optionItemIds = optionItems.stream()
-                .map(OptionItem::getId)
-                .toList();
-        return new ViewingChecklistResponseDTO(viewingId, optionItemIds);
+    public static ViewingChecklistResponseDTO from(Long viewingId, List<Long> checklistItemIds) {
+        return new ViewingChecklistResponseDTO(viewingId, checklistItemIds);
     }
 
 }

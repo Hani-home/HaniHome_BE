@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.item.domain.CategoryCode;
+import org.hanihome.hanihomebe.item.domain.OptionCategory;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.item.domain.ScopeCode;
+import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
@@ -40,6 +44,7 @@ public class ViewingService {
     private final MemberRepository memberRepository;
     private final PropertyRepository propertyRepository;
     private final OptionItemRepository optionItemRepository;
+    private final OptionCategoryRepository optionCategoryRepository;
 
     /**
      * 뷰잉 생성
@@ -102,7 +107,13 @@ public class ViewingService {
         Viewing viewing = viewingRepository.findById(dto.getViewingId())
             .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
-        viewing.cancel(dto.getReason());
+        List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(dto.getOptionItemIds())
+                .stream()
+                .map(ViewingOptionItem::create)
+                .toList();
+
+        viewing.cancel(dto.getReason(), viewingOptionItems);
+
         viewingRepository.save(viewing);
     }
     
@@ -137,6 +148,27 @@ public class ViewingService {
         return ViewingNotesResponseDTO.from(findViewing);
     }
 
+
+
+    /**
+     * 뷰잉 체크리스트에서 선택된 아이템 조회하기
+     *
+     * @param viewingId
+     * @return : Viewing 식별자, 체크리스트에서 선택된 OptionItem 식별자
+     */
+    public ViewingChecklistResponseDTO getViewingChecklist(Long viewingId) {
+        Viewing findViewing = viewingRepository.findById(viewingId)
+            .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        // VIEWING_CAT2(체크리스트 카테고리)
+        List<Long> checklistItemIds = getSelectedOptionItemIdsInCategory(findViewing, CategoryCode.VIEWING_CAT2);
+
+        return ViewingChecklistResponseDTO.from(viewingId, checklistItemIds);
+
+    }
+
+
+
     /**
      * 뷰잉 체크리스트에 사용자가 체크한 항목을 저장합니다
      * @param dto: 사용자가 체크한 아이템 식별자
@@ -149,6 +181,7 @@ public class ViewingService {
 
         List<OptionItem> optionItems = optionItemRepository.findAllById(dto.optionItemIds());
 
+        // ViewingOptionItem 생성(체크리스트 아이템)
         optionItems.forEach(optionItem -> {
             ViewingOptionItem viewingOptionItem = ViewingOptionItem.create(optionItem);
             findViewing.addViewingOptionItem(viewingOptionItem);
@@ -156,6 +189,25 @@ public class ViewingService {
 
         viewingRepository.save(findViewing);
 
-        return ViewingChecklistResponseDTO.from(findViewing.getId(), optionItems);
+        return ViewingChecklistResponseDTO.from(findViewing.getId(), optionItems.stream().map(OptionItem::getId).toList());
+    }
+
+    /**
+     * Viewing에서 특정 CategoryCode에 해당하는 ViewingOptionItem을 찾고 OptionItem.id를 반환한다
+     *
+     * @param viewing
+     * @param categoryCode :찾고 카테고리
+     * @return
+     */
+    private List<Long> getSelectedOptionItemIdsInCategory(Viewing viewing, CategoryCode categoryCode) {
+        OptionCategory category = optionCategoryRepository.findByCategoryCode(categoryCode)
+                .orElseThrow(() -> new CustomException(ServiceCode.OPTION_CATEGORY_NOT_INITIALIZED));
+
+        List<Long> checklistItemIds = viewing.getViewingOptionItems()
+                .stream()
+                .filter(viewingOptionItem -> viewingOptionItem.getOptionItem().getOptionCategory().equals(category))
+                .map(viewingOptionItem -> viewingOptionItem.getOptionItem().getId())
+                .toList();
+        return checklistItemIds;
     }
 }
