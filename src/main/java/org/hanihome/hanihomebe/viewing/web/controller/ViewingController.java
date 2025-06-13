@@ -38,7 +38,7 @@ public class ViewingController {
     }
 
     // cancel
-    @PostMapping("/cancel")
+    @PutMapping("/cancel")
     public void cancelViewing(@RequestBody @Validated ViewingCancelRequestDTO dto) {
         viewingService.cancelViewing(dto);
     }
@@ -56,7 +56,7 @@ public class ViewingController {
     }
 
     // 체크리스트 - 아이템 선택
-    @PostMapping("/checklists")
+    @PutMapping("/checklists")
     public ViewingChecklistResponseDTO uploadChecklist(@RequestBody ViewingChecklistRequestDTO dto) {
         return viewingService.uploadChecklist(dto);
     }

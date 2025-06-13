@@ -4,6 +4,6 @@ import java.util.List;
 
 public record ViewingChecklistRequestDTO(
         Long viewingId,
-        List<Long> optionItemIds
+        List<Long> allOptionItemIds
 ) {
 }

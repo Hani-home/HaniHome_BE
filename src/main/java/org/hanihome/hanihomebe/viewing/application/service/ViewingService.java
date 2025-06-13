@@ -100,17 +100,19 @@ public class ViewingService {
      */
     @Transactional
     public void cancelViewing(ViewingCancelRequestDTO dto) {
-        Viewing viewing = viewingRepository.findById(dto.getViewingId())
+        Viewing findViewing = viewingRepository.findById(dto.getViewingId())
             .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
-        List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(dto.getOptionItemIds())
+        List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(dto.getAllOptionItemIds())
                 .stream()
                 .map(ViewingOptionItem::create)
                 .toList();
 
-        viewing.cancel(dto.getReason(), viewingOptionItems);
 
-        viewingRepository.save(viewing);
+
+        findViewing.cancel(dto.getReason(), viewingOptionItems);
+
+        viewingRepository.save(findViewing);
     }
 
     public ViewingCancelResponseDTO getCancelInfo(Long viewingId) {
@@ -184,14 +186,14 @@ public class ViewingService {
         Viewing findViewing = viewingRepository.findById(dto.viewingId())
                 .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
-        List<OptionItem> optionItems = optionItemRepository.findAllById(dto.optionItemIds());
+        List<OptionItem> optionItems = optionItemRepository.findAllById(dto.allOptionItemIds());
 
         // ViewingOptionItem 생성(체크리스트 아이템)
-        optionItems.forEach(optionItem -> {
-            ViewingOptionItem viewingOptionItem = ViewingOptionItem.create(optionItem);
-            findViewing.addViewingOptionItem(viewingOptionItem);
-        });
+        List<ViewingOptionItem> viewingOptionItems = optionItems.stream()
+                .map(optionItem -> ViewingOptionItem.create(optionItem))
+                .toList();
 
+        findViewing.updateViewingOptionItem(viewingOptionItems);
         viewingRepository.save(findViewing);
 
         return ViewingChecklistResponseDTO.from(findViewing.getId(), optionItems.stream().map(OptionItem::getId).toList());

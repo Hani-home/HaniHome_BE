@@ -9,6 +9,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ViewingCancelRequestDTO {
     private Long viewingId;
-    private List<Long> optionItemIds;
+    private List<Long> allOptionItemIds;
     private String reason;
 }

@@ -86,7 +86,7 @@ class PropertyServiceTest {
                 new Region("Seoul", "Gangnam-gu", "Yeoksam-dong", "123-45", "strret", "123", "123", "building"), // Region region
                 List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg"), // List<String> photoUrls
                 BigDecimal.valueOf(250),                    // BigDecimal weeklyCost
-                List.of(1L, 2L, 3L),                        // List<Long> optionItemIds
+                List.of(1L, 2L, 3L),                        // List<Long> allOptionItemIds
                 "물/전기/인터넷 포함",                      // String costDescription
                 BigDecimal.valueOf(500),                    // BigDecimal deposit
                 BigDecimal.valueOf(100),                    // BigDecimal keyDeposit

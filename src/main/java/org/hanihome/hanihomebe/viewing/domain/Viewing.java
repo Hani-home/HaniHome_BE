@@ -44,7 +44,7 @@ public class Viewing extends BaseEntity {
     private ViewingStatus status;
 
     private String cancelReason;
-//    private List<Long> optionItemIds;
+//    private List<Long> allOptionItemIds;
     /** 매물 노트 */
     // 1. 매물 사진
     @Builder.Default
@@ -82,9 +82,7 @@ public class Viewing extends BaseEntity {
     public void cancel(String cancelReason, List<ViewingOptionItem> cancelReasonItems) {
         this.status = ViewingStatus.CANCELLED;
         this.cancelReason = cancelReason;
-        cancelReasonItems.forEach(item -> {
-            addViewingOptionItem(item);
-        });
+        updateViewingOptionItem(cancelReasonItems);
     }
 
     public void complete() {
@@ -94,11 +92,17 @@ public class Viewing extends BaseEntity {
     // 연관관계 편의 메서드
     // TODO: 현재는 옵션아이템을 하나씩 넣어주고 있음. but, 서로 다른 카테고리의 옵션 아이템이 동시에 존재하므로 수정이 어려움
     //  => OptionItem을 변경하는 모든 요청은 해당 엔티티가 소유한 모든 옵션아이템의 식별자를 제공하고, 그것으로 PUT하는 거로 결정
-    public void addViewingOptionItem(ViewingOptionItem viewingOptionItem) {
+/*    public void addViewingOptionItem(ViewingOptionItem viewingOptionItem) {
         viewingOptionItem.setViewing(this);
         this.viewingOptionItems.add(viewingOptionItem);
-    }
+    }*/
 
+    public void updateViewingOptionItem(List<ViewingOptionItem> viewingOptionItems) {
+        this.viewingOptionItems.clear();
+        this.viewingOptionItems.addAll(viewingOptionItems);
+
+        viewingOptionItems.forEach(item -> item.setViewing(this));
+    }
     public void updateNote(List<String> fileUrls, String memo) {
 //        this.photoUrls = List.copyOf(fileUrls);   JPA에서는 불변리스트를 사용하면 문제생김?
         this.photoUrls.clear();
