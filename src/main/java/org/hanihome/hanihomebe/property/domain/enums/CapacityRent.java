@@ -3,11 +3,13 @@ package org.hanihome.hanihomebe.property.domain.enums;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum GenderPreference {
-    ANY("무관"),
-    MALE_ONLY("남자만"),
-    FEMALE_ONLY("여자만"),
-    COUPLE("커플 가능")
+public enum CapacityRent {
+    ONE("1명"),
+    TWO("2명"),
+    THREE("3명"),
+    FOUR("4명"),
+    OTHER("5명 이상")
     ;
+
     private final String value;
 }

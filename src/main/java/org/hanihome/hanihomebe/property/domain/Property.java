@@ -5,13 +5,14 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Member;
-import org.hanihome.hanihomebe.property.domain.enums.Capacity;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
-import org.hanihome.hanihomebe.property.domain.option.PropertyOptionItem;
+import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.SharePropertyPatchRequestDTO;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,19 +23,26 @@ import java.util.Set;
 
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
-
-@Entity
-@Table(name = "properties")
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @SuperBuilder
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "properties")
+@Entity
 public abstract class Property {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "property_id")
     private Long id;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedAt;
 
     /** 소유자 */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -47,10 +55,6 @@ public abstract class Property {
     @Column(nullable = false, length = 10)
     private PropertySuperType kind;
 
-    /** 3. 수용인원 */
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private Capacity capacity;
 
     /** 4. 선호 성별 */
     @Enumerated(EnumType.STRING)
@@ -68,7 +72,7 @@ public abstract class Property {
     @ElementCollection
     @CollectionTable(name = "property_photos",
             joinColumns = @JoinColumn(name = "property_id"))
-    @Column(name = "photo_url", nullable = false)
+    @Column(name = "photo_urls", nullable = false)
     private List<String> photoUrls = new ArrayList<>();
 
     /** 8. 거래 비용 */
@@ -106,8 +110,7 @@ public abstract class Property {
      * 11. 입주 가능일 (시간 단위)
      */
     @ElementCollection
-    @CollectionTable(name = "property_available_from",
-            joinColumns = @JoinColumn(name = "property_id"))
+    @CollectionTable(name = "property_available_from", joinColumns = @JoinColumn(name = "property_id"))
     @Column(name = "available_from")
     private Set<LocalDateTime> availableFrom = new HashSet<>();
 
@@ -160,9 +163,6 @@ public abstract class Property {
     }
 
     protected void updateBase(PropertyPatchRequestDTO dto) {
-        if (dto.getCapacity() != null) {
-            this.capacity = dto.getCapacity();
-        }
         if (dto.getGenderPreference() != null) {
             this.genderPreference = dto.getGenderPreference();
         }

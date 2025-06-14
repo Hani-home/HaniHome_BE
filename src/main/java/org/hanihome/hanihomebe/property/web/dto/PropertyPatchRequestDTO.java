@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import org.hanihome.hanihomebe.interest.region.Region;
-import org.hanihome.hanihomebe.property.domain.enums.Capacity;
+import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
-import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
-import org.hanihome.hanihomebe.property.domain.option.PropertyOptionItem;
+import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,7 +25,7 @@ import java.util.Set;
 })
 @Getter
 public abstract class PropertyPatchRequestDTO {
-    private Capacity capacity;
+    private CapacityShare capacity;
     private GenderPreference genderPreference;
     private Region region;
     private List<String> photoUrls;

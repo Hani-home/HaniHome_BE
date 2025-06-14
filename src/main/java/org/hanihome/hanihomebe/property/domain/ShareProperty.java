@@ -6,11 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.SharePropertyPatchRequestDTO;
-import org.springframework.data.mapping.PropertyPath;
 
 @Entity
 @DiscriminatorValue("SHARE")
@@ -21,17 +21,39 @@ public class ShareProperty extends Property {
 
 
     /**
-     * 2. 매물 유형
+     * 1. 매물 유형
      */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private SharePropertySubType sharePropertySubType;
 
+    /**
+     * 2. 매물 정보
+     */
+    private Double internalArea;     // 2-1. 실제 사용 면적
+    private Double totalArea;        // 2-2. 전체 면적
+    
+    // 총 거주인
+    private Integer totalResidents;  // 2-3. 총 거주 인원
+    
+    // 욕실 쉐어자 수
+    private Integer totalBathUser;   // 2-4. 욕실 공유 인원
+    
+    // 건물 전체 층
+    private Integer totalFloors;     // 2-5. 건물 총 층수
+    
+    // 해당 층
+    private Integer propertyFloor;   // 2-6. 해당 매물의 층수
+
+    /** 3. 수용인원 */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private CapacityShare capacityShare;
+
     public static ShareProperty create(SharePropertyCreateRequestDTO dto, Member member) {
         return ShareProperty.builder()
                 .member(member)
                 .kind(dto.kind())
-                .capacity(dto.capacity())
                 .genderPreference(dto.genderPreference())
                 .region(dto.region())
                 .photoUrls(dto.photoUrls())
@@ -46,7 +68,14 @@ public class ShareProperty extends Property {
                 .parkingOption(dto.parkingOption())
                 .viewingDates(dto.viewingDates())
                 .description(dto.description())
-                .sharePropertySubType(dto.sharePropertySubType())
+                .sharePropertySubType(dto.sharePropertySubType())   // 고유필드 1
+                .internalArea(dto.internalArea())                   // 2-1. 실제 사용 면적
+                .totalArea(dto.totalArea())                        // 2-2. 전체 면적
+                .totalResidents(dto.totalResidents())              // 2-3. 총 거주 인원
+                .totalBathUser(dto.totalBathUser())               // 2-4. 욕실 공유 인원
+                .totalFloors(dto.totalFloors())                    // 2-5. 건물 총 층수
+                .propertyFloor(dto.propertyFloor())               // 2-6. 해당 매물의 층수
+                .capacityShare(dto.capacityShare())               // 고유필드 3
                 .build();
     }
 
@@ -65,4 +94,3 @@ public class ShareProperty extends Property {
     }
 
 }
-

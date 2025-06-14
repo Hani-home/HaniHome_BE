@@ -1,9 +1,6 @@
 package org.hanihome.hanihomebe.property.application.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -12,9 +9,9 @@ import org.hanihome.hanihomebe.property.application.PropertyMapper;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
-import org.hanihome.hanihomebe.property.domain.option.OptionItem;
-import org.hanihome.hanihomebe.property.domain.option.PropertyOptionItem;
-import org.hanihome.hanihomebe.property.repository.OptionItemRepository;
+import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
+import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.property.web.dto.*;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
