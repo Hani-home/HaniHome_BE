@@ -12,6 +12,7 @@ import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.option.PropertyOptionItem;
 import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.SharePropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.wishlist.domain.WishItem;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

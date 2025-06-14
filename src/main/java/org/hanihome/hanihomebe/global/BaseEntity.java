@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.global;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,4 +22,11 @@ public abstract class BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime lastModifiedAt;
+
+    /*
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+     */
 }

@@ -7,8 +7,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hanihome.hanihomebe.global.BaseEntity;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
+import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.verification.domain.Verification;
+import org.hanihome.hanihomebe.wishlist.domain.WishItem;
+import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -67,6 +72,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Verification> verifications = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WishItem> wishItems = new ArrayList<>();
+
     public static Member createFromGoogleSignUp(String email, String googleId) {
         return Member.builder()
                 .email(email)
@@ -93,5 +101,37 @@ public class Member extends BaseEntity {
         if (memberUpdateRequestDTO.getPhoneNumber() != null) this.phoneNumber = memberUpdateRequestDTO.getPhoneNumber();
         if (memberUpdateRequestDTO.getGender() != null) this.gender = memberUpdateRequestDTO.getGender();
         if (memberUpdateRequestDTO.getProfileImage() != null) this.profileImage = memberUpdateRequestDTO.getProfileImage();
+    }
+
+    //WishItem 추가, 제거 메서드
+    public WishItem addWishItem(WishTargetType targetType, Long targetId) {
+        //중복 검사(DB 제약으로도 설정하면 좋을 것 같음)
+        /*
+        stream: 리스트 모든 요소 순회
+        anyMatch: 하나라도 있으면 true, 아니면 false
+
+        고민: O(n) 시간 복잡도를 가짐. DB에서 바로 확인하도록하면 O(1)이나 O(logn) 까지는 할 수 있을 거같음
+        근데 너무 과한가...? 즐겨찾기를 엄청 많이 할 경우는 적을 거 같네...
+         */
+        boolean alreadyWished = this.wishItems.stream()
+                .anyMatch(wish ->
+                                        wish.getTargetType()==targetType &&
+                                        wish.getTargetId().equals(targetId)
+                );
+
+        if(alreadyWished){
+            throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
+        }
+
+        WishItem wishItem = WishItem.createFrom(this, targetType, targetId);
+        this.wishItems.add(wishItem);
+        return wishItem;
+    }
+
+    public void removeWishItem(WishTargetType targetType, Long targetId) {
+        this.wishItems.removeIf(wish ->
+                wish.getTargetType() == targetType &&
+                        wish.getTargetId().equals(targetId)
+        );
     }
 }
