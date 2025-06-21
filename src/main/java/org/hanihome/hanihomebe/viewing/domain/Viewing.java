@@ -7,6 +7,10 @@ import org.hanihome.hanihomebe.property.domain.Property;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Table(name = "viewings")
 @Getter
@@ -40,6 +44,27 @@ public class Viewing extends BaseEntity {
     private ViewingStatus status;
 
     private String cancelReason;
+//    private List<Long> allOptionItemIds;
+    /** 매물 노트 */
+    // 1. 매물 사진
+    @Builder.Default
+    @Column(name = "photo_urls", nullable = false, columnDefinition = "TEXT")
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "viewing_photos", joinColumns = @JoinColumn(name = "viewing_id"))
+    private List<String> photoUrls = new ArrayList<>();
+
+    // 2. 메모
+    @Column(length = 500)
+    private String memo;
+
+
+    /** 체크리스트 및 취소 사유*/
+    @OneToMany(mappedBy = "viewing",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private Set<ViewingOptionItem> viewingOptionItems = new HashSet<>();
+
 
     /**
      * 새로운 Viewing을 생성하는 팩토리 메서드
@@ -54,13 +79,35 @@ public class Viewing extends BaseEntity {
     }
 
     /** 상태 변경 로직 등 도메인 메서드도 이곳에 추가 가능 */
-    public void cancel(String cancelReason) {
+    public void cancel(String cancelReason, List<ViewingOptionItem> cancelReasonItems) {
         this.status = ViewingStatus.CANCELLED;
         this.cancelReason = cancelReason;
+        updateViewingOptionItem(cancelReasonItems);
     }
 
     public void complete() {
         this.status = ViewingStatus.COMPLETED;
+    }
+
+    // 연관관계 편의 메서드
+    // TODO: 현재는 옵션아이템을 하나씩 넣어주고 있음. but, 서로 다른 카테고리의 옵션 아이템이 동시에 존재하므로 수정이 어려움
+    //  => OptionItem을 변경하는 모든 요청은 해당 엔티티가 소유한 모든 옵션아이템의 식별자를 제공하고, 그것으로 PUT하는 거로 결정
+/*    public void addViewingOptionItem(ViewingOptionItem viewingOptionItem) {
+        viewingOptionItem.setViewing(this);
+        this.viewingOptionItems.add(viewingOptionItem);
+    }*/
+
+    public void updateViewingOptionItem(List<ViewingOptionItem> viewingOptionItems) {
+        this.viewingOptionItems.clear();
+        this.viewingOptionItems.addAll(viewingOptionItems);
+
+        viewingOptionItems.forEach(item -> item.setViewing(this));
+    }
+    public void updateNote(List<String> fileUrls, String memo) {
+//        this.photoUrls = List.copyOf(fileUrls);   JPA에서는 불변리스트를 사용하면 문제생김?
+        this.photoUrls.clear();
+        this.photoUrls.addAll(fileUrls);
+        this.memo = memo;
     }
 }
 
