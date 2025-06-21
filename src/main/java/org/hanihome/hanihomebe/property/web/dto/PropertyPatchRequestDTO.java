@@ -39,7 +39,7 @@ public abstract class PropertyPatchRequestDTO {
     private String contractTerms;
     private Set<LocalDateTime> availableFrom;
     private ParkingOption parkingOption;
-    private Set<LocalDateTime> viewingDates;
+    private Set<LocalDateTime> possibleMeetingDates;
     private String description;
 
 }

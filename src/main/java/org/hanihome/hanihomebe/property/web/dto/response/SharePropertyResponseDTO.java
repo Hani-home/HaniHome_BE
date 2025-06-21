@@ -26,7 +26,7 @@ public record SharePropertyResponseDTO(
         String contractTerms,
         Set<LocalDateTime> availableFrom,
         ParkingOption parkingOption,
-        Set<LocalDateTime> viewingDates,
+        Set<LocalDateTime> possibleMeetingDates,
         String description,
         SharePropertySubType sharePropertySubType,                // 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
         Double internalArea,                                     // 2-1. 실제 사용 면적
@@ -77,8 +77,8 @@ public record SharePropertyResponseDTO(
                 new HashSet<>(shareProperty.getAvailableFrom()) :
                 Collections.emptySet();
 
-        Set<LocalDateTime> extractedViewingDates = (shareProperty.getViewingDates() != null) ?
-                new HashSet<>(shareProperty.getViewingDates()) :
+        Set<LocalDateTime> extractedpossibleMeetingDates = (shareProperty.getPossibleMeetingDates() != null) ?
+                new HashSet<>(shareProperty.getPossibleMeetingDates()) :
                 Collections.emptySet();
 
         return new SharePropertyResponseDTO(
@@ -98,7 +98,7 @@ public record SharePropertyResponseDTO(
                 shareProperty.getContractTerms(),
                 extractedAvailableFrom,
                 shareProperty.getParkingOption(),
-                extractedViewingDates,
+                extractedpossibleMeetingDates,
                 shareProperty.getDescription(),
                 shareProperty.getSharePropertySubType(),     // 1. 매물 유형
                 shareProperty.getInternalArea(),             // 2-1. 실제 사용 면적

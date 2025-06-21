@@ -54,7 +54,7 @@ public sealed interface PropertyCreateRequestDTO permits
 
     ParkingOption parkingOption();
 
-    Set<LocalDateTime> viewingDates();
+    Set<LocalDateTime> possibleMeetingDates();
 
     String description();
 
