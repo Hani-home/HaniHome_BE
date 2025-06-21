@@ -4,19 +4,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.item.domain.CategoryCode;
+import org.hanihome.hanihomebe.item.domain.OptionCategory;
+import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
+import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
+import org.hanihome.hanihomebe.viewing.domain.ViewingOptionItem;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.*;
+import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.View;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -33,6 +39,8 @@ public class ViewingService {
     private final ViewingRepository viewingRepository;
     private final MemberRepository memberRepository;
     private final PropertyRepository propertyRepository;
+    private final OptionItemRepository optionItemRepository;
+    private final OptionCategoryRepository optionCategoryRepository;
 
     /**
      * 뷰잉 생성
@@ -91,14 +99,31 @@ public class ViewingService {
      * 뷰잉 취소
      */
     @Transactional
-    public void cancelViewing(ViewingCancelDTO dto) {
-        Viewing viewing = viewingRepository.findById(dto.getViewingId())
+    public void cancelViewing(ViewingCancelRequestDTO dto) {
+        Viewing findViewing = viewingRepository.findById(dto.getViewingId())
             .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
-        viewing.cancel(dto.getReason());
-        viewingRepository.save(viewing);
+        List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(dto.getAllOptionItemIds())
+                .stream()
+                .map(ViewingOptionItem::create)
+                .toList();
+
+
+
+        findViewing.cancel(dto.getReason(), viewingOptionItems);
+
+        viewingRepository.save(findViewing);
     }
-    
+
+    public ViewingCancelResponseDTO getCancelInfo(Long viewingId) {
+        Viewing findViewing = viewingRepository.findById(viewingId)
+                .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        List<Long> cancelReasonItemIds = getSelectedOptionItemIdsInCategory(findViewing, CategoryCode.VIEWING_CAT1);
+        log.info("cancelReasonItemIds: {}", cancelReasonItemIds);
+        return ViewingCancelResponseDTO.from(viewingId, cancelReasonItemIds, findViewing.getCancelReason());
+    }
+
     /**
      * 시간 중복 체크
      * 각 뷰잉 시간으로부터 30분 동안은 새로운 뷰잉을 잡을 수 없음
@@ -112,5 +137,84 @@ public class ViewingService {
             // newTime이 기존 뷰잉 시간의 30분 구간 내에 있는지 확인
             return !(newTime.isBefore(existingTimeStart) || newTime.isAfter(existingTimeEnd));
         });
-}
+    }
+
+
+
+    /**
+     * 매물 노트 수정
+     */
+    @Transactional
+    public ViewingNotesResponseDTO uploadViewingNotes(ViewingNotesRequestDTO dto) {
+        Viewing findViewing = viewingRepository.findById(dto.viewingId())
+            .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        findViewing.updateNote(dto.fileUrls(), dto.memo());
+        viewingRepository.save(findViewing);
+
+        return ViewingNotesResponseDTO.from(findViewing);
+    }
+
+
+
+    /**
+     * 뷰잉 체크리스트에서 선택된 아이템 조회하기
+     *
+     * @param viewingId
+     * @return : Viewing 식별자, 체크리스트에서 선택된 OptionItem 식별자
+     */
+    public ViewingChecklistResponseDTO getViewingChecklist(Long viewingId) {
+        Viewing findViewing = viewingRepository.findById(viewingId)
+            .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        // VIEWING_CAT2(체크리스트 카테고리)
+        List<Long> checklistItemIds = getSelectedOptionItemIdsInCategory(findViewing, CategoryCode.VIEWING_CAT2);
+
+        return ViewingChecklistResponseDTO.from(viewingId, checklistItemIds);
+
+    }
+
+
+
+    /**
+     * 뷰잉 체크리스트에 사용자가 체크한 항목을 저장합니다
+     * @param dto: 사용자가 체크한 아이템 식별자
+     * @return : 체크리스트에서 사용자가 체크한 아이템 식별자
+     */
+    @Transactional
+    public ViewingChecklistResponseDTO uploadChecklist(ViewingChecklistRequestDTO dto) {
+        Viewing findViewing = viewingRepository.findById(dto.viewingId())
+                .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        List<OptionItem> optionItems = optionItemRepository.findAllById(dto.allOptionItemIds());
+
+        // ViewingOptionItem 생성(체크리스트 아이템)
+        List<ViewingOptionItem> viewingOptionItems = optionItems.stream()
+                .map(optionItem -> ViewingOptionItem.create(optionItem))
+                .toList();
+
+        findViewing.updateViewingOptionItem(viewingOptionItems);
+        viewingRepository.save(findViewing);
+
+        return ViewingChecklistResponseDTO.from(findViewing.getId(), optionItems.stream().map(OptionItem::getId).toList());
+    }
+
+    /**
+     * Viewing에서 특정 CategoryCode에 해당하는 ViewingOptionItem을 찾고 OptionItem.id를 반환한다
+     *
+     * @param viewing
+     * @param categoryCode :찾고 카테고리
+     * @return
+     */
+    private List<Long> getSelectedOptionItemIdsInCategory(Viewing viewing, CategoryCode categoryCode) {
+        OptionCategory category = optionCategoryRepository.findByCategoryCode(categoryCode)
+                .orElseThrow(() -> new CustomException(ServiceCode.OPTION_CATEGORY_NOT_INITIALIZED));
+
+        List<Long> checklistItemIds = viewing.getViewingOptionItems()
+                .stream()
+                .filter(viewingOptionItem -> viewingOptionItem.getOptionItem().getOptionCategory().equals(category))
+                .map(viewingOptionItem -> viewingOptionItem.getOptionItem().getId())
+                .toList();
+        return checklistItemIds;
+    }
 }

@@ -5,6 +5,7 @@ import org.hanihome.hanihomebe.s3.web.dto.S3RequestDTO;
 import org.hanihome.hanihomebe.s3.web.dto.S3ResponseDTO;
 import org.hanihome.hanihomebe.s3.service.S3Service;
 import org.hanihome.hanihomebe.s3.web.dto.S3VerificationRequestDTO;
+import org.hanihome.hanihomebe.s3.web.dto.S3ViewingRequestDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,5 +51,24 @@ public class S3Controller {
         ));
     }
 
+    /**
+     *
+     * @param dto :이미지 확장자
+     * @param userDetails :인증정보
+     * @return :presigned-url, fileUrl(s3 저장 경로)
+     */
+    @PostMapping("/viewings/property-notes/presigned-url")
+    public List<S3ResponseDTO> getViewingPresignedUrl(@RequestBody S3ViewingRequestDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<S3ResponseDTO> dtos = dto.getFileExtensions().stream()
+                .map(extension -> {
+                    String fileName = "viewing-note" + "-" + userDetails.getUserId() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "-" + UUID.randomUUID() + "." + extension;
+                    S3Service.PresignedUploadResponse result = s3Service.generatePresignedUrl(fileName, "viewings/notes");
+                    return new S3ResponseDTO(
+                            result.uploadUrl().toString(),
+                            result.fileUrl().toString()
+                    );
+                }).toList();
 
+        return dtos;
+    }
 }
