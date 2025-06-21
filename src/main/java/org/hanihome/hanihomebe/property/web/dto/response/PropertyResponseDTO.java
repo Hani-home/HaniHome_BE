@@ -3,8 +3,7 @@ package org.hanihome.hanihomebe.property.web.dto.response;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hanihome.hanihomebe.interest.region.Region;
-import org.hanihome.hanihomebe.property.domain.Property;
-import org.hanihome.hanihomebe.property.domain.enums.Capacity;
+import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
@@ -27,7 +26,6 @@ public sealed interface PropertyResponseDTO
     Long id();
     Long memberId();
     PropertySuperType kind();
-    Capacity capacity();
     GenderPreference genderPreference();
     Region region();
     List<String> photoUrls();

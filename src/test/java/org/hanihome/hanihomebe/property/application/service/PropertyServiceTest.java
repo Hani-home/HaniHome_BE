@@ -1,23 +1,18 @@
 package org.hanihome.hanihomebe.property.application.service;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import io.jsonwebtoken.lang.Assert;
 import jakarta.transaction.Transactional;
-import org.aspectj.lang.annotation.Before;
-import org.checkerframework.checker.units.qual.A;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Gender;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
-import org.hanihome.hanihomebe.member.service.MemberService;
 import org.hanihome.hanihomebe.property.domain.enums.*;
-import org.hanihome.hanihomebe.property.domain.option.CategoryCode;
-import org.hanihome.hanihomebe.property.domain.option.OptionCategory;
-import org.hanihome.hanihomebe.property.domain.option.OptionItem;
-import org.hanihome.hanihomebe.property.repository.OptionCategoryRepository;
-import org.hanihome.hanihomebe.property.repository.OptionItemRepository;
-import org.hanihome.hanihomebe.property.web.dto.PropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.item.domain.CategoryCode;
+import org.hanihome.hanihomebe.item.domain.OptionCategory;
+import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
+import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @SpringBootTest
 @Transactional
@@ -61,7 +55,7 @@ class PropertyServiceTest {
 
     @BeforeEach
     void init() {
-        OptionCategory category = OptionCategory.create(CategoryCode.CAT1);
+        OptionCategory category = OptionCategory.create(CategoryCode.PROPERTY_CAT1);
         optionCategoryRepository.save(category);
         optionItemRepository.save(OptionItem.createDefault(category, "item1"));
         optionItemRepository.save(OptionItem.createDefault(category, "item2"));
@@ -87,8 +81,7 @@ class PropertyServiceTest {
         // 예시: RentPropertyCreateRequestDTO 인스턴스 생성하기
         RentPropertyCreateRequestDTO dto = new RentPropertyCreateRequestDTO(
                 memberId,                                   // Long memberId
-                PropertySuperType.RENT,                     // PropertySuperType kind
-                Capacity.DOUBLE,                            // Capacity capacity
+                PropertySuperType.RENT,                 // PropertySuperType kind
                 GenderPreference.ANY,                       // GenderPreference genderPreference
                 new Region("Seoul", "Gangnam-gu", "Yeoksam-dong", "123-45", "strret", "123", "123", "building"), // Region region
                 List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg"), // List<String> photoUrls
@@ -105,7 +98,9 @@ class PropertyServiceTest {
                 Set.of(LocalDateTime.of(2025, 6, 10, 14, 0), LocalDateTime.of(2025, 6, 12, 10, 0)), // Set<LocalDateTime> viewingDates
                 "강남역 도보 5분, 신축 3층",                 // String description
                 RentPropertySubType.HOUSE,
-                true
+                RealEstateType.REAL_ESTATE,
+                CapacityRent.FOUR,
+                Exposure.EASTERN
         );
         //when
         Long id = propertyService.createProperty(dto).id();

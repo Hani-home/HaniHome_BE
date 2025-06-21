@@ -1,11 +1,8 @@
 package org.hanihome.hanihomebe.property.web.dto.response;
 
-import lombok.Getter;
 import org.hanihome.hanihomebe.interest.region.Region;
-import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
 import org.hanihome.hanihomebe.property.domain.enums.*;
-import org.hanihome.hanihomebe.property.web.dto.SharePropertyPatchRequestDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,7 +13,6 @@ public record SharePropertyResponseDTO(
         Long id,
         Long memberId,
         PropertySuperType kind,
-        Capacity capacity,
         GenderPreference genderPreference,
         Region region,
         List<String> photoUrls,
@@ -32,16 +28,20 @@ public record SharePropertyResponseDTO(
         ParkingOption parkingOption,
         Set<LocalDateTime> viewingDates,
         String description,
-        SharePropertySubType sharePropertySubType // SHARE 전용 필드
+        SharePropertySubType sharePropertySubType,                // 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
+        Double internalArea,                                     // 2-1. 실제 사용 면적
+        Double totalArea,                                        // 2-2. 전체 면적
+        Integer totalResidents,                                  // 2-3. 총 거주 인원
+        Integer totalBathUser,                                   // 2-4. 욕실 공유 인원
+        Integer totalFloors,                                     // 2-5. 건물 총 층수
+        Integer propertyFloor,                                   // 2-6. 해당 매물의 층수
+        CapacityShare capacityShare                             // 3. 수용 인원
 ) implements PropertyResponseDTO {
     public static SharePropertyResponseDTO from(ShareProperty shareProperty) {
         if (shareProperty == null) {
-            // 필요에 따라 null 대신 IllegalArgumentException을 던질 수 있습니다.
-            // 예: throw new IllegalArgumentException("shareProperty는 null일 수 없습니다.");
             return null;
         }
 
-        // memberId 추출 (shareProperty.getMember()가 Member 객체를 반환하고, Member 객체에 getId()가 있다고 가정)
         Long extractedMemberId = (shareProperty.getMember() != null) ? shareProperty.getMember().getId() : null;
 
         // optionItemNames 추출
@@ -73,12 +73,10 @@ public record SharePropertyResponseDTO(
                 new ArrayList<>(shareProperty.getPhotoUrls()) : // 방어적 복사
                 Collections.emptyList();
 
-        // availableFrom 추출 (방어적 복사)
         Set<LocalDateTime> extractedAvailableFrom = (shareProperty.getAvailableFrom() != null) ?
                 new HashSet<>(shareProperty.getAvailableFrom()) :
                 Collections.emptySet();
 
-        // viewingDates 추출 (방어적 복사)
         Set<LocalDateTime> extractedViewingDates = (shareProperty.getViewingDates() != null) ?
                 new HashSet<>(shareProperty.getViewingDates()) :
                 Collections.emptySet();
@@ -87,7 +85,6 @@ public record SharePropertyResponseDTO(
                 shareProperty.getId(),
                 extractedMemberId,
                 shareProperty.getKind(),
-                shareProperty.getCapacity(),
                 shareProperty.getGenderPreference(),
                 shareProperty.getRegion(),
                 extractedPhotoUrls,
@@ -103,7 +100,14 @@ public record SharePropertyResponseDTO(
                 shareProperty.getParkingOption(),
                 extractedViewingDates,
                 shareProperty.getDescription(),
-                shareProperty.getSharePropertySubType() // ShareProperty 전용 필드
+                shareProperty.getSharePropertySubType(),     // 1. 매물 유형
+                shareProperty.getInternalArea(),             // 2-1. 실제 사용 면적
+                shareProperty.getTotalArea(),                // 2-2. 전체 면적
+                shareProperty.getTotalResidents(),           // 2-3. 총 거주 인원
+                shareProperty.getTotalBathUser(),            // 2-4. 욕실 공유 인원
+                shareProperty.getTotalFloors(),              // 2-5. 건물 총 층수
+                shareProperty.getPropertyFloor(),            // 2-6. 해당 매물의 층수
+                shareProperty.getCapacityShare()             // 3. 수용 인원
         );
     }
 }

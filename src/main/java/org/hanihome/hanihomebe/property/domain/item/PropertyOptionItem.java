@@ -1,7 +1,8 @@
-package org.hanihome.hanihomebe.property.domain.option;
+package org.hanihome.hanihomebe.property.domain.item;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hanihome.hanihomebe.item.domain.OptionItem;
 import org.hanihome.hanihomebe.property.domain.Property;
 
 import static jakarta.persistence.FetchType.LAZY;

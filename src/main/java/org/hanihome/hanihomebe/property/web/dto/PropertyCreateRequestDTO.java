@@ -3,11 +3,10 @@ package org.hanihome.hanihomebe.property.web.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hanihome.hanihomebe.interest.region.Region;
-import org.hanihome.hanihomebe.property.domain.enums.Capacity;
+import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
-import org.hanihome.hanihomebe.property.domain.option.OptionItem;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -28,8 +27,6 @@ public sealed interface PropertyCreateRequestDTO permits
     Long memberId();
 
     PropertySuperType kind();
-
-    Capacity capacity();
 
     GenderPreference genderPreference();
 
