@@ -10,7 +10,6 @@ import org.hanihome.hanihomebe.item.repository.ScopeTypeRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-
 @RequiredArgsConstructor
 @Component
 public class ScopeInitializer {
@@ -38,10 +37,6 @@ public class ScopeInitializer {
         }
     }
 
-    private boolean isAlreadyInitialized(ScopeCode scope) {
-        return scopeTypeRepository.existsByScopeCode(scope);
-    }
-
 
     /**
      * ScopeType과 OptionCategory를 사용하여 OptionCategoryScope를 init
@@ -56,13 +51,14 @@ public class ScopeInitializer {
             OptionCategory category = getCategory(categoryCode);
             // SCOPE_RENT 에만 연결
             if (category.getCategoryCode().equals(CategoryCode.PROPERTY_CAT5)) {
+                if( isAlreadyInitialized(categoryCode, rentScope)) continue;
+
                 connectCategoryToScope(category, List.of(rentScope));
                 continue;
             }
             // SCOPE_RENT, SCOPE_SHARE에 연결
+            if(isAlreadyInitialized(categoryCode, rentScope) || isAlreadyInitialized(categoryCode, shareScope) ) continue;
             connectCategoryToScope(category, List.of(rentScope, shareScope));
-
-
         }
 
         // 뷰잉 카테고리 - 스코프 연결
@@ -70,8 +66,16 @@ public class ScopeInitializer {
             OptionCategory category = getCategory(categoryCode);
 
             // SCOPE_VIEWING에 연결
+            if(isAlreadyInitialized(categoryCode, viewingScope)) continue;
             connectCategoryToScope(category, List.of(viewingScope));
         }
+    }
+
+    private boolean isAlreadyInitialized(ScopeCode scope) {
+        return scopeTypeRepository.existsByScopeCode(scope);
+    }
+    private boolean isAlreadyInitialized(CategoryCode categoryCode, ScopeType scopeType) {
+        return categoryScopeRepository.existsByOptionCategory_CategoryCodeAndScopeType(categoryCode, scopeType);
     }
 
     private void connectCategoryToScope(OptionCategory category, List<ScopeType> rentScope) {
