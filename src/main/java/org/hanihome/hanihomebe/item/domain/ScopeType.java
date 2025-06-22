@@ -18,6 +18,7 @@ public class ScopeType {
     public Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "scope_code", unique = true, nullable = false) //오류 해결을 위해 추가해봅니다...
     private ScopeCode scopeCode;
 
     public static ScopeType create(ScopeCode scopeCode) {
