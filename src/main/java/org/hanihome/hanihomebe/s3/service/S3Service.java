@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.s3.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.hanihome.hanihomebe.s3.web.dto.S3ResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -9,7 +10,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
-import java.net.URI;
+
 import java.net.URISyntaxException;
 import java.time.Duration;
 
@@ -34,10 +35,22 @@ public class S3Service {
      * @return uploadUrl: 프론트에서 PUT 요청할 presigned URL
      *         fileUrl: 최종 접근 가능한 정적 URL
      */
-    public PresignedUploadResponse generatePresignedUrl(String fileName, String folder) {
+    public S3ResponseDTO generatePresignedUrl(String fileName, String folder) {
         //최종적으로 S3에 저장될 경로 ex. verification/ID_CARD/user1.jpg
         String objectKey = folder + "/" + fileName;
 
+        //확장자 추출
+        String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+
+        // contentType 매핑
+        String contentType = switch (extension) {
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "png" -> "image/png";
+            case "webp" -> "image/webp";
+            case "bmp" -> "image/bmp";
+            case "heic" -> "image/heic";
+            default -> "application/octet-stream"; // 기본 fallback
+        };
         /*
         S3 객체 업로드 요청에 필요한 정보 구성
         1. 버킷 이름
@@ -47,7 +60,7 @@ public class S3Service {
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(objectKey)
-                .contentType("image/jpeg")
+                .contentType(contentType)
                 .build();
 
         /*
@@ -63,16 +76,12 @@ public class S3Service {
 
         try {
             //presignedRequest.url().toURI() => presigned URL , fileUrl 업로드 완료 후 접근 가능한 고정 이미지 URL
-            return new PresignedUploadResponse(
-                    presignedRequest.url().toURI(),
-                    URI.create("https://" + bucketName + ".s3." + region + ".amazonaws.com/" + objectKey)
+            return new S3ResponseDTO(
+                    presignedRequest.url().toURI().toString(),
+                    "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + objectKey
             );
         } catch (URISyntaxException e) {
             throw new RuntimeException("Invalid URI conversion", e);
         }
     }
-    //프론트에 반환할 presignedUrl, fileUrl 담을 통
-    public record PresignedUploadResponse(URI uploadUrl, URI fileUrl) {}
-
-
 }
