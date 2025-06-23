@@ -1,6 +1,6 @@
 package org.hanihome.hanihomebe.member.service;
 
-import jakarta.persistence.EntityNotFoundException;
+
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -29,7 +29,7 @@ public class MemberService {
     @Transactional
     public void signup(MemberSignupRequestDTO memberSignupRequestDTO) {
         if(memberRepository.existsByEmail(memberSignupRequestDTO.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new CustomException(ServiceCode.EMAIL_ALREADY_EXISTS);
         }
         Member member = Member.createFrom(
                 memberSignupRequestDTO.getEmail(),
@@ -52,21 +52,17 @@ public class MemberService {
         member.markAsRegistered(); // 아래에 메서드 정의
     }
 
-
-
-
-
     //특정 멤버 조회
     public MemberResponseDTO getMemberById(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
         return MemberResponseDTO.CreateFrom(member);
     }
 
     @Transactional
     public void updateMember(Long memberId, MemberUpdateRequestDTO memberUpdateRequestDTO) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         //멤버도메인에 위임
         member.updateMember(memberUpdateRequestDTO);
@@ -75,7 +71,7 @@ public class MemberService {
     @Transactional
     public void deleteMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         memberRepository.delete(member);
     }

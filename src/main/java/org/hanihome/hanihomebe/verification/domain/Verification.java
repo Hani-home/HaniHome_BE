@@ -1,6 +1,8 @@
 package org.hanihome.hanihomebe.verification.domain;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,6 +20,8 @@ import lombok.NoArgsConstructor;
 import org.hanihome.hanihomebe.member.domain.Member;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -46,8 +50,10 @@ public class Verification {
     private VerificationStatus status;
 
     //사용자가 입력하는 사진 URL
-    @Column(length = 1000)
-    private String documentImageUrl;
+    @ElementCollection
+    @CollectionTable(name = "verification_images", joinColumns = @JoinColumn(name = "verification_id"))
+    @Column(name = "image_url", length = 1000)
+    private List<String> documentImageUrls = new ArrayList<>();
 
     //반려 사유
     @Column(length = 500)
@@ -78,12 +84,12 @@ public class Verification {
         this.rejectedAt = LocalDateTime.now();
     }
 
-    public static Verification createRequestFrom(Member member, VerificationType type, String documentImageUrl) {
+    public static Verification createRequestFrom(Member member, VerificationType type, List<String> documentImageUrls) {
         return Verification.builder()
                 .member(member)
                 .type(type)
                 .status(VerificationStatus.PENDING)
-                .documentImageUrl(documentImageUrl)
+                .documentImageUrls(documentImageUrls)
                 .build();
     }
 

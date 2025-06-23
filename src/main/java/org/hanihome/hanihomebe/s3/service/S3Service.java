@@ -2,6 +2,8 @@ package org.hanihome.hanihomebe.s3.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.s3.web.dto.S3ResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -81,7 +83,7 @@ public class S3Service {
                     "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + objectKey
             );
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Invalid URI conversion", e);
+            throw new CustomException(ServiceCode.S3_URI_CONVERSION_ERROR, e);
         }
     }
 }
