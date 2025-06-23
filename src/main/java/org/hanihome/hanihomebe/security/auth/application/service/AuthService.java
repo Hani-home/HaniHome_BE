@@ -1,7 +1,6 @@
 package org.hanihome.hanihomebe.security.auth.application.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
@@ -19,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.hanihome.hanihomebe.member.domain.Role;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -139,21 +137,17 @@ public class AuthService {
 
         // 회원 조회 (Optional 사용)
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
-
-        boolean isNewUser;
         Member member;
 
 
         //기존 유저면 로그인, 없으면 회원가입
-        if (optionalMember.isPresent()) {
-            member = optionalMember.get();
-            isNewUser = false; // 기존 유저
-        } else {
+        if (optionalMember.isEmpty()) {
             member = Member.createFromGoogleSignUp(email, googleId);
             memberRepository.save(member);
-            isNewUser = true; // 신규 유저
+        } else {
+            member = optionalMember.get();
         }
-
+        boolean isNewUser = !member.isRegistered();
         //유저 정보 바탕으로 액세스 토큰, 리프레시 토큰 발급
         String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());

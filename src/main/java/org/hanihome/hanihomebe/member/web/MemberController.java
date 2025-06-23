@@ -4,7 +4,9 @@ import org.hanihome.hanihomebe.member.service.MemberService;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
+import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,6 +39,13 @@ public class MemberController {
         MemberResponseDTO memberResponseDTO = memberService.getMemberById(memberId);
         return ResponseEntity.ok(memberResponseDTO);
     }
+
+    @PostMapping("/complete-profile")
+    public ResponseEntity<?> completeProfile(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO) {
+        memberService.completeProfile(userDetails.getUserId(), memberUpdateRequestDTO );
+        return ResponseEntity.ok("회원 등록 성공");
+    }
+
 
 
     /*
