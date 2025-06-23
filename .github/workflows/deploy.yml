@@ -35,6 +35,13 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e  # 🛑 명령어 하나라도 실패 시 전체 스크립트 중단되게 설정
+            
+            echo "[시작] Docker 디스크 정리 중..."
+            sudo docker system prune -f  # volume은 유지됨
+            
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/hanihome-server:latest
             sudo docker-compose down
             sudo docker-compose up -d
+          
+            echo "[성공] 배포 완료 🎉"

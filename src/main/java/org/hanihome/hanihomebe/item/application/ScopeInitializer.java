@@ -7,6 +7,7 @@ import org.hanihome.hanihomebe.item.domain.*;
 import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
 import org.hanihome.hanihomebe.item.repository.OptionCategoryScopeRepository;
 import org.hanihome.hanihomebe.item.repository.ScopeTypeRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,11 +30,24 @@ public class ScopeInitializer {
      * 현재 존재하는 ScopeCode 모두 init
      */
     private void initializeScopeType() {
+        /*
         for (ScopeCode scope : ScopeCode.values()) {
             if (isAlreadyInitialized(scope)) continue;
 
             ScopeType scopeType = ScopeType.create(scope);
             scopeTypeRepository.save(scopeType);
+        }
+        오류 해결을 위해 수정해봅니다...
+         */
+        for (ScopeCode scope : ScopeCode.values()) {
+            if (isAlreadyInitialized(scope)) continue;
+            try {
+                ScopeType scopeType = ScopeType.create(scope);
+                scopeTypeRepository.save(scopeType);
+            } catch (DataIntegrityViolationException e) {
+                // 중복 삽입이면 무시
+                System.out.println("중복된 scopeCode: " + scope.name());
+            }
         }
     }
 
@@ -79,10 +93,25 @@ public class ScopeInitializer {
     }
 
     private void connectCategoryToScope(OptionCategory category, List<ScopeType> rentScope) {
+        /*
         rentScope.forEach(scopeType -> {
             OptionCategoryScope categoryScope = OptionCategoryScope.create(category, scopeType);
             categoryScopeRepository.save(categoryScope);
         });
+        이것도 오류해결을 위해 수정해봅니다..
+         */
+        rentScope.forEach(scopeType -> {
+            if (isAlreadyInitialized(category.getCategoryCode(), scopeType)) return;
+
+            try {
+                OptionCategoryScope categoryScope = OptionCategoryScope.create(category, scopeType);
+                categoryScopeRepository.save(categoryScope);
+            } catch (DataIntegrityViolationException e) {
+                System.out.println("중복된 category-scope 연결: category=" + category.getCategoryCode() + ", scope=" + scopeType);
+            }
+        });
+
+
     }
 
     private CategoryCode[] getPropertyCategories() {

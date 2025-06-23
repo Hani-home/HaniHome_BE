@@ -11,6 +11,12 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(
+        name = "option_category_scope",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"option_category_id", "scope_type_id"})
+        }
+)
 public class OptionCategoryScope {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;

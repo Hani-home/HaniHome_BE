@@ -26,29 +26,31 @@ public class S3Controller {
 
     private final S3Service s3Service;
 
-    //테슽트용
-    @PostMapping("/presigned-url")
-    public ResponseEntity<S3ResponseDTO> getPresignedUrl(@RequestBody S3RequestDTO s3RequestDTO) {
-        var result = s3Service.generatePresignedUrl(s3RequestDTO.getFileName(), s3RequestDTO.getFolder());
 
-        return ResponseEntity.ok(
-                new S3ResponseDTO(
-                        result.uploadUrl().toString(),
-                        result.fileUrl().toString()
-                )
-        );
-    }
-
+    /*
     @PostMapping("/verifications/presigned-url")
     public ResponseEntity<S3ResponseDTO> getVerificationPresignedUrl(@RequestBody S3VerificationRequestDTO s3VerificationRequestDTO, @AuthenticationPrincipal CustomUserDetails userDetails) {
         //s3 저장 폴더구조 verification/passport-{memberId}-(저장된 시간)
-        String fileName = s3VerificationRequestDTO.getType() + "-" + userDetails.getUserId() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String fileName = s3VerificationRequestDTO.getType() + "-" + userDetails.getUserId() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "-" + UUID.randomUUID();
         S3Service.PresignedUploadResponse result = s3Service.generatePresignedUrl(fileName, "verification");
 
         return ResponseEntity.ok(new S3ResponseDTO(
                 result.uploadUrl().toString(),
                 result.fileUrl().toString()
         ));
+    }
+     */
+
+    @PostMapping("/verifications/presigned-url")
+    public List<S3ResponseDTO> getVerificationsPresignedUrl(@RequestBody S3VerificationRequestDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<S3ResponseDTO> dtos = dto.getFileExtensions().stream()
+                .map(extension -> {
+                    String fileName = dto.getType() + "-" + userDetails.getUserId() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "-" + UUID.randomUUID() + "." + extension;
+
+                    return s3Service.generatePresignedUrl(fileName, "verification");
+                }).toList();
+
+        return dtos;
     }
 
     /**
@@ -62,11 +64,8 @@ public class S3Controller {
         List<S3ResponseDTO> dtos = dto.getFileExtensions().stream()
                 .map(extension -> {
                     String fileName = "viewing-note" + "-" + userDetails.getUserId() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + "-" + UUID.randomUUID() + "." + extension;
-                    S3Service.PresignedUploadResponse result = s3Service.generatePresignedUrl(fileName, "viewings/notes");
-                    return new S3ResponseDTO(
-                            result.uploadUrl().toString(),
-                            result.fileUrl().toString()
-                    );
+                    return s3Service.generatePresignedUrl(fileName, "viewings/notes");
+
                 }).toList();
 
         return dtos;

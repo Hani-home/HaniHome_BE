@@ -12,7 +12,7 @@ public class VerificationConverter {
                 verification.getId(),
                 verification.getType(),
                 verification.getStatus(),
-                verification.getDocumentImageUrl(),
+                verification.getDocumentImageUrls(),
                 verification.getRejectionReason(),
                 verification.getRequestedAt(),
                 verification.getApprovedAt(),

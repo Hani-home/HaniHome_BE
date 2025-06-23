@@ -1,7 +1,8 @@
 package org.hanihome.hanihomebe.security.auth.application.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
@@ -19,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.hanihome.hanihomebe.member.domain.Role;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -139,21 +139,17 @@ public class AuthService {
 
         // 회원 조회 (Optional 사용)
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
-
-        boolean isNewUser;
         Member member;
 
 
         //기존 유저면 로그인, 없으면 회원가입
-        if (optionalMember.isPresent()) {
-            member = optionalMember.get();
-            isNewUser = false; // 기존 유저
-        } else {
+        if (optionalMember.isEmpty()) {
             member = Member.createFromGoogleSignUp(email, googleId);
             memberRepository.save(member);
-            isNewUser = true; // 신규 유저
+        } else {
+            member = optionalMember.get();
         }
-
+        boolean isNewUser = !member.isRegistered();
         //유저 정보 바탕으로 액세스 토큰, 리프레시 토큰 발급
         String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());
@@ -173,10 +169,10 @@ public class AuthService {
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
 
         Member member = memberRepository.findByEmail(loginRequestDTO.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저"));
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), member.getPassword())) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ServiceCode.PASSWORD_NOT_MATCH);
         }
 
         //JWT 발급
@@ -195,21 +191,21 @@ public class AuthService {
     public String reissueAccessToken(String refreshToken) {
 
         if(!jwtUtils.validateToken(refreshToken)) {
-            throw new RuntimeException("리프레시 토큰이 유효하지 않음");
+            throw new CustomException(ServiceCode.INVALID_REFRESH_TOKEN);
         }
 
         Long userId = jwtUtils.getUserIdFromToken(refreshToken);
 
         //한 UserId에 대해 저장된 RefreshToken이 여러 개인 경우도 고려하는 게 나으려나...?
         RefreshToken storedToken = refreshTokenRepository.findByMemberId(userId)
-                .orElseThrow(()-> new RuntimeException("저장된 리프레시 토큰이 없음"));
+                .orElseThrow(()-> new CustomException(ServiceCode.INVALID_REFRESH_TOKEN));
 
         if(!storedToken.getToken().equals(refreshToken)) {
-            throw new RuntimeException("리프레시 토큰이 일치하지 않음");
+            throw new CustomException(ServiceCode.INVALID_REFRESH_TOKEN);
         }
 
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 멤버가 존재하지 않음"));
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         String role = member.getRole().name();
 

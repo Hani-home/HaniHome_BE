@@ -20,7 +20,9 @@ public enum ServiceCode {
     // Member
     USERNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다"),
     EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다"),
-    MEMBER_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 회원은 존재하지 않습니다."),
+    MEMBER_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 ID의 회원이 존재하지 않습니다."),
+    MEMBER_ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "이미 등록된 회원입니다"),
+    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
     // jwt
     INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "리프레시 토큰 검증에 실패했습니다."),
@@ -43,6 +45,7 @@ public enum ServiceCode {
     // ScopeType
     SCOPE_TYPE_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 스코프는 아직 초기화되지 않았습니다"),
 
+
     // Notification
     NOTIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 알림은 존재하지 않습니다"),
 
@@ -52,7 +55,22 @@ public enum ServiceCode {
     // not defined
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
 
+    //S3
+    S3_URI_CONVERSION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3 URI 생성 중 오류가 발생했습니다."),
+
+
+    //verification
+    VERIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 신원 인증 요청은 존재하지 않습니다"),
+
+
+    //wishItem
+    ALEADY_WISH_EXISTS(HttpStatus.BAD_REQUEST, "이미 찜한 매물입니다."),
+    INVALID_TARGET_TYPE(HttpStatus.BAD_REQUEST, "지원하지 않는 타입입니다."),
+
+    // not defined
+    NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다")
     ;
+
     private final HttpStatus httpStatus;
     private final String message;
 }
