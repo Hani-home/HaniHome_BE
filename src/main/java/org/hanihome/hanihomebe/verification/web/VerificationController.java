@@ -4,9 +4,8 @@ package org.hanihome.hanihomebe.verification.web;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.notification.application.service.NotificationFacadeService;
 import org.hanihome.hanihomebe.notification.application.service.NotificationMessageFactory;
-import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
-import org.hanihome.hanihomebe.verification.domain.Verification;
+import org.hanihome.hanihomebe.verification.service.VerificationNotificationService;
 import org.hanihome.hanihomebe.verification.service.VerificationService;
 import org.hanihome.hanihomebe.verification.web.dto.VerificationRejectRequestDTO;
 import org.hanihome.hanihomebe.verification.web.dto.VerificationRequestDTO;
@@ -31,6 +30,7 @@ public class VerificationController {
     private final VerificationService verificationService;
     private final NotificationFacadeService notificationFacadeService;
     private final NotificationMessageFactory messageFactory;
+    private final VerificationNotificationService verificationNotificationService;
 
     /*
     Create. 사용자용 신원인증 요청
@@ -80,8 +80,7 @@ public class VerificationController {
         verificationService.approveVerification(verificationId);
 
         // 승인 시 문의자에게 알림
-        NotificationCreateDTO message = messageFactory.createVerificationApproveMessage(verificationId);
-        notificationFacadeService.sendNotification(message);
+        verificationNotificationService.sendApproveNotification(verificationId);
         return ResponseEntity.ok().build();
     }
 
@@ -90,8 +89,7 @@ public class VerificationController {
         verificationService.rejectVerification(verificationRejectRequestDTO.getReason(), verificationId);
 
         // 거부 시 문의자에게 알림
-        NotificationCreateDTO message = messageFactory.createVerificationRejectMessage(verificationId, verificationRejectRequestDTO.getReason());
-        notificationFacadeService.sendNotification(message);
+        verificationNotificationService.sendRejectNotification(verificationId, verificationRejectRequestDTO.getReason());
         return ResponseEntity.ok().build();
     }
 

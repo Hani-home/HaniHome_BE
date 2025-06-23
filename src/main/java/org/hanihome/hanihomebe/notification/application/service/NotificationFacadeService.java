@@ -1,17 +1,13 @@
 package org.hanihome.hanihomebe.notification.application.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.notification.domain.NotificationType;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
-import org.hanihome.hanihomebe.property.application.service.PropertyService;
-import org.springframework.scheduling.concurrent.SimpleAsyncTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Date;
 
+// TODO: notificationService가 뷰잉과 직접적인 연관을 가지고 있음(뷰잉 리마인더는 게스트, 호스트 모두 전달한다 등)
+//  => 별도 ViewingService로 옮기는게 필요할듯
 @RequiredArgsConstructor
 @Service
 public class NotificationFacadeService {

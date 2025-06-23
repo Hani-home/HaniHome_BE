@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.notification.application.service.*;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
+import org.hanihome.hanihomebe.viewing.application.service.ViewingNotificationService;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.hanihome.hanihomebe.viewing.web.dto.*;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
@@ -14,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class ViewingController {
     private final ViewingService viewingService;
     private final NotificationFacadeService notificationFacadeService;
     private final NotificationMessageFactory notificationMessageFactory;
+    private final ViewingNotificationService viewingNotificationService;
 
     // create
     @PostMapping
@@ -34,17 +35,9 @@ public class ViewingController {
         ViewingResponseDTO responseDTO = viewingService.createViewing(dto, userDetails.getUserId());
         // 2. 호스트에게 알림 전송
         Long viewingId = responseDTO.getId();
-        NotificationCreateDTO notificationCreateDTO = notificationMessageFactory.createViewingCreateMessage(userDetails.getUsername(), viewingId);
-        notificationFacadeService.sendNotification(notificationCreateDTO);
-
+        viewingNotificationService.sendViewingCreateNotification(userDetails.getUsername(), viewingId);
         // 3. 뷰잉 리마인더 알림 스케줄링
-        // TODO: notificationService가 뷰잉과 직접적인 연관을 가지고 있음(뷰잉 리마인더는 게스트, 호스트 모두 전달한다 등)
-        //  => 별도 ViewingService로 옮기는게 필요할듯
-        List<NotificationCreateDTO> reminderMessages = notificationMessageFactory.createViewingReminderMessage(viewingId);
-        LocalDateTime triggerTime = responseDTO.getMeetingDay().minusHours(24);
-        reminderMessages.forEach(
-                reminder->notificationFacadeService.registerReminderNotification(reminder, triggerTime)
-        );
+        viewingNotificationService.sendReminderNotification(viewingId, responseDTO.getMeetingDay());
         return responseDTO;
     }
 
@@ -62,10 +55,8 @@ public class ViewingController {
     public void cancelViewing(@RequestBody @Validated ViewingCancelRequestDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         // viewing 취소
         viewingService.cancelViewing(dto);
-
         // 알림 생성 및 전송
-        NotificationCreateDTO notificationCreateDTO = notificationMessageFactory.createViewingCanceledMessage(userDetails.getUserId(), dto.getViewingId());
-        notificationFacadeService.sendNotification(notificationCreateDTO);
+        viewingNotificationService.sendViewingCanceledNotification(userDetails.getUserId(), dto.getViewingId());
     }
 
     // 취소 이유 데이터 조회
