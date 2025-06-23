@@ -28,7 +28,7 @@ public class OneOnOneService {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
-        OneOnOneConsult oneOnOneConsult = OneOnOneConsult.create(dto.getContent(), findMember);
+        OneOnOneConsult oneOnOneConsult = OneOnOneConsult.create(dto.getContent(), dto.getEmail(), findMember);
         oneOnOneConsultRepository.save(oneOnOneConsult);
         return OneOnOneConsultResponseDTO.from(oneOnOneConsult);
     }

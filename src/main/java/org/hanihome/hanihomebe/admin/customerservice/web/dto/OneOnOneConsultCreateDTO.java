@@ -7,4 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OneOnOneConsultCreateDTO {
     private String content;
+    private String email;
 }
