@@ -1,6 +1,6 @@
 package org.hanihome.hanihomebe.verification.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
@@ -38,12 +38,14 @@ public class VerificationService {
     }
 
     //Read. 사용자 본인 신원인증 불러오기
+    @Transactional(readOnly = true)
     public List<VerificationResponseDTO> getMyVerifications(Long memberId) {
         List<Verification> verifications = verificationRepository.findAllByMemberId(memberId);
         return VerificationConverter.toVerificationResponseDTOList(verifications);
     }
 
     //Read. 관리자 모든 신원인증 요청 불러오기
+    @Transactional(readOnly = true)
     public List<VerificationResponseDTO> getAllVerificationsForAdmin() {
         List<Verification> verifications = verificationRepository.findAll();
         return VerificationConverter.toVerificationResponseDTOList(verifications);
