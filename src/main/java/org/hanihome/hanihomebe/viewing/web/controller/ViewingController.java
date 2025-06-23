@@ -2,15 +2,12 @@ package org.hanihome.hanihomebe.viewing.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.notification.application.service.*;
-import org.hanihome.hanihomebe.notification.domain.NotificationType;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
-import org.hanihome.hanihomebe.property.application.service.PropertyService;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.hanihome.hanihomebe.viewing.web.dto.*;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateNotificationDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,10 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.List;
-import java.util.TimeZone;
 
 @RequiredArgsConstructor
 @Validated
