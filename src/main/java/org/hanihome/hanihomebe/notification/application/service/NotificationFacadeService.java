@@ -28,7 +28,7 @@ public class NotificationFacadeService {
         Long notificationId = notificationService.createNotification(dto)
                 .id();
         // 알림 보내기
-        notificationPushService.pushNotification(dto.receiverId());
+        notificationPushService.pushNotification(notificationId);
     }
 
     // 3. 24시간 전 리마인더 알림 등록
