@@ -75,6 +75,10 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishItem> wishItems = new ArrayList<>();
 
+    //회원가입 여부 확인용
+    @Column(nullable = false)
+    private boolean isRegistered = false;
+
     public static Member createFromGoogleSignUp(String email, String googleId) {
         return Member.builder()
                 .email(email)
@@ -82,6 +86,7 @@ public class Member extends BaseEntity {
                 .socialProvider("Google")
                 .googleId(googleId)
                 .role(Role.GUEST)
+                .isRegistered(false)
                 .build();
     }
 
@@ -101,6 +106,10 @@ public class Member extends BaseEntity {
         if (memberUpdateRequestDTO.getPhoneNumber() != null) this.phoneNumber = memberUpdateRequestDTO.getPhoneNumber();
         if (memberUpdateRequestDTO.getGender() != null) this.gender = memberUpdateRequestDTO.getGender();
         if (memberUpdateRequestDTO.getProfileImage() != null) this.profileImage = memberUpdateRequestDTO.getProfileImage();
+    }
+
+    public void markAsRegistered() {
+        this.isRegistered = true;
     }
 
     //WishItem 추가, 제거 메서드
