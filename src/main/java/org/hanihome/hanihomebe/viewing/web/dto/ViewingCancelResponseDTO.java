@@ -11,13 +11,13 @@ import java.util.List;
 @Getter
 public class ViewingCancelResponseDTO {
     private Long viewingId;
-    private List<Long> optionItemIds;
+    private List<Long> cancelReasonOptionItemIds;
     private String reason;
 
     public static ViewingCancelResponseDTO from(Long viewingId, List<Long> cancelReasonItemIds, String reason) {
         return ViewingCancelResponseDTO.builder()
                 .viewingId(viewingId)
-                .optionItemIds(cancelReasonItemIds)
+                .cancelReasonOptionItemIds(cancelReasonItemIds)
                 .reason(reason)
                 .build();
     }
