@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.notification.application.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.notification.domain.Notification;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class EmitterService {
@@ -36,9 +38,18 @@ public class EmitterService {
         emitters.computeIfAbsent(userId, k -> new ConcurrentHashMap<>()) //Map<String, SseEmitter>
                 .put(emitterId, emitter);
 
-        emitter.onCompletion(() -> removeEmitter(userId, emitterId));       // call back 이벤트 리스너 등록.
-        emitter.onTimeout(()    -> removeEmitter(userId, emitterId));       //onCompletion, onTimeout, onError는 connect 함수 내에서 "등록만" 하는 것이고,
-        emitter.onError((e) -> removeEmitter(userId, emitterId)); //실제 호출은 SSE 연결의 생명주기 도중에 Spring이 알아서 호출
+        emitter.onCompletion(() -> {
+            log.info("[SSE 종료]SseEmitter onCompletion userId: {}, emitterId: {}", userId, emitterId);
+            removeEmitter(userId, emitterId);
+        });       // call back 이벤트 리스너 등록.
+        emitter.onTimeout(()    -> {
+            log.warn("[SSE 타임아웃]SseEmitter onTimeout userId: {}, emitterId: {}", userId, emitterId);
+            removeEmitter(userId, emitterId);
+        });       //onCompletion, onTimeout, onError는 connect 함수 내에서 "등록만" 하는 것이고,
+        emitter.onError((e) -> {
+            log.error("[SSE 오류]SseEmitter onError userId: {}, emitterId: {}, exception: {}", userId, emitterId, e.toString());
+            removeEmitter(userId, emitterId);
+        }); //실제 호출은 SSE 연결의 생명주기 도중에 Spring이 알아서 호출
 
         try {
             // 초기 연결 확인 이벤트
