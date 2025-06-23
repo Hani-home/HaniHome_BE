@@ -11,13 +11,16 @@ import org.hanihome.hanihomebe.admin.customerservice.domain.OneOnOneConsultStatu
 @Getter
 public class OneOnOneConsultResponseDTO {
     private String content;
-    private Long memberId;
+    private Long customerId;
     private OneOnOneConsultStatus status;
+    private String email;
 
     public static OneOnOneConsultResponseDTO from(OneOnOneConsult oneOnOneConsult) {
         return OneOnOneConsultResponseDTO.builder()
                 .content(oneOnOneConsult.getContent())
-                .memberId(oneOnOneConsult.getCustomer().getId())
+                .customerId(oneOnOneConsult.getCustomer().getId())
+                .status(oneOnOneConsult.getStatus())
+                .email(oneOnOneConsult.getEmail())
                 .build();
     }
 }

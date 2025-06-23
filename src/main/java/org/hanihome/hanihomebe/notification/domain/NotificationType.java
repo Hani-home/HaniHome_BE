@@ -4,6 +4,6 @@ package org.hanihome.hanihomebe.notification.domain;
 public enum NotificationType {
     VIEWING_REMINDER,
     VIEWING_CREATED,
-    VIEWING_CANCELED
-
+    VIEWING_CANCELED,
+    ONE_ON_ONE_CONSULT_REPLIED,
 }

@@ -69,4 +69,11 @@ public class NotificationMessageFactory {
         NotificationCreateDTO hostDTO = NotificationCreateDTO.create(hostId, title, content, NotificationType.VIEWING_REMINDER);
         return List.of(NotificationCreateDTO.create(guestId, title, content, NotificationType.VIEWING_REMINDER), hostDTO);
     }
+
+    public NotificationCreateDTO createOneOnOneConsultRepliedMessage(Long receiverId) {
+        String title = "1:1 문의에 대한 답변이 완료되었어요";
+        String content = "이메일로 확인해주세요";
+        return NotificationCreateDTO.create(receiverId, title, content, NotificationType.ONE_ON_ONE_CONSULT_REPLIED);
+    }
+
 }

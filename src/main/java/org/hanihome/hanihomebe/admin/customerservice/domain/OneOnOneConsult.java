@@ -25,7 +25,7 @@ public class OneOnOneConsult {
 
     private String content;
 
-    private String email;
+    private String email;   //답변을 받을 이메일
 
     private OneOnOneConsultStatus status;
 
