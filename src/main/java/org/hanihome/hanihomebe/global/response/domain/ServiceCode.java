@@ -52,9 +52,6 @@ public enum ServiceCode {
     // OneOnOneConsult
     ONE_ON_ONE_CONSULT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 일대일 상담문의글은 존재하지 않습니다"),
 
-    // not defined
-    NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
-
     //S3
     S3_URI_CONVERSION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3 URI 생성 중 오류가 발생했습니다."),
 
