@@ -1,6 +1,8 @@
 package org.hanihome.hanihomebe.security.auth.application.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
@@ -167,10 +169,10 @@ public class AuthService {
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
 
         Member member = memberRepository.findByEmail(loginRequestDTO.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저"));
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), member.getPassword())) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ServiceCode.PASSWORD_NOT_MATCH);
         }
 
         //JWT 발급
@@ -189,21 +191,21 @@ public class AuthService {
     public String reissueAccessToken(String refreshToken) {
 
         if(!jwtUtils.validateToken(refreshToken)) {
-            throw new RuntimeException("리프레시 토큰이 유효하지 않음");
+            throw new CustomException(ServiceCode.INVALID_REFRESH_TOKEN);
         }
 
         Long userId = jwtUtils.getUserIdFromToken(refreshToken);
 
         //한 UserId에 대해 저장된 RefreshToken이 여러 개인 경우도 고려하는 게 나으려나...?
         RefreshToken storedToken = refreshTokenRepository.findByMemberId(userId)
-                .orElseThrow(()-> new RuntimeException("저장된 리프레시 토큰이 없음"));
+                .orElseThrow(()-> new CustomException(ServiceCode.INVALID_REFRESH_TOKEN));
 
         if(!storedToken.getToken().equals(refreshToken)) {
-            throw new RuntimeException("리프레시 토큰이 일치하지 않음");
+            throw new CustomException(ServiceCode.INVALID_REFRESH_TOKEN);
         }
 
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("해당 멤버가 존재하지 않음"));
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         String role = member.getRole().name();
 

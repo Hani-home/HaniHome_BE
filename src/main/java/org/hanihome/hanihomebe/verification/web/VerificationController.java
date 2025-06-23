@@ -40,8 +40,17 @@ public class VerificationController {
     Read. 사용자용, 본인의 모든 신원 요청 불러오기
      */
     @GetMapping
-    public ResponseEntity<List<VerificationResponseDTO>> getMyVerifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<VerificationResponseDTO> response = verificationService.getMyVerifications(userDetails.getUserId());
+    public ResponseEntity<List<VerificationResponseDTO>> getMyAllVerifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<VerificationResponseDTO> response = verificationService.getMyAllVerifications(userDetails.getUserId());
+        return ResponseEntity.ok(response);
+    }
+
+    /*
+    Read. 사용자용, 본인의 개별 신원 요청 불러오기
+     */
+    @GetMapping("/{verificationId}")
+    public ResponseEntity<VerificationResponseDTO> getMyVerification(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long verificationId) {
+        VerificationResponseDTO response = verificationService.getMyVerification(userDetails.getUserId(), verificationId);
         return ResponseEntity.ok(response);
     }
 
@@ -61,15 +70,15 @@ public class VerificationController {
     TODO : 추후 ADMIN 접근 권한 설정
     @PreAuthorize("hasRole('ADMIN')")
      */
-    @PatchMapping("/admin/{id}/approve")
-    public ResponseEntity<String> approveVerification(@PathVariable Long id) {
-        verificationService.approveVerification(id);
+    @PatchMapping("/admin/{verificationId}/approve")
+    public ResponseEntity<String> approveVerification(@PathVariable Long verificationId) {
+        verificationService.approveVerification(verificationId);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/admin/{id}/reject")
-    public ResponseEntity<String> rejectVerification(@RequestBody VerificationRejectRequestDTO verificationRejectRequestDTO, @PathVariable Long id) {
-        verificationService.rejectVerification(verificationRejectRequestDTO.getReason(), id);
+    @PatchMapping("/admin/{verificationId}/reject")
+    public ResponseEntity<String> rejectVerification(@RequestBody VerificationRejectRequestDTO verificationRejectRequestDTO, @PathVariable Long verificationId) {
+        verificationService.rejectVerification(verificationRejectRequestDTO.getReason(), verificationId);
         return ResponseEntity.ok().build();
     }
 

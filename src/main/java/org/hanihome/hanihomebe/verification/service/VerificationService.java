@@ -1,5 +1,7 @@
 package org.hanihome.hanihomebe.verification.service;
 
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -25,12 +27,12 @@ public class VerificationService {
     @Transactional
     public VerificationResponseDTO requestVerification(VerificationRequestDTO verificationRequestDTO, Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         VerificationType type = verificationRequestDTO.getType();
-        String documentImageUrl = verificationRequestDTO.getDocumentImageUrl();
+        List<String> documentImageUrls = verificationRequestDTO.getDocumentImageUrls();
 
-        Verification verification = Verification.createRequestFrom(member, type, documentImageUrl);
+        Verification verification = Verification.createRequestFrom(member, type, documentImageUrls);
 
         Verification saved = verificationRepository.save(verification);
 
@@ -39,9 +41,18 @@ public class VerificationService {
 
     //Read. 사용자 본인 신원인증 불러오기
     @Transactional(readOnly = true)
-    public List<VerificationResponseDTO> getMyVerifications(Long memberId) {
+    public List<VerificationResponseDTO> getMyAllVerifications(Long memberId) {
         List<Verification> verifications = verificationRepository.findAllByMemberId(memberId);
         return VerificationConverter.toVerificationResponseDTOList(verifications);
+    }
+
+    //Read. 사용자 본인 신원인증 요청 개별로 불러오기
+    @Transactional(readOnly = true)
+    public VerificationResponseDTO getMyVerification(Long memberId, Long verificationId) {
+        Verification verification = verificationRepository.findByIdAndMemberId(verificationId, memberId)
+                .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
+
+        return VerificationConverter.toVerificationResponseDTO(verification);
     }
 
     //Read. 관리자 모든 신원인증 요청 불러오기
@@ -55,7 +66,7 @@ public class VerificationService {
     @Transactional
     public void approveVerification(Long verificationId) {
         Verification verification = verificationRepository.findById(verificationId)
-                .orElseThrow(() -> new IllegalArgumentException("인증 요청이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
 
         verification.approve();
     }
@@ -63,7 +74,7 @@ public class VerificationService {
     @Transactional
     public void rejectVerification(String reason, Long verificationId) {
         Verification verification = verificationRepository.findById(verificationId)
-                .orElseThrow(() -> new IllegalArgumentException("인증 요청이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
 
         verification.reject(reason);
     }
