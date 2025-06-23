@@ -11,6 +11,8 @@ import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.hanihome.hanihomebe.notification.application.service.EmitterService;
+import org.hanihome.hanihomebe.notification.application.service.NotificationService;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
@@ -41,6 +43,8 @@ public class ViewingService {
     private final PropertyRepository propertyRepository;
     private final OptionItemRepository optionItemRepository;
     private final OptionCategoryRepository optionCategoryRepository;
+    private final NotificationService notificationService;
+    private final EmitterService emitterService;
 
     /**
      * 뷰잉 생성
@@ -52,7 +56,7 @@ public class ViewingService {
     @Transactional
     public ViewingResponseDTO createViewing(ViewingCreateDTO dto, Long memberId) {
         // 0. Member, Property 조회
-        Member findMember = memberRepository.findById(memberId)
+        Member findMemberGuest = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
         Property findProperty = propertyRepository.findById(dto.getPropertyId())
                 .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
@@ -63,24 +67,20 @@ public class ViewingService {
         }
         
         // 2. 사용자의 기존 다가오는 뷰잉 스케줄 조회
-        List<Viewing> existingViewings = viewingRepository.findByMemberAndMeetingDayAfterAndStatus(findMember, LocalDateTime.now(), ViewingStatus.REQUESTED);
+        List<Viewing> existingViewings = viewingRepository.findByMemberAndMeetingDayAfterAndStatus(findMemberGuest, LocalDateTime.now(), ViewingStatus.REQUESTED);
 
         // 3. 시간대 중복 체크
         List<LocalDateTime> availableTimes = preferredTimes.stream()
             .filter(preferredTime -> !isTimeConflict(preferredTime, existingViewings))
             .toList();
-        
-        if (availableTimes.isEmpty()) {
-            throw new CustomException(ServiceCode.VIEWING_ALREADY_PRESCHEDULED);
-        }
-        
+
         // 4. 가능한 시간대 중 가장 빠른 시간대로 확정
         LocalDateTime confirmedTime = availableTimes.stream()
             .min(Comparator.naturalOrder())
-            .orElseThrow(() -> new IllegalStateException("적절한 시간을 찾을 수 없습니다."));
+            .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_ALREADY_PRESCHEDULED));
         
         // 5. 뷰잉 생성 및 저장
-        Viewing viewing = Viewing.create(findMember, findProperty, confirmedTime);
+        Viewing viewing = Viewing.create(findMemberGuest, findProperty, confirmedTime);
         viewingRepository.save(viewing);
 
         return ViewingResponseDTO.from(viewing);
@@ -93,6 +93,10 @@ public class ViewingService {
         return viewingRepository.findByMemberId(memberId).stream()
                 .map(viewing -> ViewingResponseDTO.from(viewing))
                 .toList();
+    }
+    public ViewingResponseDTO getViewingById(Long viewingId) {
+        return ViewingResponseDTO.from(viewingRepository.findById(viewingId)
+                .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS)));
     }
 
     /**

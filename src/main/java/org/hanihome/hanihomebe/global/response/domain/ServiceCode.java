@@ -43,6 +43,12 @@ public enum ServiceCode {
     // ScopeType
     SCOPE_TYPE_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 스코프는 아직 초기화되지 않았습니다"),
 
+    // Notification
+    NOTIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 알림은 존재하지 않습니다"),
+
+    // OneOnOneConsult
+    ONE_ON_ONE_CONSULT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 일대일 상담문의글은 존재하지 않습니다"),
+
     // not defined
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
 
