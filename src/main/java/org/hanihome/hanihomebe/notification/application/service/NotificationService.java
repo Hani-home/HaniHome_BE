@@ -8,7 +8,6 @@ import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -30,8 +29,9 @@ public class NotificationService {
      * @param userId 알림대상 사용자 ID
      * @return 알림 리스트
      */
-    public List<Notification> getNotifications(Long userId) {
-        return notificationRepository.findByReceiverIdOrderByCreatedAtDesc(userId);
+    public List<Notification> getMyNotifications(Long userId, Boolean isRead) {
+
+        return notificationRepository.findMyNotificationAndIsReadOptional(userId, isRead);
     }
 
     /**
