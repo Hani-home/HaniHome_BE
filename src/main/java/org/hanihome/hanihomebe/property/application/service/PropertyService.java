@@ -3,6 +3,8 @@ package org.hanihome.hanihomebe.property.application.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.application.PropertyMapper;
@@ -67,7 +69,7 @@ public class PropertyService {
             return propertyMapper.toResponseDto(save);
         }
 
-        throw new RuntimeException("매물 생성 실패: 해당하는 Property Subtype이 없습니다.");
+        throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
     }
 
 

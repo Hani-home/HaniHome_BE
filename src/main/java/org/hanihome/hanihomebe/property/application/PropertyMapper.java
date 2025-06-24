@@ -1,13 +1,18 @@
 package org.hanihome.hanihomebe.property.application;
 
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
+import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.SharePropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.RentPropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.SharePropertyResponseDTO;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.mapstruct.*;
 
 
@@ -35,13 +40,24 @@ public interface PropertyMapper {
     default void callUpdate(SharePropertyPatchRequestDTO dto, @MappingTarget ShareProperty entity) {
         entity.update(dto); }
 
+
     default PropertyResponseDTO toResponseDto(Property entity) {
-        if(entity instanceof ShareProperty) {
-            return SharePropertyResponseDTO.from((ShareProperty) entity);
-        } else if (entity instanceof RentProperty) {
-            return RentPropertyResponseDTO.from((RentProperty) entity);
-        } else {
-            throw new RuntimeException("Unsupported entity type: " + entity.getClass().getName());
+        PropertySuperType propertyType = entity.getKind();
+        switch (propertyType) {
+            case SHARE:
+                return SharePropertyResponseDTO.from(safeCast(entity, ShareProperty.class));
+            case RENT:
+                return RentPropertyResponseDTO.from(safeCast(entity, RentProperty.class));
+            default:
+                throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
         }
+    }
+
+    private <T> T safeCast(Object entity, Class<T> targetClass) {
+        if (entity instanceof HibernateProxy) {
+            return targetClass.cast(Hibernate.unproxy(entity));
+        }
+        return targetClass.cast(entity);
+
     }
 }
