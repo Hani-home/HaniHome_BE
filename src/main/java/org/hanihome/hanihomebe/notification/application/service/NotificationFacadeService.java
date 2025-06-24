@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.notification.application.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 // TODO: notificationService가 뷰잉과 직접적인 연관을 가지고 있음(뷰잉 리마인더는 게스트, 호스트 모두 전달한다 등)
 //  => 별도 ViewingService로 옮기는게 필요할듯
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class NotificationFacadeService {
@@ -24,6 +26,7 @@ public class NotificationFacadeService {
         Long notificationId = notificationService.createNotification(dto)
                 .id();
         // 알림 보내기
+        log.info("알림 전송");
         notificationPushService.pushNotification(notificationId);
     }
 
