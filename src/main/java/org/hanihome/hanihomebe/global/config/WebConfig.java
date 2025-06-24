@@ -14,7 +14,10 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // 모든 URL에 대해
-                        .allowedOrigins("http://localhost:3000") // 프론트 주소
+                        .allowedOrigins("http://localhost:3000",
+                                "https://hani-home.vercel.app",
+                                "https://hanihome.app"
+                        ) // 프론트 주소
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .exposedHeaders("Authorization")
