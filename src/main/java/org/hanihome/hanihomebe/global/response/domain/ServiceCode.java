@@ -67,6 +67,7 @@ public enum ServiceCode {
 
     // not defined
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
+    NOTIFICATION_SEND_FAILED(HttpStatus.BAD_REQUEST, "알림 전송에 실패했습니다"),
     ;
 
     private final HttpStatus httpStatus;
