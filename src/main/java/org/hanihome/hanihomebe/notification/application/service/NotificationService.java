@@ -20,7 +20,7 @@ public class NotificationService {
 
     @Transactional
     public NotificationResponseDTO createNotification(NotificationCreateDTO dto) {
-        Notification notification = Notification.create(dto.receiverId(), dto.title(), dto.content());
+        Notification notification = Notification.create(dto.receiverId(), dto.title(), dto.content(), dto.notificationType());
 
         notificationRepository.save(notification);
         return NotificationResponseDTO.from(notification);

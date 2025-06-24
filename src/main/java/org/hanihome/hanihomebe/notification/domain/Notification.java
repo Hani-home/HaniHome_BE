@@ -28,11 +28,12 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NotificationType type; // VIEWING_REMINDER, VIEWING_CREATED, VIEWING_CANCELED
 
-    public static Notification create(Long receiverId, String title, String content) {
+    public static Notification create(Long receiverId, String title, String content, NotificationType type) {
         return Notification.builder()
                 .receiverId(receiverId)
                 .title(title)
                 .content(content)
+                .type(type)
                 .isRead(false)
                 .build();
     }
