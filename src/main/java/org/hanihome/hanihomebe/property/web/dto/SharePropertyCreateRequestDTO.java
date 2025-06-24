@@ -27,7 +27,7 @@ public record SharePropertyCreateRequestDTO(
         String contractTerms,                       // 계약 형태 설명
         Set<LocalDateTime> availableFrom,           // 입주 가능일(시간 단위) 집합
         ParkingOption parkingOption,                // 주차 옵션
-        Set<LocalDateTime> viewingDates,            // 뷰잉 가능 날짜 집합
+        Set<LocalDateTime> possibleMeetingDates,            // 뷰잉 가능 날짜 집합
         String description,                         // 매물 소개
         SharePropertySubType sharePropertySubType,  //고유필드 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
         Double internalArea,                        //고유필드 2-1. 실제 사용 면적
@@ -48,8 +48,8 @@ public record SharePropertyCreateRequestDTO(
         if (availableFrom == null) {
             availableFrom = new HashSet<>();
         }
-        if (viewingDates == null) {
-            viewingDates = new HashSet<>();
+        if (possibleMeetingDates == null) {
+            possibleMeetingDates = new HashSet<>();
         }
     }
 }

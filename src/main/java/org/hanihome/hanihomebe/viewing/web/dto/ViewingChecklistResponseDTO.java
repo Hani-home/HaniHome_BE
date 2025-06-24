@@ -5,7 +5,7 @@ import java.util.List;
 
 public record ViewingChecklistResponseDTO(
         Long viewingId,
-        List<Long> optionItemIds
+        List<Long> checklistOptionItemIds
 
 ) {
     public static ViewingChecklistResponseDTO from(Long viewingId, List<Long> optionItemIds) {

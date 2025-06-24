@@ -45,12 +45,20 @@ public enum ServiceCode {
     // ScopeType
     SCOPE_TYPE_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 스코프는 아직 초기화되지 않았습니다"),
 
+
+    // Notification
+    NOTIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 알림은 존재하지 않습니다"),
+
+    // OneOnOneConsult
+    ONE_ON_ONE_CONSULT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 일대일 상담문의글은 존재하지 않습니다"),
+
     //S3
     S3_URI_CONVERSION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3 URI 생성 중 오류가 발생했습니다."),
 
 
     //verification
     VERIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 신원 인증 요청은 존재하지 않습니다"),
+
 
     //wishItem
     ALEADY_WISH_EXISTS(HttpStatus.BAD_REQUEST, "이미 찜한 매물입니다."),

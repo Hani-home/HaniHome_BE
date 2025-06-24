@@ -39,7 +39,7 @@ public sealed interface PropertyResponseDTO
     String contractTerms();
     Set<LocalDateTime> availableFrom();
     ParkingOption parkingOption();
-    Set<LocalDateTime> viewingDates();
+    Set<LocalDateTime> possibleMeetingDates();
     String description();
 
 }

@@ -33,7 +33,7 @@ public record RentPropertyCreateRequestDTO(
         String contractTerms,                       // 계약 형태 설명
         Set<LocalDateTime> availableFrom,           // 입주 가능일(시간 단위) 집합
         ParkingOption parkingOption,                // 주차 옵션
-        Set<LocalDateTime> viewingDates,            // 뷰잉 가능 날짜 집합
+        Set<LocalDateTime> possibleMeetingDates,            // 뷰잉 가능 날짜 집합
         String description,                         // 매물 소개
         RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
         RealEstateType isRealEstateIntervention,    // (RentProperty 고유) 부동산 중개 여부
@@ -50,8 +50,8 @@ public record RentPropertyCreateRequestDTO(
         if (availableFrom == null) {
             availableFrom = new HashSet<>();
         }
-        if (viewingDates == null) {
-            viewingDates = new HashSet<>();
+        if (possibleMeetingDates == null) {
+            possibleMeetingDates = new HashSet<>();
         }
     }
 }
