@@ -5,9 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Member;
-import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
-import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
-import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
+import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
 import org.springframework.data.annotation.CreatedDate;
@@ -49,6 +47,17 @@ public abstract class Property {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    /**
+     * 매물 상태
+     */
+    // 노출 상태: 노출, 숨김
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private DisplayStatus displayStatus = DisplayStatus.ACTIVE;
+    // 거래 상태: 거래 가능, 거래 중, 거래 완료
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private TradeStatus tradeStatus = TradeStatus.BEFORE;
 
     /**1. 매물 종류: SHARE / RENT */
     @Enumerated(EnumType.STRING)
@@ -207,6 +216,12 @@ public abstract class Property {
         }
         if (dto.getDescription() != null) {
             this.description = dto.getDescription();
+        }
+        if (dto.getDisplayStatus() != null) {
+            this.displayStatus = dto.getDisplayStatus();
+        }
+        if(dto.getTradeStatus() != null) {
+            this.tradeStatus = dto.getTradeStatus();
         }
     }
 
