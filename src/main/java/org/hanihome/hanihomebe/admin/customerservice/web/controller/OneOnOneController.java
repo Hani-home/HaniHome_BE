@@ -49,6 +49,6 @@ public class OneOnOneController {
         // 1. OneOnOne 처리
         oneOnOneService.replyByEmail(oneOnOneConsultId, userDetails.getUserId());
         // 2. 알림 전송
-        oneOnOneNotificationService.sendOneOnOneConsultRepliedNotification(userDetails.getUserId());
+        oneOnOneNotificationService.sendOneOnOneConsultRepliedNotification(dto.getCustomerId());
     }
 }
