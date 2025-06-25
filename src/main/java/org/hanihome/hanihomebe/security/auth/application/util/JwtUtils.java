@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.security.auth.application.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -59,7 +60,7 @@ public class JwtUtils {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-
+    /*
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -72,6 +73,23 @@ public class JwtUtils {
             return false;
         }
     }
+     */
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            return false;  // 만료는 false로 처리
+        } catch (JwtException | IllegalArgumentException e) {
+            throw e;  // 나머지는 예외로 던짐 → 필터에서 인증 실패로 처리
+        }
+    }
+
+
 
     public Long getUserIdFromToken(String token) {
         return Long.parseLong(getClaims(token).getSubject());
