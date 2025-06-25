@@ -46,9 +46,9 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", tokens.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(Duration.ofDays(7))
-                .sameSite("None")
                 .build();
 
         return ResponseEntity.ok()
