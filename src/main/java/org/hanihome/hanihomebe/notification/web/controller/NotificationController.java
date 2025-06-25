@@ -8,17 +8,17 @@ import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import org.yaml.snakeyaml.emitter.Emitter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
     private final EmitterService emitterService;
+
     /**
      * SSE 스트림 연결 요청 엔드포인트
      */
@@ -27,9 +27,9 @@ public class NotificationController {
         return emitterService.connect(userDetails.getUserId());
     }
 
-    @GetMapping
-    public List<NotificationResponseDTO> getNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return notificationService.getNotifications(userDetails.getUserId()).stream()
+    @GetMapping("/my-notifications")
+    public List<NotificationResponseDTO> getNotifications(@RequestParam(required = false) Boolean read, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return notificationService.getMyNotifications(userDetails.getUserId(), read).stream()
                 .map(NotificationResponseDTO::from)
                 .collect(Collectors.toList());
     }

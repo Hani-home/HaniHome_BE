@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.admin.customerservice.web.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.admin.customerservice.application.OneOnOneNotificationService;
 import org.hanihome.hanihomebe.admin.customerservice.application.OneOnOneService;
 import org.hanihome.hanihomebe.admin.customerservice.domain.OneOnOneConsultStatus;
 import org.hanihome.hanihomebe.admin.customerservice.web.dto.OneOnOneConsultCreateDTO;
@@ -22,6 +23,7 @@ public class OneOnOneController {
     private final OneOnOneService oneOnOneService;
     private final NotificationFacadeService notificationFacadeService;
     private final NotificationMessageFactory messageFactory;
+    private final OneOnOneNotificationService oneOnOneNotificationService;
 
     // 상담 등록
     @PostMapping
@@ -47,7 +49,6 @@ public class OneOnOneController {
         // 1. OneOnOne 처리
         oneOnOneService.replyByEmail(oneOnOneConsultId, userDetails.getUserId());
         // 2. 알림 전송
-        NotificationCreateDTO message = messageFactory.createOneOnOneConsultRepliedMessage(dto.getCustomerId());
-        notificationFacadeService.sendNotification(message);
+        oneOnOneNotificationService.sendOneOnOneConsultRepliedNotification(userDetails.getUserId());
     }
 }

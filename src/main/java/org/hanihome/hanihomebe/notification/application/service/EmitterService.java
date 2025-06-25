@@ -35,8 +35,8 @@ public class EmitterService {
     public SseEmitter connect(Long userId) {
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         String emitterId = userId + "_" + UUID.randomUUID();
-        emitters.computeIfAbsent(userId, k -> new ConcurrentHashMap<>()) //Map<String, SseEmitter>
-                .put(emitterId, emitter);
+        emitters.computeIfAbsent(userId, k -> new ConcurrentHashMap<>()); //Map<String, SseEmitter>
+        emitters.get(userId).put(emitterId, emitter);
 
         emitter.onCompletion(() -> {
             log.info("[SSE 종료]SseEmitter onCompletion userId: {}, emitterId: {}", userId, emitterId);
@@ -59,12 +59,13 @@ public class EmitterService {
         } catch (IOException ex) {
             removeEmitter(userId, emitterId);
         }
-
+        log.info("현재 연결된 모든 emitters:{}", emitters.toString().replace("[", "").replace("]", ""));
         return emitter;
     }
 
 
     public Map<String,SseEmitter>  getEmittersByUserId(Long userId) {
+        log.info("요청된 사용자의 emitter: userId:{}, emitters:{}", userId, emitters.get(userId));
         return emitters.get(userId);
     }
 
