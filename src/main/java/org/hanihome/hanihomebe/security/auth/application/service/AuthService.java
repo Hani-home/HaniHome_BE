@@ -17,7 +17,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +68,6 @@ public class AuthService {
 
     @Transactional
     public LoginResponseDTO googleCodeLogin(String code) {
-
         /*
         전반적인 로직 :
             프론트가 code를 받아서 해당 api로 보냄.
@@ -80,8 +78,38 @@ public class AuthService {
             결과 프론트에 전달
          */
 
+        Map<String, Object> responseBody = requestGoogleToken(code);
 
+        //토큰 받아온 response에서 id_token 추출
+        String idToken = (String) responseBody.get("id_token");
 
+        // String accessToken = (String) responseBody.get("access_token"); // 필요하면 사용
+
+        //id_token 검증 후 payload 추출
+        GoogleIdToken.Payload payload = googleOAuthUtils.verify(idToken);
+        if (payload == null) {
+            throw new IllegalArgumentException("유효하지 않은 토큰");
+        }
+
+        //payload에서 필요한 이메일, 구글 고유 ID 추출
+        String email = payload.getEmail();
+        String googleId = payload.getSubject();
+
+        Member member = findOrCreateMember(email, googleId);
+        boolean isNewUser = !member.isRegistered();
+
+        //유저 정보 바탕으로 액세스 토큰, 리프레시 토큰 발급
+        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
+        String refreshToken = jwtUtils.generateRefreshToken(member.getId());
+
+        //리프레시 토큰은 redis에 저장
+        storeRefreshToken(member.getId(), refreshToken);
+
+        // 토큰이랑 신규유저여부 담아서 프론트에 전달
+        return new LoginResponseDTO(accessToken, refreshToken, isNewUser);
+    }
+
+    private Map<String, Object> requestGoogleToken(String code) {
         //HTTP 요청을 보내기 위한 Spring class
         RestTemplate restTemplate = new RestTemplate();
 
@@ -123,20 +151,10 @@ public class AuthService {
         }
 
         //토큰 받아온 response에서 id_token 추출
-        Map<String, Object> responseBody = response.getBody();
-        String idToken = (String) responseBody.get("id_token");
-        // String accessToken = (String) responseBody.get("access_token"); // 필요하면 사용
+        return response.getBody();
+    }
 
-        //id_token 검증 후 payload 추출
-        GoogleIdToken.Payload payload = googleOAuthUtils.verify(idToken);
-        if (payload == null) {
-            throw new IllegalArgumentException("유효하지 않은 토큰");
-        }
-
-        //payload에서 필요한 이메일, 구글 고유 ID 추출
-        String email = payload.getEmail();
-        String googleId = payload.getSubject();
-
+    private Member findOrCreateMember(String email, String googleId) {
         // 회원 조회 (Optional 사용)
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
         Member member;
@@ -149,21 +167,19 @@ public class AuthService {
         } else {
             member = optionalMember.get();
         }
-        boolean isNewUser = !member.isRegistered();
-        //유저 정보 바탕으로 액세스 토큰, 리프레시 토큰 발급
-        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
-        String refreshToken = jwtUtils.generateRefreshToken(member.getId());
+        return member;
 
+    }
+
+    private void storeRefreshToken(Long memberId, String refreshToken) {
         //리프레시 토큰은 redis에 저장
         RefreshToken tokenEntity = RefreshToken.builder()
-                .memberId(member.getId())
+                .memberId(memberId)
                 .token(refreshToken)
                 .build();
         refreshTokenRepository.save(tokenEntity);
-
-        // 토큰이랑 신규유저여부 담아서 프론트에 전달
-        return new LoginResponseDTO(accessToken, refreshToken, isNewUser);
     }
+
 
     //일반 로그인
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
@@ -210,9 +226,6 @@ public class AuthService {
         String role = member.getRole().name();
 
         return jwtUtils.generateAccessToken(member.getId(), role);
-
-
-
     }
     // 테스트용 로그인 DB에 있는 ID:1 인 사용자를 가지고 토큰발급
     @Transactional
