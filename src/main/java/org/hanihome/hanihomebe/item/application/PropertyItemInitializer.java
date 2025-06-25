@@ -19,20 +19,20 @@ public class PropertyItemInitializer extends OptionItemInitializer {
     @Override
     public void initialize() {
         // 매물 공통 아이템 초기화
-        initializeBillItems();                  // 카테고리1: 빌에 포함된 항목
-        initializePossibleNotPossibleItems();   // 카테고리2: 가능불가능 여부
-        initializeFreeToolsItems();             // 카테고리3: 무료 제공 가전가구
-        initializePropertyAdvantageItems();     // 카테고리4: 매물 장점
+        initializePropertyAdvantageItems();     // 카테고리1: 매물 장점
+        initializeFreeToolsItems();             // 카테고리2: 무료 제공 가전가구
+        initializePossibleNotPossibleItems();   // 카테고리3: 가능불가능 여부
+        initializeBillItems();                  // 카테고리4: 빌에 포함된 항목
         initializeRealEstateIntervention();     // 카테고리5: 부동산 중개 여부
     }
 
 
     ///  빌에 포함된 항목
     private void initializeBillItems() {
-        if(super.isAlreadyInitialized(CategoryCode.PROPERTY_CAT1)) return;
+        if(super.isAlreadyInitialized(CategoryCode.PROPERTY_CAT4)) return;
         
         // save Category
-        OptionCategory category = super.saveCategory(CategoryCode.PROPERTY_CAT1);
+        OptionCategory category = super.saveCategory(CategoryCode.PROPERTY_CAT4);
 
         // save item
         List<String> billItems = Arrays.asList(
@@ -45,10 +45,10 @@ public class PropertyItemInitializer extends OptionItemInitializer {
 
     /// 가능 불가능 여부
     private void initializePossibleNotPossibleItems() {
-        if(super.isAlreadyInitialized(CategoryCode.PROPERTY_CAT2)) return;
+        if(super.isAlreadyInitialized(CategoryCode.PROPERTY_CAT3)) return;
         
         // save category
-        OptionCategory category = super.saveCategory(CategoryCode.PROPERTY_CAT2);
+        OptionCategory category = super.saveCategory(CategoryCode.PROPERTY_CAT3);
 
         // save 부모-자식 관계의 아이템
         super.saveParentChildItems(category, "흡연자", Arrays.asList("가능", "불가능"));
@@ -60,10 +60,10 @@ public class PropertyItemInitializer extends OptionItemInitializer {
 
     /// 무료 가전,가 구
     private void initializeFreeToolsItems() {
-        if(super.isAlreadyInitialized(CategoryCode.PROPERTY_CAT3)) return;
+        if(super.isAlreadyInitialized(CategoryCode.PROPERTY_CAT2)) return;
         
         // save category
-        OptionCategory category = super.saveCategory(CategoryCode.PROPERTY_CAT3);
+        OptionCategory category = super.saveCategory(CategoryCode.PROPERTY_CAT2);
         
         // save items
         // 침실 아이템
@@ -89,10 +89,10 @@ public class PropertyItemInitializer extends OptionItemInitializer {
 
     /// 이 매물의 장점
     private void initializePropertyAdvantageItems() {
-        if(super.isAlreadyInitialized(CategoryCode.PROPERTY_CAT4)) return;
+        if(super.isAlreadyInitialized(CategoryCode.PROPERTY_CAT1)) return;
         
         // save category
-        OptionCategory category = super.saveCategory(CategoryCode.PROPERTY_CAT4);
+        OptionCategory category = super.saveCategory(CategoryCode.PROPERTY_CAT1);
 
         // save items
         List<String> advantages = Arrays.asList(

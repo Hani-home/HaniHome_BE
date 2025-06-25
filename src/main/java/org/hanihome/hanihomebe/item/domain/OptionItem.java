@@ -74,6 +74,12 @@ public class OptionItem {
                 .build();
     }
 
+    public void modify(OptionCategory category, OptionItem parentItem, String itemName) {
+        this.optionCategory = category;
+        this.parent = parentItem;
+        this.itemName = itemName;
+    }
+
 /*
     // 연관관계 편의 메서드
     public void addChild(OptionItem child) {
