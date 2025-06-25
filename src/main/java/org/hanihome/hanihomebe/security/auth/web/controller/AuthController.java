@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.security.auth.web.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.security.auth.web.dto.GoogleLoginRequestDTO;
 import org.hanihome.hanihomebe.security.auth.web.dto.LoginRequestDTO;
 import org.hanihome.hanihomebe.security.auth.web.dto.LoginResponseDTO;
@@ -10,6 +11,8 @@ import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
 import org.hanihome.hanihomebe.security.auth.application.jwt.blacklist.BlacklistService;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshTokenService;
 import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -26,12 +29,14 @@ import java.time.Duration;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
     private final BlacklistService blacklistService;
     private final JwtUtils jwtUtils;
+
 
 
     @PostMapping("/social/login")
@@ -85,17 +90,21 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<?> reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtUtils.extractRefreshTokenFromCookie(request);
+        log.info("리프레시 토큰 추출");
 
         if (refreshToken == null || !jwtUtils.validateToken(refreshToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing or invalid");
         }
 
         try {
+            log.info("액세스 토큰 재발급 진입");
             String newAccessToken = authService.reissueAccessToken(refreshToken);
+            log.info("재발급 성공");
             response.setHeader("Authorization", "Bearer " + newAccessToken);
             return ResponseEntity.ok("Access token reissued");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token reissue failed: " + e.getMessage());
+            log.error("Access token reissue failed", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token reissue failed");
         }
     }
 
