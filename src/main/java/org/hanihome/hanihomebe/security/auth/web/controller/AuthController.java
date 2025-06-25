@@ -1,5 +1,6 @@
 package org.hanihome.hanihomebe.security.auth.web.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.web.dto.GoogleLoginRequestDTO;
@@ -10,6 +11,7 @@ import org.hanihome.hanihomebe.security.auth.application.jwt.blacklist.Blacklist
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshTokenService;
 import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -78,6 +80,23 @@ public class AuthController {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         LoginResponseDTO response = authService.login(loginRequestDTO);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = jwtUtils.extractRefreshTokenFromCookie(request);
+
+        if (refreshToken == null || !jwtUtils.validateToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing or invalid");
+        }
+
+        try {
+            String newAccessToken = authService.reissueAccessToken(refreshToken);
+            response.setHeader("Authorization", "Bearer " + newAccessToken);
+            return ResponseEntity.ok("Access token reissued");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token reissue failed: " + e.getMessage());
+        }
     }
 
 
