@@ -30,6 +30,9 @@ public enum ServiceCode {
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효한 토큰이 아닙니다"),
     MALFORMED_TOKEN(HttpStatus.BAD_REQUEST, "토큰의 구조가 올바르지 않습니다"),
     UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "미지원하는 토큰입니다"),
+    ACCESS_TOKEN_MISSING(HttpStatus.BAD_REQUEST, "액세스 토큰이 없습니다."),
+    ACCESS_TOKEN_BLACKLISTED(HttpStatus.BAD_REQUEST, "로그아웃 처리된 액세스 토큰입니다"),
+    ACCESS_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "만료된 액세스 토큰입니다."),
 
     // Property
     PROPERTY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 매물은 존재하지 않습니다"),
