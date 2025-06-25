@@ -42,6 +42,10 @@ public enum ServiceCode {
 
     // OptionCategory
     OPTION_CATEGORY_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 카테고리는 아직 초기화 되지 않았습니다"),
+    OPTION_CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 카테고리는 존재하지 않습니다."),
+
+    // OptionItem
+    OPTION_ITEM_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 옵션 아이템은 존재하지 않습니다"),
 
     // ScopeType
     SCOPE_TYPE_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 스코프는 아직 초기화되지 않았습니다"),
