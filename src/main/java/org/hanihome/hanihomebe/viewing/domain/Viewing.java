@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+//TODO: guest, host 모두 viewing에서 볼 수 있도록 해야할듯
 @Table(name = "viewings")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // JPA용 기본 생성자

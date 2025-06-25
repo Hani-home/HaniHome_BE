@@ -62,6 +62,12 @@ public class VerificationService {
         return VerificationConverter.toVerificationResponseDTOList(verifications);
     }
 
+    @Transactional(readOnly = true)
+    public Verification getVerificationById(Long verificationId) {
+        return verificationRepository.findById(verificationId)
+                .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
+    }
+
     //Update. 관리자가 신원 인증 승인 or 반려
     @Transactional
     public void approveVerification(Long verificationId) {

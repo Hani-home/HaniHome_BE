@@ -36,7 +36,7 @@ public abstract class Property {
     @Id @GeneratedValue(strategy = IDENTITY)
     @Column(name = "property_id")
     private Long id;
-
+    // TODO: 시간관리 클래스인 BaseEntity 별개로 사용되다보니 유지보수에 혼란이 있어보임. BaseEntity를 interface로 두고 implements를 여러개 생성하는 방식으로라도 관리가 필요할듯
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -146,10 +146,10 @@ public abstract class Property {
      * 15. 뷰잉 가능 날짜
      */
     @ElementCollection
-    @CollectionTable(name = "property_viewing_dates",
+    @CollectionTable(name = "property_possible_meeting_dates",
             joinColumns = @JoinColumn(name = "property_id"))
-    @Column(name = "viewing_date")
-    private Set<LocalDateTime> viewingDates = new HashSet<>();
+    @Column(name = "meeting_date")
+    private Set<LocalDateTime> possibleMeetingDates = new HashSet<>();
 
     /** 16. 매물 소개 */
     private String description;
@@ -202,8 +202,8 @@ public abstract class Property {
         if (dto.getParkingOption() != null) {
             this.parkingOption = dto.getParkingOption();
         }
-        if (dto.getViewingDates() != null) {
-            this.viewingDates = dto.getViewingDates();
+        if (dto.getPossibleMeetingDates() != null) {
+            this.possibleMeetingDates = dto.getPossibleMeetingDates();
         }
         if (dto.getDescription() != null) {
             this.description = dto.getDescription();

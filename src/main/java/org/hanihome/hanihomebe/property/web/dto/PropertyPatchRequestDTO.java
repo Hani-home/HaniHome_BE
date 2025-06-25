@@ -25,12 +25,11 @@ import java.util.Set;
 })
 @Getter
 public abstract class PropertyPatchRequestDTO {
-    private CapacityShare capacity;
     private GenderPreference genderPreference;
     private Region region;
     private List<String> photoUrls;
     private BigDecimal weeklyCost;
-    private List<PropertyOptionItem> optionItems;     // 포함된 비용 항목 리스트
+    private List<PropertyOptionItem> optionItems;     // 포함된 비용 항목 리스트, TODO: OptionItemId를 받아야할듯
     private String costDescription;
     private BigDecimal deposit;
     private BigDecimal keyDeposit;
@@ -39,7 +38,7 @@ public abstract class PropertyPatchRequestDTO {
     private String contractTerms;
     private Set<LocalDateTime> availableFrom;
     private ParkingOption parkingOption;
-    private Set<LocalDateTime> viewingDates;
+    private Set<LocalDateTime> possibleMeetingDates;
     private String description;
 
 }

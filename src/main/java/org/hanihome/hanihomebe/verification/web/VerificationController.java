@@ -2,6 +2,9 @@ package org.hanihome.hanihomebe.verification.web;
 
 
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.notification.application.service.NotificationFacadeService;
+import org.hanihome.hanihomebe.notification.application.service.NotificationMessageFactory;
+import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.verification.domain.Verification;
 import org.hanihome.hanihomebe.verification.service.VerificationService;
@@ -26,6 +29,8 @@ import java.util.List;
 public class VerificationController {
 
     private final VerificationService verificationService;
+    private final NotificationFacadeService notificationFacadeService;
+    private final NotificationMessageFactory messageFactory;
 
     /*
     Create. 사용자용 신원인증 요청
@@ -73,12 +78,20 @@ public class VerificationController {
     @PatchMapping("/admin/{verificationId}/approve")
     public ResponseEntity<String> approveVerification(@PathVariable Long verificationId) {
         verificationService.approveVerification(verificationId);
+
+        // 승인 시 문의자에게 알림
+        NotificationCreateDTO message = messageFactory.createVerificationApproveMessage(verificationId);
+        notificationFacadeService.sendNotification(message);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/admin/{verificationId}/reject")
     public ResponseEntity<String> rejectVerification(@RequestBody VerificationRejectRequestDTO verificationRejectRequestDTO, @PathVariable Long verificationId) {
         verificationService.rejectVerification(verificationRejectRequestDTO.getReason(), verificationId);
+
+        // 거부 시 문의자에게 알림
+        NotificationCreateDTO message = messageFactory.createVerificationRejectMessage(verificationId, verificationRejectRequestDTO.getReason());
+        notificationFacadeService.sendNotification(message);
         return ResponseEntity.ok().build();
     }
 

@@ -66,7 +66,7 @@ public class ShareProperty extends Property {
                 .contractTerms(dto.contractTerms())
                 .availableFrom(dto.availableFrom())
                 .parkingOption(dto.parkingOption())
-                .viewingDates(dto.viewingDates())
+                .possibleMeetingDates(dto.possibleMeetingDates())
                 .description(dto.description())
                 .sharePropertySubType(dto.sharePropertySubType())   // 고유필드 1
                 .internalArea(dto.internalArea())                   // 2-1. 실제 사용 면적

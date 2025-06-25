@@ -25,7 +25,7 @@ public record RentPropertyResponseDTO(
         String contractTerms,
         Set<LocalDateTime> availableFrom,
         ParkingOption parkingOption,
-        Set<LocalDateTime> viewingDates,
+        Set<LocalDateTime> possibleMeetingDates,
         String description,
         RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
         RealEstateType isRealEstateIntervention,    // (RentProperty 고유) 부동산 중개 여부
@@ -57,9 +57,9 @@ public record RentPropertyResponseDTO(
             new HashSet<>(rentProperty.getAvailableFrom()) :
             Collections.emptySet();
 
-        // viewingDates 추출 (방어적 복사)
-    Set<LocalDateTime> extractedViewingDates = (rentProperty.getViewingDates() != null) ?
-            new HashSet<>(rentProperty.getViewingDates()) :
+        // possibleMeetingDates 추출 (방어적 복사)
+    Set<LocalDateTime> extractedpossibleMeetingDates = (rentProperty.getPossibleMeetingDates() != null) ?
+            new HashSet<>(rentProperty.getPossibleMeetingDates()) :
             Collections.emptySet();
 
     return new RentPropertyResponseDTO(
@@ -79,7 +79,7 @@ public record RentPropertyResponseDTO(
             rentProperty.getContractTerms(),
             extractedAvailableFrom,
             rentProperty.getParkingOption(),
-            extractedViewingDates,
+            extractedpossibleMeetingDates,
             rentProperty.getDescription(),
             rentProperty.getRentPropertySubType(),           // (RentProperty 고유) 1. 매물 유형
             rentProperty.getIsRealEstateIntervention(),     // (RentProperty 고유) 2. 부동산 중개 여부
