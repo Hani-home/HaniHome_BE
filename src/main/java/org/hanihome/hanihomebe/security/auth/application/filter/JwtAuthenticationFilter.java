@@ -88,7 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (CustomException e) {
-            ServiceCode code = e.getServiceCode();g
+            ServiceCode code = e.getServiceCode();
             setErrorResponse(response, code.name(), code.getMessage());
         } catch (Exception e) {
             setErrorResponse(response, "AUTH_EXCEPTION", "Authentication failed: " + e.getMessage());
