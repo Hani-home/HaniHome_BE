@@ -20,7 +20,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
      * @return
      */
     @Query("select n from Notification n " +
-            "where n.receiverId = :receiverId " +
+            "where n.receiver.id = :receiverId " +
             "and (:isRead is null or n.isRead = :isRead)")
     List<Notification> findMyNotificationAndIsReadOptional(Long receiverId, Boolean isRead);
 

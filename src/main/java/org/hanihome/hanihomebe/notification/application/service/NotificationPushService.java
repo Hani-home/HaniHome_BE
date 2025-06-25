@@ -30,7 +30,7 @@ public class NotificationPushService {
  public void pushNotification(Long notificationId) {
      Notification findNotification = notificationRepository.findById(notificationId)
              .orElseThrow(() -> new CustomException(ServiceCode.NOTIFICATION_NOT_EXISTS));
-     Long receiverId = findNotification.getReceiverId();
+     Long receiverId = findNotification.getReceiver().getId();
 
      Map<String, SseEmitter> userEmitters = emitterService.getEmittersByUserId(receiverId);
      log.info("알림 전송 대기. receiverId: {" +

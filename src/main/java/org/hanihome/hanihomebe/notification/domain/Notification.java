@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.notification.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hanihome.hanihomebe.global.BaseEntity;
+import org.hanihome.hanihomebe.member.domain.Member;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -17,7 +18,9 @@ public class Notification extends BaseEntity {
     @Column(name = "notification_id")
     private Long id;
 
-    private Long receiverId;
+//    private Long receiverId;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "member_id")
+    private Member receiver;
 
     private String title;
 
@@ -28,9 +31,9 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private NotificationType type; // VIEWING_REMINDER, VIEWING_CREATED, VIEWING_CANCELED
 
-    public static Notification create(Long receiverId, String title, String content, NotificationType type) {
+    public static Notification create(Member receiver, String title, String content, NotificationType type) {
         return Notification.builder()
-                .receiverId(receiverId)
+                .receiver(receiver)
                 .title(title)
                 .content(content)
                 .type(type)

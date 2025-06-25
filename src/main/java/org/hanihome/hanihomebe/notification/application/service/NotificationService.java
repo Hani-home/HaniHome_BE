@@ -2,6 +2,10 @@ package org.hanihome.hanihomebe.notification.application.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.notification.domain.Notification;
 import org.hanihome.hanihomebe.notification.repository.NotificationRepository;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
@@ -16,10 +20,12 @@ import java.util.List;
 @Service
 public class NotificationService {
     private final NotificationRepository notificationRepository;
-
+    private final MemberRepository memberRepository;
     @Transactional
     public NotificationResponseDTO createNotification(NotificationCreateDTO dto) {
-        Notification notification = Notification.create(dto.receiverId(), dto.title(), dto.content(), dto.notificationType());
+        Member receiver = memberRepository.findById(dto.receiverId())
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+        Notification notification = Notification.create(receiver, dto.title(), dto.content(), dto.notificationType());
 
         notificationRepository.save(notification);
         return NotificationResponseDTO.from(notification);
@@ -30,7 +36,6 @@ public class NotificationService {
      * @return 알림 리스트
      */
     public List<Notification> getMyNotifications(Long userId, Boolean isRead) {
-
         return notificationRepository.findMyNotificationAndIsReadOptional(userId, isRead);
     }
 
