@@ -9,7 +9,9 @@ import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
+import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -39,6 +41,20 @@ public class PropertyController {
     public PropertyResponseDTO getPropertyById(@PathVariable Long propertyId) {
         return propertyService.getPropertyById(propertyId);
     }
+
+    // 내 매물 조회
+    @GetMapping("/members/me/properties")
+    public List<PropertyResponseDTO> getMyProperties(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return propertyService.getMyProperty(userDetails.getUserId());
+    }
+
+    // 회원의 매물 조회
+    @GetMapping("/members/{memberId}/properties")
+    public List<PropertyResponseDTO> getPropertiesByMember(@PathVariable Long memberId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return propertyService.getPropertiesByMemberId(memberId, userDetails);
+    }
+
+
 
     //update
 
