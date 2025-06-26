@@ -1,6 +1,5 @@
 package org.hanihome.hanihomebe.wishlist.application.service;
 
-import jakarta.transaction.Transactional;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -15,6 +14,7 @@ import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Comparator;
@@ -94,7 +94,7 @@ public class WishItemService {
     부동산 찜 매물 조회, 다른 타입에 대해서 폭넓게 진행하고자 했는데 응답 DTO 맞추기가 어렵네요...
     근데 또 막상이러니 Property, PropertyRepository, propertyMapper 다 주입해서 더 별로인 거 같기도 하네요... 이것도 validate한거처럼 수정하는 게 더 나을지도..
      */
-
+    @Transactional(readOnly = true)
     public List<PropertyResponseDTO> getWishProperties(Long memberId, String sort) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
@@ -133,6 +133,7 @@ public class WishItemService {
         throw new CustomException(ServiceCode.INVALID_SORT_OPTION);
     }
 
+    @Transactional(readOnly = true)
     public Map<WishTargetType, List<?>> getAllWishItems(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));

@@ -18,6 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class VerificationService {
 
     private final VerificationRepository verificationRepository;
@@ -40,14 +41,12 @@ public class VerificationService {
     }
 
     //Read. 사용자 본인 신원인증 불러오기
-    @Transactional(readOnly = true)
     public List<VerificationResponseDTO> getMyAllVerifications(Long memberId) {
         List<Verification> verifications = verificationRepository.findAllByMemberId(memberId);
         return VerificationConverter.toVerificationResponseDTOList(verifications);
     }
 
     //Read. 사용자 본인 신원인증 요청 개별로 불러오기
-    @Transactional(readOnly = true)
     public VerificationResponseDTO getMyVerification(Long memberId, Long verificationId) {
         Verification verification = verificationRepository.findByIdAndMemberId(verificationId, memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
@@ -56,13 +55,11 @@ public class VerificationService {
     }
 
     //Read. 관리자 모든 신원인증 요청 불러오기
-    @Transactional(readOnly = true)
     public List<VerificationResponseDTO> getAllVerificationsForAdmin() {
         List<Verification> verifications = verificationRepository.findAll();
         return VerificationConverter.toVerificationResponseDTOList(verifications);
     }
 
-    @Transactional(readOnly = true)
     public Verification getVerificationById(Long verificationId) {
         return verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));

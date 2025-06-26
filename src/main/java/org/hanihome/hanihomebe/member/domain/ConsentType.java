@@ -1,5 +1,8 @@
 package org.hanihome.hanihomebe.member.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum ConsentType {
     // 필수 동의 항목
     SERVICE_TERMS(true, "하니홈 서비스 이용약관 동의"),
