@@ -50,6 +50,12 @@ public class ViewingController {
         return ResponseEntity.ok(viewings);
     }
 
+    // 뷰잉 상세조회
+    @GetMapping("/{viewingId}")
+    public ViewingResponseDTO getViewingById(@PathVariable Long viewingId) {
+        return viewingService.getViewingById(viewingId);
+    }
+
     // cancel
     @PutMapping("/{viewingId}/cancel")
     public void cancelViewing(@RequestBody @Validated ViewingCancelRequestDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
