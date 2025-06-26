@@ -132,8 +132,7 @@ public class Member extends BaseEntity {
         this.nickname = dto.getNickname();
         this.gender = dto.getGender();
         this.interestRegion = dto.getInterestRegion();
-
-
+        this.profileImage = dto.getProfileImage();
 
     }
 
