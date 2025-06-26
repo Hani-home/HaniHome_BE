@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.member.web;
 
 import org.hanihome.hanihomebe.member.service.MemberService;
+import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
@@ -41,8 +42,8 @@ public class MemberController {
     }
 
     @PostMapping("/complete-profile")
-    public ResponseEntity<?> completeProfile(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO) {
-        memberService.completeProfile(userDetails.getUserId(), memberUpdateRequestDTO );
+    public ResponseEntity<?> completeProfile(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberCompleteProfileRequestDTO dto) {
+        memberService.completeProfile(userDetails.getUserId(), dto);
         return ResponseEntity.ok("회원 등록 성공");
     }
 
