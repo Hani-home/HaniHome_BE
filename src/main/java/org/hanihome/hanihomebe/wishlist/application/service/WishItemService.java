@@ -17,9 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,11 +39,11 @@ public class WishItemService {
         PROPERTY → PropertyWishTargetValidator,
         ...
     }
-
      */
+    private final Map<WishTargetType, WishTargetCounter> counterMap;
 
     @Autowired
-    public WishItemService(MemberRepository memberRepository, WishItemRepository wishItemRepository, List<WishTargetValidator> validators, PropertyRepository propertyRepository, PropertyMapper propertyMapper, List<WishTargetService> targetServices) {
+    public WishItemService(MemberRepository memberRepository, WishItemRepository wishItemRepository, List<WishTargetValidator> validators, PropertyRepository propertyRepository, PropertyMapper propertyMapper, List<WishTargetService> targetServices, List<WishTargetCounter> targetCounters) {
         this.memberRepository = memberRepository;
         this.wishItemRepository = wishItemRepository;
         this.validatorMap = validators.stream().collect(Collectors.toMap(WishTargetValidator::getType, v -> v));
@@ -49,6 +51,8 @@ public class WishItemService {
         this.propertyMapper = propertyMapper;
         this.wishTargetServiceMap = targetServices.stream()
                 .collect(Collectors.toMap(WishTargetService::getTargetType, s -> s));
+        this.counterMap = targetCounters.stream()
+                .collect(Collectors.toMap(WishTargetCounter::getTargetType, s -> s));
     }
 
     //매물 찜하기 Create
@@ -76,6 +80,12 @@ public class WishItemService {
 
         WishItem wishItem = member.addWishItem(targetType, targetId);
         wishItemRepository.save(wishItem);
+
+        //찜 수 증가가 처리 => 추후 스케쥴러로 찜 수를 정기적으로 맞춰줄 필요가 있을 것 같음.
+        WishTargetCounter counter = counterMap.get(targetType);
+        if (counter != null) {
+            counter.increment(targetId);
+        }
     }
 
     //삭제는 일단 추후. 영속성 떄문. property 단에서도 삭제를 해야하기 때문에 property 작업이 끝나면 진행하겠음
@@ -85,7 +95,7 @@ public class WishItemService {
     근데 또 막상이러니 Property, PropertyRepository, propertyMapper 다 주입해서 더 별로인 거 같기도 하네요... 이것도 validate한거처럼 수정하는 게 더 나을지도..
      */
 
-    public List<PropertyResponseDTO> getWishProperties(Long memberId) {
+    public List<PropertyResponseDTO> getWishProperties(Long memberId, String sort) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
@@ -99,9 +109,28 @@ public class WishItemService {
 
         List<Property> properties = propertyRepository.findAllById(propertyIds);
 
-        return properties.stream()
-                .map(propertyMapper::toResponseDto)
-                .toList();
+        if ("latest".equalsIgnoreCase(sort)) {
+            propertyWishes.sort(Comparator.comparing(WishItem::getCreatedAt).reversed());
+
+            Map<Long, Property> propertyMap = properties.stream()
+                    .collect(Collectors.toMap(Property::getId, p -> p));
+
+            return propertyWishes.stream()
+                    .map(WishItem::getTargetId)
+                    .map(propertyMap::get)
+                    .filter(Objects::nonNull)
+                    .map(propertyMapper::toResponseDto)
+                    .toList();
+        }
+
+        if ("popular".equalsIgnoreCase(sort)) {
+            return properties.stream()
+                    .sorted(Comparator.comparing(Property::getWishCount).reversed())
+                    .map(propertyMapper::toResponseDto)
+                    .toList();
+        }
+
+        throw new CustomException(ServiceCode.INVALID_SORT_OPTION);
     }
 
     public Map<WishTargetType, List<?>> getAllWishItems(Long memberId) {
@@ -119,11 +148,15 @@ public class WishItemService {
 
         // 각 타입별 Service 사용해 DTO 변환
         Map<WishTargetType, List<?>> result = new HashMap<>();
+
+
         for (Map.Entry<WishTargetType, List<Long>> entry : groupedIds.entrySet()) {
             WishTargetService service = wishTargetServiceMap.get(entry.getKey());
             if (service != null) {
                 result.put(entry.getKey(), service.getTargetDTOs(entry.getValue()));
             }
+
+
         }
 
         return result; // ex) { PROPERTY: [PropertyResponseDTO...], PRODUCT: [ProductResponseDTO...] }

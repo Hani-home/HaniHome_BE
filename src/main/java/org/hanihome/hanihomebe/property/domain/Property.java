@@ -154,6 +154,21 @@ public abstract class Property {
     /** 16. 매물 소개 */
     private String description;
 
+    /** 17. 찜한 수*/
+    @Column(name = "wish_count", nullable = false)
+    private int wishCount = 0;
+
+    // 찜한 수 up => 찜하기 추가 서비스 로직에서 사용
+    public void incrementWishCount() {
+        this.wishCount++;
+    }
+    //찜한 수 down => 찜하기 삭제 서비스 로직에서 사용 예정
+    public void decrementWishCount() {
+        if(this.wishCount >0){
+            this.wishCount--;
+        }
+    }
+
 
 
     /** 공통 DTO 변환 메서드 */
