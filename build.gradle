@@ -89,4 +89,17 @@
 
     tasks.named('test') {
         useJUnitPlatform()
+
+        def envFile = rootProject.file(".env.test")
+        if (envFile.exists()) {
+            println ".env.test detected — applying environment variables..."
+            envFile.eachLine { line ->
+                if (!line.startsWith("#") && line.contains("=")) {
+                    def (key, value) = line.split("=", 2)
+                    environment key.trim(), value.trim()
+                }
+            }
+        } else {
+            println ".env.test not found. Skipping env injection."
+        }
     }
