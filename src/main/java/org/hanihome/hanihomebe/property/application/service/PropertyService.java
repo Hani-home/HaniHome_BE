@@ -12,6 +12,7 @@ import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
@@ -19,6 +20,7 @@ import org.hanihome.hanihomebe.property.web.dto.*;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.RentPropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.SharePropertyResponseDTO;
+import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -94,6 +96,40 @@ public class PropertyService {
                 .orElseThrow(() -> new RuntimeException("Property not found: " + id));
 
         return propertyMapper.toResponseDto(findProperty);
+    }
+
+    /**
+     * 회원 별 Property 조회
+     */
+    public List<PropertyResponseDTO> getPropertiesByMemberId(Long memberId, CustomUserDetails userDetails) {
+        DisplayStatus displayStatus;
+        if (userDetails == null) {                        // 일반 사용자별 매물 조회
+            displayStatus = DisplayStatus.ACTIVE;
+        } else if (userDetails.getUserId() == memberId) { // 매물 소유자
+            displayStatus = null;
+        } else {
+            displayStatus = DisplayStatus.ACTIVE;
+        }
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
+        List<PropertyResponseDTO> dtos = propertyRepository.findByMemberAndDisplayStatus(findMember, displayStatus).stream()
+                .map(property -> propertyMapper.toResponseDto(property))
+                .toList();
+        return dtos;
+    }
+
+    /**
+     * 내 Property 조회
+     * */
+    public List<PropertyResponseDTO> getMyProperty(Long memberId) {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
+        List<PropertyResponseDTO> dtos = propertyRepository.findByMemberAndDisplayStatus(findMember, null).stream()
+                .map(property -> propertyMapper.toResponseDto(property))
+                .toList();
+        return dtos;
     }
 
     //update

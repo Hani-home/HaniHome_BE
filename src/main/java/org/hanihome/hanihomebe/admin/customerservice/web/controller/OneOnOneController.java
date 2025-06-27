@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin/one-on-one-consult")
+@RequestMapping("/api/v1")
 @RestController
 public class OneOnOneController {
     private final OneOnOneService oneOnOneService;
@@ -26,13 +26,13 @@ public class OneOnOneController {
     private final OneOnOneNotificationService oneOnOneNotificationService;
 
     // 상담 등록
-    @PostMapping
+    @PostMapping("/one-on-one-consult")
     public OneOnOneConsultResponseDTO create(@RequestBody OneOnOneConsultCreateDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return oneOnOneService.createOneOnOneConsult(dto, userDetails.getUserId());
     }
 
     // 모든 일대일 상담 내역 조회
-    @GetMapping
+    @GetMapping("/admin/one-on-one-consult")
     public List<OneOnOneConsultResponseDTO> getAll(@RequestParam(name = "status", required = false) OneOnOneConsultStatus status) {
         if (status != null) {
             return oneOnOneService.getAllByStatus(status);
@@ -42,13 +42,13 @@ public class OneOnOneController {
     }
 
     // 운영자는 문의에 이메일로 답변 완료
-    @PostMapping("/{oneOnOneConsultId}/reply")
+    @PostMapping("/admin/one-on-one-consult/{oneOnOneConsultId}/reply")
     public void replyByEmail(@PathVariable Long oneOnOneConsultId,
                              @AuthenticationPrincipal CustomUserDetails userDetails,
                              @RequestBody OneOnOneConsultReplyDTO dto) {
         // 1. OneOnOne 처리
         oneOnOneService.replyByEmail(oneOnOneConsultId, userDetails.getUserId());
         // 2. 알림 전송
-        oneOnOneNotificationService.sendOneOnOneConsultRepliedNotification(userDetails.getUserId());
+        oneOnOneNotificationService.sendOneOnOneConsultRepliedNotification(dto.getCustomerId());
     }
 }

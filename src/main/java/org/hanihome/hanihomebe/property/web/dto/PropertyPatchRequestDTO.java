@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import org.hanihome.hanihomebe.interest.region.Region;
-import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
-import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
-import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
+import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 
 import java.math.BigDecimal;
@@ -40,5 +38,8 @@ public abstract class PropertyPatchRequestDTO {
     private ParkingOption parkingOption;
     private Set<LocalDateTime> possibleMeetingDates;
     private String description;
+    private DisplayStatus displayStatus;
+    private TradeStatus tradeStatus;
+
 
 }
