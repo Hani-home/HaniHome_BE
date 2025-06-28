@@ -30,6 +30,7 @@ public sealed interface PropertyResponseDTO
     Region region();
     List<String> photoUrls();
     BigDecimal weeklyCost();
+    Boolean billIncluded();
     List<String> optionItemNames();
     String costDescription();
     BigDecimal deposit();
@@ -37,7 +38,10 @@ public sealed interface PropertyResponseDTO
     Integer noticePeriodWeeks();
     Integer minimumStayWeeks();
     String contractTerms();
-    Set<LocalDateTime> availableFrom();
+    LocalDateTime availableFrom();
+    LocalDateTime availableTo();
+    Boolean negotiable();
+    Boolean immediate();
     ParkingOption parkingOption();
     Set<LocalDateTime> possibleMeetingDates();
     String description();
