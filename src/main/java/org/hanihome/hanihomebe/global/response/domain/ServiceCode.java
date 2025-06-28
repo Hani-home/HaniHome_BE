@@ -23,6 +23,8 @@ public enum ServiceCode {
     MEMBER_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 ID의 회원이 존재하지 않습니다."),
     MEMBER_ALREADY_REGISTERED(HttpStatus.BAD_REQUEST, "이미 등록된 회원입니다"),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    REQUIRED_CONSENT_MISSING(HttpStatus.BAD_REQUEST, "필수 동의 항목에 모두 동의해야 합니다."),
+
 
     // jwt
     INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "리프레시 토큰 검증에 실패했습니다."),
@@ -71,6 +73,7 @@ public enum ServiceCode {
     //wishItem
     ALEADY_WISH_EXISTS(HttpStatus.BAD_REQUEST, "이미 찜한 매물입니다."),
     INVALID_TARGET_TYPE(HttpStatus.BAD_REQUEST, "지원하지 않는 타입입니다."),
+    INVALID_SORT_OPTION(HttpStatus.BAD_REQUEST, "지원하지 않는 정렬타입입니다."),
 
     // not defined
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),

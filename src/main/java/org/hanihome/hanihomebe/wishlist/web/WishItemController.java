@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -32,15 +33,16 @@ public class WishItemController {
     }
 
     @GetMapping("/properties")
-    public ResponseEntity<List<PropertyResponseDTO>> getWishProperty(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<PropertyResponseDTO>> getWishProperty(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "latest") String sort ) { //sort latest, popular
 
-        List<PropertyResponseDTO> response = wishItemService.getWishProperties(userDetails.getUserId());
+        List<PropertyResponseDTO> response = wishItemService.getWishProperties(userDetails.getUserId(), sort);
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
     public ResponseEntity<Map<WishTargetType, List<?>>> getAllWishItems(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
         Long memberId = userDetails.getUserId();
         Map<WishTargetType, List<?>> wishMap = wishItemService.getAllWishItems(memberId);
         return ResponseEntity.ok(wishMap);

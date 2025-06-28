@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hanihome.hanihomebe.global.BaseEntity;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.member.web.dto.ConsentAgreementDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.verification.domain.Verification;
@@ -75,9 +77,20 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishItem> wishItems = new ArrayList<>();
 
+    // 관심지역 필드 일단 스트링으로 해두겠음. 추후 region 클래스 생기면 수정할게요
+    @Column(name = "interest_region")
+    private String interestRegion;
+
     //회원가입 여부 확인용
     @Column(nullable = false)
     private boolean isRegistered = false;
+
+    //동의 내역
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Consent> consents = new ArrayList<>();
+
+    //광고마케팅 동의는 따로 boolean으로 빼도 좋을 듯. 알림 보낼 때 자주쓰니까
+
 
     public static Member createFromGoogleSignUp(String email, String googleId) {
         return Member.builder()
@@ -106,6 +119,21 @@ public class Member extends BaseEntity {
         if (memberUpdateRequestDTO.getPhoneNumber() != null) this.phoneNumber = memberUpdateRequestDTO.getPhoneNumber();
         if (memberUpdateRequestDTO.getGender() != null) this.gender = memberUpdateRequestDTO.getGender();
         if (memberUpdateRequestDTO.getProfileImage() != null) this.profileImage = memberUpdateRequestDTO.getProfileImage();
+    }
+
+    public void completeProfile(MemberCompleteProfileRequestDTO dto) {
+        if (this.isRegistered) {
+            throw new CustomException(ServiceCode.MEMBER_ALREADY_REGISTERED);
+        }
+
+        // 프로필 정보 설정
+        this.name = dto.getName();
+        this.phoneNumber = dto.getPhoneNumber();
+        this.nickname = dto.getNickname();
+        this.gender = dto.getGender();
+        this.interestRegion = dto.getInterestRegion();
+        this.profileImage = dto.getProfileImage();
+
     }
 
     public void markAsRegistered() {
