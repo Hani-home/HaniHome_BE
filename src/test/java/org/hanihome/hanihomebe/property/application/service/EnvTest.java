@@ -25,6 +25,6 @@ public class EnvTest {
 
     @Test
     public void test() {
-        System.out.println("env load success, JWTSECRET_KEY: " + secretKey);
+        System.out.println("env load success, JWTSECRET_KEY: ");
     }
 }
