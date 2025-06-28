@@ -63,6 +63,7 @@ class PropertyServiceTest {
         optionItemRepository.save(OptionItem.createDefault(category, "item3"));
         memberId = memberRepository.save(Member.builder()
                 .email("test@hanihome.com")
+                .password("<PASSWORD>")
                 .birthDate(LocalDate.now())
                 .gender(Gender.MALE)
                 .role(Role.GUEST)
