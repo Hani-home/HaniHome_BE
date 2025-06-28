@@ -5,6 +5,7 @@ import org.hanihome.hanihomebe.property.application.service.PropertySearchServic
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.web.dto.PropertySearchConditionDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,7 +24,7 @@ public class PropertySearchController {
 
     @GetMapping("/search")
     public Map<PropertySuperType,List<PropertyResponseDTO>> searchProperties(
-            @ModelAttribute PropertySearchConditionDTO conditionDTO,
+            @ParameterObject PropertySearchConditionDTO conditionDTO,
             Pageable pageable) {
         return propertySearchService.search(conditionDTO);
     }
