@@ -42,12 +42,18 @@ public class VerificationService {
 
     //Read. 사용자 본인 신원인증 불러오기
     public List<VerificationResponseDTO> getMyAllVerifications(Long memberId) {
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
         List<Verification> verifications = verificationRepository.findAllByMemberId(memberId);
         return VerificationConverter.toVerificationResponseDTOList(verifications);
     }
 
     //Read. 사용자 본인 신원인증 요청 개별로 불러오기
     public VerificationResponseDTO getMyVerification(Long memberId, Long verificationId) {
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
         Verification verification = verificationRepository.findByIdAndMemberId(verificationId, memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
 
@@ -59,7 +65,7 @@ public class VerificationService {
         List<Verification> verifications = verificationRepository.findAll();
         return VerificationConverter.toVerificationResponseDTOList(verifications);
     }
-
+    //Read. 관리자 개별 신원인증 불러오기
     public Verification getVerificationById(Long verificationId) {
         return verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
