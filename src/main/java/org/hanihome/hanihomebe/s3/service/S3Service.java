@@ -17,18 +17,21 @@ import java.net.URISyntaxException;
 import java.time.Duration;
 
 @Service
-@RequiredArgsConstructor
 public class S3Service {
 
-    //Presigned URL 생성 전용 객체, Config에서 Bean으로 등록하여 주입받음
     private final S3Presigner s3Presigner;
+    private final String bucketName;
+    private final String region;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
-
-    @Value("${cloud.aws.region.static}")
-    private String region;
-
+    public S3Service(
+            S3Presigner s3Presigner,
+            @Value("${cloud.aws.s3.bucket}") String bucketName,
+            @Value("${cloud.aws.region.static}") String region
+    ) {
+        this.s3Presigner = s3Presigner;
+        this.bucketName = bucketName;
+        this.region = region;
+    }
     //PresignedUrl 생성 메서드, 파일 이름과  폴더명을 받아 presigned URL과 실제 접근 가능한 fileUrl 생성해서 반환
     /**
      * 파일 이름과 폴더명을 받아 Presigned URL과 실제 접근 가능한 fileUrl을 생성해 반환

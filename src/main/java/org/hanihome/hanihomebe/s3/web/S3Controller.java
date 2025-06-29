@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.s3.web;
 
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.s3.web.dto.S3ProfileRequestDTO;
 import org.hanihome.hanihomebe.s3.web.dto.S3RequestDTO;
 import org.hanihome.hanihomebe.s3.web.dto.S3ResponseDTO;
 import org.hanihome.hanihomebe.s3.service.S3Service;
@@ -69,5 +70,12 @@ public class S3Controller {
                 }).toList();
 
         return dtos;
+    }
+
+    @PostMapping("/profiles/presigned-url")
+    public S3ResponseDTO getProfilePresignedUrl(@RequestBody S3ProfileRequestDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        String extension = dto.getFileExtension();
+        String fileName = userDetails.getUserId() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + UUID.randomUUID() + "." + extension;
+        return s3Service.generatePresignedUrl(fileName, "profile");
     }
 }

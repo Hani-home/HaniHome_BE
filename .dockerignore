@@ -15,6 +15,7 @@ build/
 
 # 환경파일 (중요: .env 노출 방지!)
 .env
+.env.test
 
 # Git
 .git/
