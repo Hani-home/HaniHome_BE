@@ -14,6 +14,7 @@ import org.hanihome.hanihomebe.item.domain.OptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.SharePropertyCreateRequestDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,13 +58,14 @@ class PropertyServiceTest {
 
     @BeforeEach
     void init() {
-        OptionCategory category = OptionCategory.create(CategoryCode.PROPERTY_CAT1);
+        OptionCategory category = OptionCategory.create(CategoryCode.PROPERTY_CAT4);
         optionCategoryRepository.save(category);
         optionItemRepository.save(OptionItem.createDefault(category, "item1"));
         optionItemRepository.save(OptionItem.createDefault(category, "item2"));
         optionItemRepository.save(OptionItem.createDefault(category, "item3"));
         memberId = memberRepository.save(Member.builder()
                 .email("test@hanihome.com")
+                .password("<PASSWORD>")
                 .birthDate(LocalDate.now())
                 .gender(Gender.MALE)
                 .role(Role.GUEST)
@@ -81,28 +83,41 @@ class PropertyServiceTest {
     void createProperty() {
         //given
         // 예시: RentPropertyCreateRequestDTO 인스턴스 생성하기
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments");
+        List<String> photoUrls = List.of("https://example.com/1.jpg", "https://example.com/2.jpg");
+        BigDecimal deposit = new BigDecimal("800.00");
+        BigDecimal keyDeposit = new BigDecimal("100.00");
+        LocalDateTime availableFrom = LocalDateTime.of(2025, 7, 1, 12, 0);
+        LocalDateTime availableTo = LocalDateTime.of(2025, 12, 31, 12, 0);
+        BigDecimal weeklyCost = new BigDecimal("100.00");
+
         RentPropertyCreateRequestDTO dto = new RentPropertyCreateRequestDTO(
-                memberId,                                   // Long memberId
-                PropertySuperType.RENT,                 // PropertySuperType kind
-                GenderPreference.ANY,                       // GenderPreference genderPreference
-                new Region("Seoul", "Gangnam-gu", "Yeoksam-dong", "123-45", "strret", "123", "123", "building"), // Region region
-                List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg"), // List<String> photoUrls
-                BigDecimal.valueOf(250),                    // BigDecimal weeklyCost
-                List.of(1L, 2L, 3L),                        // List<Long> allOptionItemIds
-                "물/전기/인터넷 포함",                      // String costDescription
-                BigDecimal.valueOf(500),                    // BigDecimal deposit
-                BigDecimal.valueOf(100),                    // BigDecimal keyDeposit
-                3,                                          // Integer noticePeriodWeeks
-                4,                                          // Integer minimumStayWeeks
-                "최소 4주 거주 후 연장 가능",               // String contractTerms
-                Set.of(LocalDateTime.of(2025, 7, 1, 10, 0)),// Set<LocalDateTime> availableFrom
-                ParkingOption.RESERVED_SPACE,               // ParkingOption parkingOption
-                Set.of(LocalDateTime.of(2025, 6, 10, 14, 0), LocalDateTime.of(2025, 6, 12, 10, 0)), // Set<LocalDateTime> viewingDates
-                "강남역 도보 5분, 신축 3층",                 // String description
+                memberId, // memberId
+                PropertySuperType.RENT,
+                GenderPreference.ANY,
+                region,
+                photoUrls,
+                weeklyCost,
+                true,
+                List.of(1L, 2L, 3L), // optionItemIds
+                "전기세, 수도세 포함",
+                deposit,
+                keyDeposit,
+                4, // noticePeriodWeeks
+                12, // minimumStayWeeks
+                "6개월 이상 계약 가능",
+                availableFrom,
+                availableTo,
+                true,
+                true,
+                ParkingOption.STREET_PARKING,
+                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                "깨끗하고 조용한 마스터룸입니다.",
+                // Rent 전용 필드
                 RentPropertySubType.HOUSE,
-                RealEstateType.REAL_ESTATE,
+                RealEstateType.INDIVIDUAL,
                 CapacityRent.FOUR,
-                Exposure.EASTERN
+                Exposure.SOUTHERN
         );
         //when
         Long id = propertyService.createProperty(dto).id();

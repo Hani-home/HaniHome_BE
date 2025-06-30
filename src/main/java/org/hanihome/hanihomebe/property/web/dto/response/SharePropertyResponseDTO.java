@@ -17,6 +17,7 @@ public record SharePropertyResponseDTO(
         Region region,
         List<String> photoUrls,
         BigDecimal weeklyCost,
+        Boolean billIncluded,
         List<String> optionItemNames,
         String costDescription,
         BigDecimal deposit,
@@ -24,7 +25,10 @@ public record SharePropertyResponseDTO(
         Integer noticePeriodWeeks,
         Integer minimumStayWeeks,
         String contractTerms,
-        Set<LocalDateTime> availableFrom,
+        LocalDateTime availableFrom,
+        LocalDateTime availableTo,
+        Boolean negotiable,
+        Boolean immediate,
         ParkingOption parkingOption,
         Set<LocalDateTime> possibleMeetingDates,
         String description,
@@ -73,10 +77,6 @@ public record SharePropertyResponseDTO(
                 new ArrayList<>(shareProperty.getPhotoUrls()) : // 방어적 복사
                 Collections.emptyList();
 
-        Set<LocalDateTime> extractedAvailableFrom = (shareProperty.getAvailableFrom() != null) ?
-                new HashSet<>(shareProperty.getAvailableFrom()) :
-                Collections.emptySet();
-
         Set<LocalDateTime> extractedpossibleMeetingDates = (shareProperty.getPossibleMeetingDates() != null) ?
                 new HashSet<>(shareProperty.getPossibleMeetingDates()) :
                 Collections.emptySet();
@@ -89,6 +89,7 @@ public record SharePropertyResponseDTO(
                 shareProperty.getRegion(),
                 extractedPhotoUrls,
                 shareProperty.getWeeklyCost(),
+                shareProperty.isBillIncluded(),
                 extractedOptionItemNames,
                 shareProperty.getCostDescription(),
                 shareProperty.getDeposit(),
@@ -96,7 +97,10 @@ public record SharePropertyResponseDTO(
                 shareProperty.getNoticePeriodWeeks(),
                 shareProperty.getMinimumStayWeeks(),
                 shareProperty.getContractTerms(),
-                extractedAvailableFrom,
+                shareProperty.getAvailableFrom(),
+                shareProperty.getAvailableTo(),
+                shareProperty.isNegotiable(),
+                shareProperty.isImmediate(),
                 shareProperty.getParkingOption(),
                 extractedpossibleMeetingDates,
                 shareProperty.getDescription(),

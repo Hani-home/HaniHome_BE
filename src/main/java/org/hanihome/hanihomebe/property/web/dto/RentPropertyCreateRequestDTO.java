@@ -24,6 +24,7 @@ public record RentPropertyCreateRequestDTO(
         Region region,                              // 주소 정보 (Embedded 타입)
         List<String> photoUrls,                     // 매물 사진 URL 리스트
         BigDecimal weeklyCost,                      // 주 단위 비용
+        boolean billIncluded,
         List<Long> optionItemIds,       // 포함된 비용 항목 리스트
         String costDescription,                     // 비용 설명 (TEXT)
         BigDecimal deposit,                         // 보증금
@@ -31,7 +32,10 @@ public record RentPropertyCreateRequestDTO(
         Integer noticePeriodWeeks,                  // 노티스(주 단위)
         Integer minimumStayWeeks,                   // 최소 거주 기간(주 단위)
         String contractTerms,                       // 계약 형태 설명
-        Set<LocalDateTime> availableFrom,           // 입주 가능일(시간 단위) 집합
+        LocalDateTime availableFrom,           // 입주 가능일(시간 단위) 집합
+        LocalDateTime availableTo,
+        boolean immediate,
+        boolean negotiable,
         ParkingOption parkingOption,                // 주차 옵션
         Set<LocalDateTime> possibleMeetingDates,            // 뷰잉 가능 날짜 집합
         String description,                         // 매물 소개
@@ -46,9 +50,6 @@ public record RentPropertyCreateRequestDTO(
         }
         if (optionItemIds == null) {
             optionItemIds = new ArrayList<>();
-        }
-        if (availableFrom == null) {
-            availableFrom = new HashSet<>();
         }
         if (possibleMeetingDates == null) {
             possibleMeetingDates = new HashSet<>();

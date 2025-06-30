@@ -18,10 +18,10 @@ public class PropertyOptionItem {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY) @JoinColumn(name = "property_id")
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "property_id", nullable = false)
     private Property property;
 
-    @ManyToOne(fetch = LAZY) @JoinColumn(name = "option_item_id")
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "option_item_id", nullable = false)
     private OptionItem optionItem;
 
     private String optionItemName;
