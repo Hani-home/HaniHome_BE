@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PropertyRepository extends JpaRepository<Property, Long> {
+public interface PropertyRepository extends JpaRepository<Property, Long>, PropertySearchRepository {
     /**
      * 특정 회원이 가진 매물을 노출상태에 따라 조회
      * @param member 매물 호스트

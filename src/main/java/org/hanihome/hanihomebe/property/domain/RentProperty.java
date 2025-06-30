@@ -27,6 +27,7 @@ public class RentProperty extends Property {
     private RentPropertySubType rentPropertySubType;
 
     /** 2.  부동산 중개 여부*/
+    @Enumerated(EnumType.STRING)
     private RealEstateType isRealEstateIntervention;
 
     /** 3. 거주 인원  */
@@ -43,6 +44,7 @@ public class RentProperty extends Property {
                 .region(dto.region())
                 .photoUrls(dto.photoUrls())
                 .weeklyCost(dto.weeklyCost())
+                .isBillIncluded(dto.billIncluded())
                 .costDescription(dto.costDescription())
                 .deposit(dto.deposit())
                 .keyDeposit(dto.keyDeposit())
@@ -50,6 +52,9 @@ public class RentProperty extends Property {
                 .minimumStayWeeks(dto.minimumStayWeeks())
                 .contractTerms(dto.contractTerms())
                 .availableFrom(dto.availableFrom())
+                .availableTo(dto.availableTo())
+                .isImmediate(dto.immediate())
+                .isNegotiable(dto.negotiable())
                 .parkingOption(dto.parkingOption())
                 .possibleMeetingDates(dto.possibleMeetingDates())
                 .description(dto.description())

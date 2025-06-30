@@ -30,15 +30,28 @@
         // mysql
         runtimeOnly 'com.mysql:mysql-connector-j'
 
+        // h2DB for test
+        runtimeOnly 'com.h2database:h2'
+
+        // QueryDSL
+        implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+        annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta' // Q타입 생성
+        annotationProcessor("jakarta.persistence:jakarta.persistence-api:3.1.0") // 어노테이션 분석용(JPA 어노테이션 모음)
+        annotationProcessor("jakarta.annotation:jakarta.annotation-api:2.1.1")   // 어노테이션 분석용(Jakarta 어노테이션 모음)
+
         // spring web
         implementation 'org.springframework.boot:spring-boot-starter-web'
+
+        //spring test
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
         //lombok
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
 
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
         // security
         implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -85,6 +98,25 @@
         implementation 'software.amazon.awssdk:s3control:2.27.3'
         implementation 'software.amazon.awssdk:s3outposts:2.27.3'
 
+    }
+
+    def querydslDir = "build/generated/querydsl"
+
+    //여기 있는 소스도 main 코드처럼 컴파일하라 (읽기 대상 등록)
+    sourceSets {
+        main.java.srcDirs += [querydslDir]
+    }
+
+    // Annotation Processor 출력 경로 설정
+    // QueryDSL APT가 이 경로에 Q 파일을 생성하라
+    // 1. JavaCompile 태스크에 직접 설정 (권장)
+    tasks.withType(JavaCompile) {
+        options.generatedSourceOutputDirectory = file(querydslDir)
+    }
+
+    // clean 태스크 실행시 Q타입 디렉토리 삭제
+    clean {
+        delete file(querydslDir)
     }
 
     tasks.named('test') {

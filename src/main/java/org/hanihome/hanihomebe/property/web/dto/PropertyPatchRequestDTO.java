@@ -34,7 +34,8 @@ public abstract class PropertyPatchRequestDTO {
     private Integer noticePeriodWeeks;
     private Integer minimumStayWeeks;
     private String contractTerms;
-    private Set<LocalDateTime> availableFrom;
+    private LocalDateTime availableFrom;
+    private LocalDateTime availableTo;
     private ParkingOption parkingOption;
     private Set<LocalDateTime> possibleMeetingDates;
     private String description;

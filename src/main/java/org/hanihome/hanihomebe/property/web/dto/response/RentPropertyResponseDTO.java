@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.property.web.dto.response;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.enums.*;
+import org.hibernate.validator.internal.util.privilegedactions.LoadClass;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public record RentPropertyResponseDTO(
         Region region,
         List<String> photoUrls,
         BigDecimal weeklyCost,
+        Boolean billIncluded,
         List<String> optionItemNames,
         String costDescription,
         BigDecimal deposit,
@@ -23,7 +25,10 @@ public record RentPropertyResponseDTO(
         Integer noticePeriodWeeks,
         Integer minimumStayWeeks,
         String contractTerms,
-        Set<LocalDateTime> availableFrom,
+        LocalDateTime availableFrom,
+        LocalDateTime availableTo,
+        Boolean negotiable,
+        Boolean immediate,
         ParkingOption parkingOption,
         Set<LocalDateTime> possibleMeetingDates,
         String description,
@@ -52,10 +57,6 @@ public record RentPropertyResponseDTO(
             new ArrayList<>(rentProperty.getPhotoUrls()) :
             Collections.emptyList();
 
-        // availableFrom 추출 (방어적 복사)
-    Set<LocalDateTime> extractedAvailableFrom = (rentProperty.getAvailableFrom() != null) ?
-            new HashSet<>(rentProperty.getAvailableFrom()) :
-            Collections.emptySet();
 
         // possibleMeetingDates 추출 (방어적 복사)
     Set<LocalDateTime> extractedpossibleMeetingDates = (rentProperty.getPossibleMeetingDates() != null) ?
@@ -70,6 +71,7 @@ public record RentPropertyResponseDTO(
             rentProperty.getRegion(),
             photoUrls,
             rentProperty.getWeeklyCost(),
+            rentProperty.isBillIncluded(),
             optionItemNames,
             rentProperty.getCostDescription(),
             rentProperty.getDeposit(),
@@ -77,7 +79,10 @@ public record RentPropertyResponseDTO(
             rentProperty.getNoticePeriodWeeks(),
             rentProperty.getMinimumStayWeeks(),
             rentProperty.getContractTerms(),
-            extractedAvailableFrom,
+            rentProperty.getAvailableFrom(),
+            rentProperty.getAvailableTo(),
+            rentProperty.isNegotiable(),
+            rentProperty.isImmediate(),
             rentProperty.getParkingOption(),
             extractedpossibleMeetingDates,
             rentProperty.getDescription(),

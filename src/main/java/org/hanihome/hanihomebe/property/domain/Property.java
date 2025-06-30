@@ -1,5 +1,6 @@
 package org.hanihome.hanihomebe.property.domain;
 
+import com.querydsl.core.BooleanBuilder;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -21,6 +22,8 @@ import java.util.Set;
 
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
+//TODO: 엔티티들 제약조건 모두 작성필요
+//  DTO도 검증 제약조건 작성 필요
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -88,6 +91,7 @@ public abstract class Property {
     // 8-1. 비용 (주 단위)
     @Column(nullable = false)
     private BigDecimal weeklyCost;
+    private boolean isBillIncluded;
 
     // 8-2. 포함된 비용항목: 수도세, 전기세 ...
     // 해당 엔티티는 독립적인 CRUD가 없을거라고 예상되므로 양방향+cascade해도 무방해보임
@@ -118,10 +122,10 @@ public abstract class Property {
     /**
      * 11. 입주 가능일 (시간 단위)
      */
-    @ElementCollection
-    @CollectionTable(name = "property_available_from", joinColumns = @JoinColumn(name = "property_id"))
-    @Column(name = "available_from")
-    private Set<LocalDateTime> availableFrom = new HashSet<>();
+    private LocalDateTime availableFrom;
+    private LocalDateTime availableTo;
+    private boolean isImmediate;
+    private boolean isNegotiable;
 
     /** 12. 기타 허용/불가 */
 /* OptionItem에서 처리

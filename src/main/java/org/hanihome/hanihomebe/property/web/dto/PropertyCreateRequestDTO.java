@@ -50,7 +50,9 @@ public sealed interface PropertyCreateRequestDTO permits
 
     String contractTerms();
 
-    Set<LocalDateTime> availableFrom();
+//    Set<LocalDateTime> availableFrom();
+    LocalDateTime availableFrom();
+    LocalDateTime availableTo();
 
     ParkingOption parkingOption();
 
