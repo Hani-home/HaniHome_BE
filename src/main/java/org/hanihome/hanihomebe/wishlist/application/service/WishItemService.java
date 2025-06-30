@@ -56,7 +56,7 @@ public class WishItemService {
     }
 
     //매물 찜하기 Create
-    public void addWishItem(Long memberId, WishTargetType targetType, Long targetId) {
+    public WishItem addWishItem(Long memberId, WishTargetType targetType, Long targetId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
@@ -78,14 +78,20 @@ public class WishItemService {
             throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
         }
 
-        WishItem wishItem = member.addWishItem(targetType, targetId);
-        wishItemRepository.save(wishItem);
+        WishItem wishItem = WishItem.createFrom(member, targetType, targetId);
+
+        member.addWishItem(wishItem);
+
+        WishItem saved = wishItemRepository.save(wishItem);
 
         //찜 수 증가가 처리 => 추후 스케쥴러로 찜 수를 정기적으로 맞춰줄 필요가 있을 것 같음.
         WishTargetCounter counter = counterMap.get(targetType);
         if (counter != null) {
             counter.increment(targetId);
         }
+
+        return saved;
+
     }
 
     //삭제는 일단 추후. 영속성 떄문. property 단에서도 삭제를 해야하기 때문에 property 작업이 끝나면 진행하겠음

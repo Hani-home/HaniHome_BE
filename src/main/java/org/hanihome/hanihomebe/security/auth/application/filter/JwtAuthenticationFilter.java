@@ -54,8 +54,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 || path.startsWith("/api/v1/auth/social/login")
                 || path.equals("/health")
                 || path.equals("/api/v1/auth/login")
-                || path.equals("/api/v1/members/signup")
-                || path.equals("/api/v1/auth/refresh"); // 필요하면 추가
+                || path.equals("/api/v1/members/signup");
+        // 필요하면 추가
 
     }
 
@@ -72,7 +72,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if (accessToken == null) {
-                throw new CustomException(ServiceCode.ACCESS_TOKEN_MISSING);
+                filterChain.doFilter(request, response);
+                return;
             }
 
             if (jwtUtils.validateToken(accessToken)) {

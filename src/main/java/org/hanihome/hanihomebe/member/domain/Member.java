@@ -74,6 +74,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Verification> verifications = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishItem> wishItems = new ArrayList<>();
 
@@ -141,7 +142,7 @@ public class Member extends BaseEntity {
     }
 
     //WishItem 추가, 제거 메서드
-    public WishItem addWishItem(WishTargetType targetType, Long targetId) {
+    public void addWishItem(WishItem wishItem) {
         //중복 검사(DB 제약으로도 설정하면 좋을 것 같음)
         /*
         stream: 리스트 모든 요소 순회
@@ -152,17 +153,15 @@ public class Member extends BaseEntity {
          */
         boolean alreadyWished = this.wishItems.stream()
                 .anyMatch(wish ->
-                                        wish.getTargetType()==targetType &&
-                                        wish.getTargetId().equals(targetId)
+                                        wish.getTargetType()==wishItem.getTargetType() &&
+                                        wish.getTargetId().equals(wishItem.getTargetId())
                 );
 
         if(alreadyWished){
             throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
         }
 
-        WishItem wishItem = WishItem.createFrom(this, targetType, targetId);
         this.wishItems.add(wishItem);
-        return wishItem;
     }
 
     public void removeWishItem(WishTargetType targetType, Long targetId) {
