@@ -70,7 +70,9 @@ public class ShareProperty extends Property {
                 .isImmediate(dto.immediate())
                 .isNegotiable(dto.negotiable())
                 .parkingOption(dto.parkingOption())
-                .possibleMeetingDates(dto.possibleMeetingDates())
+                .meetingDateFrom(dto.meetingDateFrom())
+                .meetingDateTo(dto.meetingDateTo())
+                .timeSlots(dto.timeSlots())
                 .description(dto.description())
                 .sharePropertySubType(dto.sharePropertySubType())   // 고유필드 1
                 .internalArea(dto.internalArea())                   // 2-1. 실제 사용 면적

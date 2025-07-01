@@ -14,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -156,13 +157,29 @@ public abstract class Property {
 */
 
     /**
-     * 15. 뷰잉 가능 날짜
+     * 15-1 뷰잉 가능 날짜
+     * */
+    private LocalDate meetingDateFrom;
+    private LocalDate meetingDateTo;
+
+    /**
+     * 15-2 뷰잉 가능 시간
+     * 최소 1개, 최대 3개
      */
     @ElementCollection
-    @CollectionTable(name = "property_possible_meeting_dates",
+    @CollectionTable(name = "property_time_slot",
             joinColumns = @JoinColumn(name = "property_id"))
-    @Column(name = "meeting_date")
-    private Set<LocalDateTime> possibleMeetingDates = new HashSet<>();
+    @AttributeOverrides({   // 컬렉션 테이블의 칼럼 개수가 2개이므로 값 설정
+            @AttributeOverride(
+                    name = "timeFrom",
+                    column = @Column(name = "time_from", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "timeTo",
+                    column = @Column(name = "time_to", nullable = false)
+            )
+    })
+    private List<TimeSlot> timeSlots = new ArrayList<>();   // 00:00 ~ 24:00, 단위: 30분
 
     /** 16. 매물 소개 */
     private String description;
@@ -230,8 +247,14 @@ public abstract class Property {
         if (dto.getParkingOption() != null) {
             this.parkingOption = dto.getParkingOption();
         }
-        if (dto.getPossibleMeetingDates() != null) {
-            this.possibleMeetingDates = dto.getPossibleMeetingDates();
+        if (dto.getMeetingDateFrom() != null) {
+            this.meetingDateFrom = dto.getMeetingDateFrom();
+        }
+        if(dto.getMeetingDateTo() != null) {
+            this.meetingDateTo = dto.getMeetingDateTo();
+        }
+        if (dto.getTimeSlots() != null) {
+            this.timeSlots = dto.getTimeSlots();
         }
         if (dto.getDescription() != null) {
             this.description = dto.getDescription();
