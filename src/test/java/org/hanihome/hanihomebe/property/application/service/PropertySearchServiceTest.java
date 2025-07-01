@@ -260,8 +260,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-
-        assertTrue(results.isEmpty());
+          results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
 
 
@@ -304,7 +305,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
 
     /// 입주 가능일
@@ -350,7 +353,10 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
+
     }
 
     @Test
@@ -474,7 +480,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
     @Test
     void shouldReturnFourProperty_whenFilterByBillIncluded_true() {
@@ -494,7 +502,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
     @Test
     void shouldReturnZeroProperty_whenFilterByImmediate_false() {
@@ -504,7 +514,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
     private static void logging(Map<PropertySuperType, List<PropertyResponseDTO>> results) {
         log.info("results: {}", results);
