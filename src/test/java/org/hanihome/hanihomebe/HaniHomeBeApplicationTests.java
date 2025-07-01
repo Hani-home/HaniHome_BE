@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 class HaniHomeBeApplicationTests {
 
+    /* build.gradle 에 작성
     @BeforeAll
     static void setupEnv() {
         Dotenv dotenv = Dotenv.configure()
@@ -20,6 +21,7 @@ class HaniHomeBeApplicationTests {
             System.setProperty(entry.getKey(), entry.getValue());
         });
     }
+     */
     @Test
     void hello() {
 

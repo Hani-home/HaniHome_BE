@@ -9,9 +9,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest
+@ActiveProfiles("test")
 public class EnvTest {
-    @Value("${JWT_SECRET_KEY}")
-    String secretKey;
+
 
     @BeforeAll
     static void setupEnv() {
@@ -26,6 +26,6 @@ public class EnvTest {
 
     @Test
     public void test() {
-        System.out.println("env load success, JWTSECRET_KEY: " + secretKey);
+        System.out.println("env load success, JWTSECRET_KEY: ");
     }
 }

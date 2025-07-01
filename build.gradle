@@ -120,5 +120,25 @@
     }
 
     tasks.named('test') {
+
         useJUnitPlatform()
+        //./gradlew test 실행 시 자동으로 .env.test 주입
+        def envFile = rootProject.file(".env.test") //.env.test 확인
+
+        /*
+        env.test 파일이 존재한다면
+        한줄한줄 읽어서 key value 분리해서 주입
+         */
+        if (envFile.exists()) {
+            println ".env.test detected — applying environment variables..."
+            envFile.eachLine { line ->
+                if (!line.startsWith("#") && line.contains("=")) {
+                    def (key, value) = line.split("=", 2)
+                    environment key.trim(), value.trim()
+                }
+            }
+        } else {
+            //env.test 없으면 출력
+            println ".env.test not found. Skipping env injection."
+        }
     }
