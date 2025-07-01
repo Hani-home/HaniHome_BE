@@ -60,9 +60,11 @@ public class VerificationService {
         return VerificationConverter.toVerificationResponseDTOList(verifications);
     }
 
-    public Verification getVerificationById(Long verificationId) {
-        return verificationRepository.findById(verificationId)
+    public VerificationResponseDTO getVerificationById(Long verificationId) {
+        Verification findVerification = verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
+
+        return VerificationConverter.toVerificationResponseDTO(findVerification);
     }
 
     //Update. 관리자가 신원 인증 승인 or 반려
