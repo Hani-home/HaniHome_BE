@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@Disabled //테스트 파일 수정 안 된 거 같아서 일단 막아두겠습니다!! 다시 작성하시고 풀어주세요!
 @ActiveProfiles("test")
 @SpringBootTest
 @Transactional

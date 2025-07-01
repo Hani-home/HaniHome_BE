@@ -155,7 +155,7 @@ class PropertySearchServiceTest {
                 ParkingOption.STREET_PARKING,
                 Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
                 "깨끗하고 조용한 마스터룸입니다.",
-        // Rent 전용 필드
+                // Rent 전용 필드
                 RentPropertySubType.HOUSE,
                 RealEstateType.INDIVIDUAL,
                 CapacityRent.FOUR,

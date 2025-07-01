@@ -70,32 +70,46 @@ public class WishItemServiceTest {
 
         memberId = memberRepository.save(member).getId();
 
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments");
+        List<String> photoUrls = List.of("https://example.com/1.jpg", "https://example.com/2.jpg");
+        BigDecimal deposit = new BigDecimal("800.00");
+        BigDecimal keyDeposit = new BigDecimal("100.00");
+
+        LocalDateTime availableFrom = LocalDateTime.of(2025, 5, 5, 5, 5);
+        LocalDateTime availableTo = LocalDateTime.of(2025, 5, 10, 5, 5);
+
+        BigDecimal weeklyCost = new BigDecimal("100.00");
+
         SharePropertyCreateRequestDTO dto = new SharePropertyCreateRequestDTO(
-                null,
+                memberId, // memberId
                 PropertySuperType.SHARE,
                 GenderPreference.ANY,
-                new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments"),  // Region은 Embedded 객체니까 생성자 맞춰줘야 해
-                List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg"),
-                BigDecimal.valueOf(250),
-                List.of(),  // optionItemIds
-                "관리비 포함",
-                BigDecimal.valueOf(500),
-                BigDecimal.valueOf(200),
-                2,
-                4,
-                "계약 조건 설명",
-                Set.of(LocalDateTime.now().plusDays(3)),  // 입주 가능일
-                ParkingOption.NONE,
-                Set.of(LocalDateTime.now().plusDays(1)),  // 뷰잉 가능일
-                "깔끔한 쉐어하우스입니다.",
-                SharePropertySubType.SECOND_ROOM,
-                15.5,
-                100.0,
-                4,
-                2,
+                region,
+                photoUrls,
+                weeklyCost,
+                true,
+                List.of(1L, 2L, 3L), // optionItemIds
+                "전기세, 수도세 포함",
+                deposit,
+                keyDeposit,
+                4, // noticePeriodWeeks
+                12, // minimumStayWeeks
+                "6개월 이상 계약 가능",
+                availableFrom,
+                availableTo,
+                true,
+                true,
+                ParkingOption.STREET_PARKING,
+                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                "깨끗하고 조용한 마스터룸입니다.",
+                SharePropertySubType.MASTER_ROOM,
+                10.0, // internalArea
+                50.0, // totalArea
                 3,
                 2,
-                CapacityShare.SINGLE
+                5,
+                2,
+                CapacityShare.DOUBLE
         );
 
         ShareProperty shareProperty = ShareProperty.create(dto, member);
