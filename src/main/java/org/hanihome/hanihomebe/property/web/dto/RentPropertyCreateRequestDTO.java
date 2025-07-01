@@ -1,12 +1,20 @@
 package org.hanihome.hanihomebe.property.web.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
+import org.hanihome.hanihomebe.property.domain.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 
 import java.util.ArrayList;
@@ -37,7 +45,12 @@ public record RentPropertyCreateRequestDTO(
         boolean immediate,
         boolean negotiable,
         ParkingOption parkingOption,                // 주차 옵션
-        Set<LocalDateTime> possibleMeetingDates,            // 뷰잉 가능 날짜 집합
+//        Set<LocalDateTime> possibleMeetingDates,            // 뷰잉 가능 날짜 집합
+        @NotNull LocalDate meetingDateFrom,
+        @NotNull LocalDate meetingDateTo,
+        @NotNull @Size(min = 1, max = 3)
+        @Valid //값 객체 내부도 검증
+        List<TimeSlot> timeSlots,
         String description,                         // 매물 소개
         RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
         RealEstateType isRealEstateIntervention,    // (RentProperty 고유) 부동산 중개 여부
@@ -51,8 +64,10 @@ public record RentPropertyCreateRequestDTO(
         if (optionItemIds == null) {
             optionItemIds = new ArrayList<>();
         }
-        if (possibleMeetingDates == null) {
-            possibleMeetingDates = new HashSet<>();
+        // 뷰잉 가능 시간 검증
+        boolean isValidTimeSlots = TimeSlotValidator.validAllConditions(timeSlots);
+        if(!isValidTimeSlots) {
+            throw new CustomException(ServiceCode.INVALID_PROPERTY_TIME_SLOT);
         }
     }
 }

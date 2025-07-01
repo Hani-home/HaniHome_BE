@@ -2,9 +2,11 @@ package org.hanihome.hanihomebe.property.web.dto.response;
 
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
+import org.hanihome.hanihomebe.property.domain.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,7 +32,9 @@ public record SharePropertyResponseDTO(
         Boolean negotiable,
         Boolean immediate,
         ParkingOption parkingOption,
-        Set<LocalDateTime> possibleMeetingDates,
+        LocalDate meetingDateFrom,
+        LocalDate meetingDateTo,
+        List<TimeSlot> timeSlots,
         String description,
         SharePropertySubType sharePropertySubType,                // 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
         Double internalArea,                                     // 2-1. 실제 사용 면적
@@ -52,9 +56,9 @@ public record SharePropertyResponseDTO(
         // shareProperty.getOptionItems()가 OptionItem 객체의 컬렉션을 반환하고,
         // 각 OptionItem 객체에 이름(예: getName())을 반환하는 메서드가 있다고 가정합니다.
         // 실제 OptionItem 클래스명과 이름 추출 메서드로 수정해야 합니다.
-        List<String> extractedOptionItemNames;
+        List<String> optionItemNames;
         if (shareProperty.getOptionItems() != null && !shareProperty.getOptionItems().isEmpty()) {
-            extractedOptionItemNames = shareProperty.getOptionItems().stream()
+            optionItemNames = shareProperty.getOptionItems().stream()
                     // .map(ActualOptionItemClass::getName) // 예: OptionItem::getName
                     // 아래는 실제 OptionItem 클래스 구조에 맞춰 수정해야 하는 플레이스홀더입니다.
                     // OptionItem 클래스에 getName() 메서드가 있다고 가정:
@@ -68,7 +72,7 @@ public record SharePropertyResponseDTO(
                     })
                     .collect(Collectors.toList());
         } else {
-            extractedOptionItemNames = Collections.emptyList();
+            optionItemNames = Collections.emptyList();
         }
 
         // photoUrls 추출 (shareProperty.getPhotoUrls()가 List<String>을 반환한다고 가정)
@@ -77,9 +81,7 @@ public record SharePropertyResponseDTO(
                 new ArrayList<>(shareProperty.getPhotoUrls()) : // 방어적 복사
                 Collections.emptyList();
 
-        Set<LocalDateTime> extractedpossibleMeetingDates = (shareProperty.getPossibleMeetingDates() != null) ?
-                new HashSet<>(shareProperty.getPossibleMeetingDates()) :
-                Collections.emptySet();
+        List<TimeSlot> timeSlots = new ArrayList<>(shareProperty.getTimeSlots());
 
         return new SharePropertyResponseDTO(
                 shareProperty.getId(),
@@ -90,7 +92,7 @@ public record SharePropertyResponseDTO(
                 extractedPhotoUrls,
                 shareProperty.getWeeklyCost(),
                 shareProperty.isBillIncluded(),
-                extractedOptionItemNames,
+                optionItemNames,
                 shareProperty.getCostDescription(),
                 shareProperty.getDeposit(),
                 shareProperty.getKeyDeposit(),
@@ -102,7 +104,9 @@ public record SharePropertyResponseDTO(
                 shareProperty.isNegotiable(),
                 shareProperty.isImmediate(),
                 shareProperty.getParkingOption(),
-                extractedpossibleMeetingDates,
+                shareProperty.getMeetingDateFrom(),
+                shareProperty.getMeetingDateTo(),
+                timeSlots,
                 shareProperty.getDescription(),
                 shareProperty.getSharePropertySubType(),     // 1. 매물 유형
                 shareProperty.getInternalArea(),             // 2-1. 실제 사용 면적
