@@ -12,7 +12,9 @@ import org.hanihome.hanihomebe.wishlist.application.validation.WishTargetValidat
 import org.hanihome.hanihomebe.wishlist.domain.WishItem;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
+import org.hanihome.hanihomebe.wishlist.web.dto.WishItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,7 +58,7 @@ public class WishItemService {
     }
 
     //매물 찜하기 Create
-    public WishItem addWishItem(Long memberId, WishTargetType targetType, Long targetId) {
+    public WishItemDTO addWishItem(Long memberId, WishTargetType targetType, Long targetId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
@@ -70,19 +72,17 @@ public class WishItemService {
         validator.validate(targetId);
 
 
-        //이미 찜했는지 확인
-        boolean alreadyExists = wishItemRepository.existsByMemberAndTargetTypeAndTargetId(
-                member, targetType, targetId
-        );
-        if (alreadyExists) {
-            throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
-        }
 
         WishItem wishItem = WishItem.createFrom(member, targetType, targetId);
 
         member.addWishItem(wishItem);
 
-        WishItem saved = wishItemRepository.save(wishItem);
+        //Unique 조건 추가 후 변경했습니다.
+        try {
+            wishItemRepository.save(wishItem);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
+        }
 
         //찜 수 증가가 처리 => 추후 스케쥴러로 찜 수를 정기적으로 맞춰줄 필요가 있을 것 같음.
         WishTargetCounter counter = counterMap.get(targetType);
@@ -90,9 +90,40 @@ public class WishItemService {
             counter.increment(targetId);
         }
 
-        return saved;
-
+        return WishItemDTO.create(wishItem);
     }
+
+    public void removeWishItem(Long memberId, WishTargetType targetType, Long targetId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
+        // validator 꺼내기
+        WishTargetValidator validator = validatorMap.get(targetType);
+        if (validator == null) {
+            throw new CustomException(ServiceCode.INVALID_TARGET_TYPE);
+        }
+
+        // 검증 실행
+        validator.validate(targetId);
+
+        // 해당 찜이 실제 존재하는지 확인
+        WishItem wishItem = wishItemRepository.findByMemberAndTargetTypeAndTargetId(member, targetType, targetId)
+                .orElseThrow(() -> new CustomException(ServiceCode.NOT_A_WISH));
+
+        // 연관된 member의 리스트에서도 제거
+        member.removeWishItem(targetType, targetId);
+
+        // DB에서 삭제
+        wishItemRepository.delete(wishItem);
+
+        // 찜 수 감소 처리
+        WishTargetCounter counter = counterMap.get(targetType);
+        if (counter != null) {
+            counter.decrement(targetId);
+        }
+    }
+
+
 
     //삭제는 일단 추후. 영속성 떄문. property 단에서도 삭제를 해야하기 때문에 property 작업이 끝나면 진행하겠음
 

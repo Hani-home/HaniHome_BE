@@ -9,7 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest
-@ActiveProfiles("test")
 public class EnvTest {
 
 

@@ -8,6 +8,7 @@ import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.web.dto.WishItemRequestDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,6 +47,13 @@ public class WishItemController {
         Long memberId = userDetails.getUserId();
         Map<WishTargetType, List<?>> wishMap = wishItemService.getAllWishItems(memberId);
         return ResponseEntity.ok(wishMap);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> removeWishItem(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody WishItemRequestDTO dto) {
+        wishItemService.removeWishItem(userDetails.getUserId(), dto.getTargetType(), dto.getTargetId());
+
+        return ResponseEntity.ok().build();
     }
 
 }

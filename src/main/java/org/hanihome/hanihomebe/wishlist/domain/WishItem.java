@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,15 @@ import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 
 @Entity
-@Table(name = "wish_item")
+@Table(
+        name = "wish_item",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_member_target",
+                        columnNames = {"member_id", "target_type", "target_id"}
+                )
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //단지 JPA만을 위해
 public class WishItem extends BaseEntity {//lastModifiedAt은 현재는 쓸 일이 없을 것 같긴 하지만... 혹시모를 확장성, 그리고 일관성을 위해

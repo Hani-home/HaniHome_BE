@@ -17,6 +17,7 @@ import org.hanihome.hanihomebe.wishlist.application.service.WishItemService;
 import org.hanihome.hanihomebe.wishlist.domain.WishItem;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
+import org.hanihome.hanihomebe.wishlist.web.dto.WishItemDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,9 +75,10 @@ public class WishItemServiceTest {
                 null,
                 PropertySuperType.SHARE,
                 GenderPreference.ANY,
-                new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments"),  // Region은 Embedded 객체니까 생성자 맞춰줘야 해
+                new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments"),
                 List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg"),
                 BigDecimal.valueOf(250),
+                true,  // billIncluded 추가
                 List.of(),  // optionItemIds
                 "관리비 포함",
                 BigDecimal.valueOf(500),
@@ -84,9 +86,12 @@ public class WishItemServiceTest {
                 2,
                 4,
                 "계약 조건 설명",
-                Set.of(LocalDateTime.now().plusDays(3)),  // 입주 가능일
+                LocalDateTime.now().plusDays(3),  // availableFrom
+                LocalDateTime.now().plusDays(30), // availableTo
+                false, // immediate
+                true,  // negotiable
                 ParkingOption.NONE,
-                Set.of(LocalDateTime.now().plusDays(1)),  // 뷰잉 가능일
+                Set.of(LocalDateTime.now().plusDays(1)),  // possibleMeetingDates
                 "깔끔한 쉐어하우스입니다.",
                 SharePropertySubType.SECOND_ROOM,
                 15.5,
@@ -97,7 +102,6 @@ public class WishItemServiceTest {
                 2,
                 CapacityShare.SINGLE
         );
-
         ShareProperty shareProperty = ShareProperty.create(dto, member);
         propertyId = propertyRepository.save(shareProperty).getId();
 
@@ -111,13 +115,14 @@ public class WishItemServiceTest {
     @Test
     @DisplayName("올바른 요청일 때 찜 추가")
     void addWishItemTest() {
-        WishItem wishItem = wishItemService.addWishItem(memberId, WishTargetType.PROPERTY, propertyId);
+        WishItemDTO dto = wishItemService.addWishItem(memberId, WishTargetType.PROPERTY, propertyId);
 
-        assertThat(wishItem).isNotNull();
-        assertThat(wishItem.getId()).isNotNull();
-        assertThat(wishItem.getTargetId()).isEqualTo(propertyId);
-        assertThat(wishItem.getTargetType()).isEqualTo(WishTargetType.PROPERTY);
+        assertThat(dto).isNotNull();
+        assertThat(dto.getTargetId()).isNotNull();
+        assertThat(dto.getTargetId()).isEqualTo(propertyId);
+        assertThat(dto.getTargetType()).isEqualTo(WishTargetType.PROPERTY);
     }
+
 
 
 
