@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /** ver1: 값타입 */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,7 +25,7 @@ public class Region {
     private String state;
     // Chatswood
     @Column(nullable = false)
-    private String suburb;
+    private String suburb;  //(suburb or locality)
     // Smith St
     @Column(nullable = false)
     private String streetName;
@@ -31,13 +33,20 @@ public class Region {
     @Column(nullable = false)
     private String streetNumber;
 
+    /// 상세 주소 (optional)
     // 1203, 몇동 몇호
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String unit;
 
     // Chatswood Central Apartments
     @Column(nullable = true)
     private String buildingName;
+
+    /// 위도, 경도
+    @Column(precision = 9, scale = 6, nullable = false)
+    private BigDecimal longitude;
+    @Column(precision = 9, scale = 6, nullable = false)
+    private BigDecimal latitude;
 }
 
 

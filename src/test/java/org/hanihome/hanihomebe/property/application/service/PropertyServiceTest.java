@@ -7,6 +7,7 @@ import org.hanihome.hanihomebe.member.domain.Gender;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.hanihome.hanihomebe.property.domain.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.OptionCategory;
@@ -27,10 +28,10 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
-@Disabled //테스트 파일 수정 안 된 거 같아서 일단 막아두겠습니다!! 다시 작성하시고 풀어주세요!
 @ActiveProfiles("test")
 @SpringBootTest
 @Transactional
@@ -83,17 +84,24 @@ class PropertyServiceTest {
     void createProperty() {
         //given
         // 예시: RentPropertyCreateRequestDTO 인스턴스 생성하기
-        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments");
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(150), BigDecimal.valueOf(0));
         List<String> photoUrls = List.of("https://example.com/1.jpg", "https://example.com/2.jpg");
         BigDecimal deposit = new BigDecimal("800.00");
         BigDecimal keyDeposit = new BigDecimal("100.00");
-        LocalDateTime availableFrom = LocalDateTime.of(2025, 7, 1, 12, 0);
-        LocalDateTime availableTo = LocalDateTime.of(2025, 12, 31, 12, 0);
+
+        LocalDateTime availableFrom = LocalDateTime.of(2025, 5, 5, 5, 5);
+        LocalDateTime availableTo = LocalDateTime.of(2025, 5, 10, 5, 5);
+
         BigDecimal weeklyCost = new BigDecimal("100.00");
 
-        RentPropertyCreateRequestDTO dto = new RentPropertyCreateRequestDTO(
+        // 뷰잉 가능 날짜
+        List<TimeSlot> timeSlots = List.of(new TimeSlot(LocalTime.of(12, 0), LocalTime.of(12, 30)), new TimeSlot(LocalTime.of(15, 0), LocalTime.of(15, 30)));
+        LocalDate meetingDateFrom = LocalDate.of(2025, 5, 10);
+        LocalDate meetingDateTo = LocalDate.of(2025, 5, 12);
+
+        SharePropertyCreateRequestDTO dto = new SharePropertyCreateRequestDTO(
                 memberId, // memberId
-                PropertySuperType.RENT,
+                PropertySuperType.SHARE,
                 GenderPreference.ANY,
                 region,
                 photoUrls,
@@ -111,13 +119,18 @@ class PropertyServiceTest {
                 true,
                 true,
                 ParkingOption.STREET_PARKING,
-                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                meetingDateFrom,
+                meetingDateTo,
+                timeSlots,
                 "깨끗하고 조용한 마스터룸입니다.",
-                // Rent 전용 필드
-                RentPropertySubType.HOUSE,
-                RealEstateType.INDIVIDUAL,
-                CapacityRent.FOUR,
-                Exposure.SOUTHERN
+                SharePropertySubType.MASTER_ROOM,
+                10.0, // internalArea
+                50.0, // totalArea
+                3,
+                2,
+                5,
+                2,
+                CapacityShare.DOUBLE
         );
         //when
         Long id = propertyService.createProperty(dto).id();

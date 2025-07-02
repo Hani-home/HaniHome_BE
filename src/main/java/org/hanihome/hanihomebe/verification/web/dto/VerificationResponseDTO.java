@@ -19,4 +19,5 @@ public class VerificationResponseDTO {
     private LocalDateTime requestedAt;
     private LocalDateTime approvedAt;
     private LocalDateTime rejectedAt;
+    private Long memberId;
 }

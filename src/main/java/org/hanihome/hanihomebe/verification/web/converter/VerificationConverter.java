@@ -16,7 +16,8 @@ public class VerificationConverter {
                 verification.getRejectionReason(),
                 verification.getRequestedAt(),
                 verification.getApprovedAt(),
-                verification.getRejectedAt()
+                verification.getRejectedAt(),
+                verification.getMember().getId()
         );
     }
 
