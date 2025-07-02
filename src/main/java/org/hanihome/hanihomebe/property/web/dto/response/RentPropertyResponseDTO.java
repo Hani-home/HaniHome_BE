@@ -1,10 +1,12 @@
 package org.hanihome.hanihomebe.property.web.dto.response;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
+import org.hanihome.hanihomebe.property.domain.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hibernate.validator.internal.util.privilegedactions.LoadClass;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,7 +32,9 @@ public record RentPropertyResponseDTO(
         Boolean negotiable,
         Boolean immediate,
         ParkingOption parkingOption,
-        Set<LocalDateTime> possibleMeetingDates,
+        LocalDate meetingDateFrom,
+        LocalDate meetingDateTo,
+        List<TimeSlot> timeSlots,
         String description,
         RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
         RealEstateType isRealEstateIntervention,    // (RentProperty 고유) 부동산 중개 여부
@@ -59,37 +63,37 @@ public record RentPropertyResponseDTO(
 
 
         // possibleMeetingDates 추출 (방어적 복사)
-    Set<LocalDateTime> extractedpossibleMeetingDates = (rentProperty.getPossibleMeetingDates() != null) ?
-            new HashSet<>(rentProperty.getPossibleMeetingDates()) :
-            Collections.emptySet();
+        List<TimeSlot> timeSlots = new ArrayList<>(rentProperty.getTimeSlots());
 
-    return new RentPropertyResponseDTO(
-            rentProperty.getId(),
-            memberId,
-            rentProperty.getKind(),
-            rentProperty.getGenderPreference(),
-            rentProperty.getRegion(),
-            photoUrls,
-            rentProperty.getWeeklyCost(),
-            rentProperty.isBillIncluded(),
-            optionItemNames,
-            rentProperty.getCostDescription(),
-            rentProperty.getDeposit(),
-            rentProperty.getKeyDeposit(),
-            rentProperty.getNoticePeriodWeeks(),
-            rentProperty.getMinimumStayWeeks(),
-            rentProperty.getContractTerms(),
-            rentProperty.getAvailableFrom(),
-            rentProperty.getAvailableTo(),
-            rentProperty.isNegotiable(),
-            rentProperty.isImmediate(),
-            rentProperty.getParkingOption(),
-            extractedpossibleMeetingDates,
-            rentProperty.getDescription(),
-            rentProperty.getRentPropertySubType(),           // (RentProperty 고유) 1. 매물 유형
-            rentProperty.getIsRealEstateIntervention(),     // (RentProperty 고유) 2. 부동산 중개 여부
-            rentProperty.getCapacityRent(),                 // (RentProperty 고유) 3. 수용인원-렌트
-            rentProperty.getExposure()                      // (RentProperty 고유) 4. 남향북향
-    );
+        return new RentPropertyResponseDTO(
+                rentProperty.getId(),
+                memberId,
+                rentProperty.getKind(),
+                rentProperty.getGenderPreference(),
+                rentProperty.getRegion(),
+                photoUrls,
+                rentProperty.getWeeklyCost(),
+                rentProperty.isBillIncluded(),
+                optionItemNames,
+                rentProperty.getCostDescription(),
+                rentProperty.getDeposit(),
+                rentProperty.getKeyDeposit(),
+                rentProperty.getNoticePeriodWeeks(),
+                rentProperty.getMinimumStayWeeks(),
+                rentProperty.getContractTerms(),
+                rentProperty.getAvailableFrom(),
+                rentProperty.getAvailableTo(),
+                rentProperty.isNegotiable(),
+                rentProperty.isImmediate(),
+                rentProperty.getParkingOption(),
+                rentProperty.getMeetingDateFrom(),
+                rentProperty.getMeetingDateTo(),
+                timeSlots,
+                rentProperty.getDescription(),
+                rentProperty.getRentPropertySubType(),           // (RentProperty 고유) 1. 매물 유형
+                rentProperty.getIsRealEstateIntervention(),     // (RentProperty 고유) 2. 부동산 중개 여부
+                rentProperty.getCapacityRent(),                 // (RentProperty 고유) 3. 수용인원-렌트
+                rentProperty.getExposure()                      // (RentProperty 고유) 4. 남향북향
+        );
 }
 }

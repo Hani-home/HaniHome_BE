@@ -3,12 +3,14 @@ package org.hanihome.hanihomebe.property.web.dto.response;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hanihome.hanihomebe.interest.region.Region;
+import org.hanihome.hanihomebe.property.domain.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +45,10 @@ public sealed interface PropertyResponseDTO
     Boolean negotiable();
     Boolean immediate();
     ParkingOption parkingOption();
-    Set<LocalDateTime> possibleMeetingDates();
+//    Set<LocalDateTime> possibleMeetingDates();
+    LocalDate meetingDateFrom();
+    LocalDate meetingDateTo();
+    List<TimeSlot> timeSlots();
     String description();
 
 }

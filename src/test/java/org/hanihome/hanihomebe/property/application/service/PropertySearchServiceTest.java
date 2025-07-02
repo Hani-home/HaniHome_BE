@@ -6,6 +6,7 @@ import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.hanihome.hanihomebe.property.domain.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.web.dto.PropertySearchConditionDTO;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
@@ -20,7 +21,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +63,7 @@ class PropertySearchServiceTest {
          * 매물 종류 / 매물 유형 / 예산 범위 / 입주 가능일 / 지하철역
          *
          */
-        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments");
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(150), BigDecimal.valueOf(0));
         List<String> photoUrls = List.of("https://example.com/1.jpg", "https://example.com/2.jpg");
         BigDecimal deposit = new BigDecimal("800.00");
         BigDecimal keyDeposit = new BigDecimal("100.00");
@@ -69,6 +72,11 @@ class PropertySearchServiceTest {
         LocalDateTime availableTo = LocalDateTime.of(2025, 5, 10, 5, 5);
 
         BigDecimal weeklyCost = new BigDecimal("100.00");
+
+        // 뷰잉 가능 날짜
+        List<TimeSlot> timeSlots = List.of(new TimeSlot(LocalTime.of(12, 0), LocalTime.of(12, 30)), new TimeSlot(LocalTime.of(15, 0), LocalTime.of(15, 30)));
+        LocalDate meetingDateFrom = LocalDate.of(2025, 5, 10);
+        LocalDate meetingDateTo = LocalDate.of(2025, 5, 12);
 
         SharePropertyCreateRequestDTO share_masterRoom = new SharePropertyCreateRequestDTO(
                 memberId, // memberId
@@ -90,7 +98,9 @@ class PropertySearchServiceTest {
                 true,
                 true,
                 ParkingOption.STREET_PARKING,
-                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                meetingDateFrom,
+                meetingDateTo,
+                timeSlots,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
@@ -121,7 +131,9 @@ class PropertySearchServiceTest {
                 true,
                 true,
                 ParkingOption.STREET_PARKING,
-                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                meetingDateFrom,
+                meetingDateTo,
+                timeSlots,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.SECOND_ROOM,
                 10.0, // internalArea
@@ -153,14 +165,17 @@ class PropertySearchServiceTest {
                 true,
                 true,
                 ParkingOption.STREET_PARKING,
-                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                meetingDateFrom,
+                meetingDateTo,
+                timeSlots,
                 "깨끗하고 조용한 마스터룸입니다.",
-        // Rent 전용 필드
+                // Rent 전용 필드
                 RentPropertySubType.HOUSE,
                 RealEstateType.INDIVIDUAL,
                 CapacityRent.FOUR,
                 Exposure.SOUTHERN
         );
+
         RentPropertyCreateRequestDTO rentDto_unit = new RentPropertyCreateRequestDTO(
                 memberId, // memberId
                 PropertySuperType.RENT,
@@ -181,7 +196,9 @@ class PropertySearchServiceTest {
                 true,
                 true,
                 ParkingOption.STREET_PARKING,
-                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                meetingDateFrom,
+                meetingDateTo,
+                timeSlots,
                 "깨끗하고 조용한 마스터룸입니다.",
                 // Rent 전용 필드
                 RentPropertySubType.UNIT,
@@ -198,7 +215,7 @@ class PropertySearchServiceTest {
     }
     /// 매물 종류
     @Test
-    void shouldReturnTwoShare_whenFilterByPropertySuperTypeSHARAE() {
+    void shouldReturnTwoShare_whenFilterByPropertySuperTypeSHARE() {
         Map<PropertySuperType, List<PropertyResponseDTO>> results = propertySearchService.search(
                 PropertySearchConditionDTO
                         .builder()
@@ -260,8 +277,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-
-        assertTrue(results.isEmpty());
+          results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
 
 
@@ -304,7 +322,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
 
     /// 입주 가능일
@@ -350,14 +370,18 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
+
     }
 
     @Test
     void shouldReturnOneProperty_whenFilterByAvailableFrom() {
 
         Long memberId = memberRepository.findAll().stream().findFirst().get().getId();
-        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments");
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(150), BigDecimal.valueOf(0));
+
         List<String> photoUrls = List.of("https://example.com/1.jpg", "https://example.com/2.jpg");
         BigDecimal deposit = new BigDecimal("800.00");
         BigDecimal keyDeposit = new BigDecimal("100.00");
@@ -366,6 +390,9 @@ class PropertySearchServiceTest {
         LocalDateTime availableTo = LocalDateTime.of(2025, 5, 25, 5, 5);
 
         BigDecimal weeklyCost = new BigDecimal("100.00");
+        List<TimeSlot> timeSlots = List.of(new TimeSlot(LocalTime.of(12, 0), LocalTime.of(12, 30)), new TimeSlot(LocalTime.of(15, 0), LocalTime.of(15, 30)));
+        LocalDate meetingDateFrom = LocalDate.of(2025, 5, 10);
+        LocalDate meetingDateTo = LocalDate.of(2025, 5, 12);
 
         SharePropertyCreateRequestDTO share_masterRoom = new SharePropertyCreateRequestDTO(
                 memberId, // memberId
@@ -387,7 +414,9 @@ class PropertySearchServiceTest {
                 true,
                 true,
                 ParkingOption.STREET_PARKING,
-                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                meetingDateFrom,
+                meetingDateTo,
+                timeSlots,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
@@ -413,7 +442,8 @@ class PropertySearchServiceTest {
     void shouldReturnFourProperty_whenFIlterByAvailableFrom() {
 
         Long memberId = memberRepository.findAll().stream().findFirst().get().getId();
-        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments");
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(150), BigDecimal.valueOf(0));
+
         List<String> photoUrls = List.of("https://example.com/1.jpg", "https://example.com/2.jpg");
         BigDecimal deposit = new BigDecimal("800.00");
         BigDecimal keyDeposit = new BigDecimal("100.00");
@@ -422,6 +452,9 @@ class PropertySearchServiceTest {
         LocalDateTime availableTo = LocalDateTime.of(2025, 5, 25, 5, 5);
 
         BigDecimal weeklyCost = new BigDecimal("100.00");
+        List<TimeSlot> timeSlots = List.of(new TimeSlot(LocalTime.of(12, 0), LocalTime.of(12, 30)), new TimeSlot(LocalTime.of(15, 0), LocalTime.of(15, 30)));
+        LocalDate meetingDateFrom = LocalDate.of(2025, 5, 10);
+        LocalDate meetingDateTo = LocalDate.of(2025, 5, 12);
 
         SharePropertyCreateRequestDTO share_masterRoom = new SharePropertyCreateRequestDTO(
                 memberId, // memberId
@@ -443,7 +476,9 @@ class PropertySearchServiceTest {
                 true,
                 true,
                 ParkingOption.STREET_PARKING,
-                Set.of(LocalDateTime.of(2025, 6, 30, 14, 0)),
+                meetingDateFrom,
+                meetingDateTo,
+                timeSlots,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
@@ -474,7 +509,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
     @Test
     void shouldReturnFourProperty_whenFilterByBillIncluded_true() {
@@ -494,7 +531,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
     @Test
     void shouldReturnZeroProperty_whenFilterByImmediate_false() {
@@ -504,7 +543,9 @@ class PropertySearchServiceTest {
                         .build()
         );
         logging(results);
-        assertTrue(results.isEmpty());
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
     }
     private static void logging(Map<PropertySuperType, List<PropertyResponseDTO>> results) {
         log.info("results: {}", results);
