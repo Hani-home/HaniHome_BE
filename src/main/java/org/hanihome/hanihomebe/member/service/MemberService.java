@@ -10,6 +10,7 @@ import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.member.web.dto.ConsentAgreementDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberNicknameCheckResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
@@ -95,6 +96,11 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         memberRepository.delete(member);
+    }
+
+    public MemberNicknameCheckResponseDTO checkNickname(String nickname) {
+        boolean available = !memberRepository.existsByNickname(nickname);
+        return new MemberNicknameCheckResponseDTO(available);
     }
 
     private void validateRequiredConsents(List<ConsentAgreementDTO> consents) {

@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.member.web;
 
 import org.hanihome.hanihomebe.member.service.MemberService;
 import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberNicknameCheckResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -47,7 +49,11 @@ public class MemberController {
         return ResponseEntity.ok("회원 등록 성공");
     }
 
-
+    @GetMapping("/check-nickname")
+    public ResponseEntity<MemberNicknameCheckResponseDTO> checkNickname(@AuthenticationPrincipal CustomUserDetails userDetails , @RequestParam String nickname) {
+        MemberNicknameCheckResponseDTO dto = memberService.checkNickname(nickname);
+        return ResponseEntity.ok(dto);
+    }
 
     /*
     지금은 멤버 아이디만 있으면 다 가져올 수 있지만,
