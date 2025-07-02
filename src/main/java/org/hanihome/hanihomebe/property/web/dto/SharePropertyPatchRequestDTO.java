@@ -1,6 +1,8 @@
 package org.hanihome.hanihomebe.property.web.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
+import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 
@@ -14,4 +16,14 @@ public class SharePropertyPatchRequestDTO extends PropertyPatchRequestDTO {
     private Integer totalFloors;                        // 2-5. 건물 총 층수
     private Integer propertyFloor;                      // 2-6. 해당 매물의 층수
     private CapacityShare capacityShare;                // 3. 수용 인원
+
+    @AssertTrue(message = "timeSlot의 timeFrom, timeTo는 30분 단위여야 합니다.")
+    private boolean isValidTimeSlot() {
+        // timeSlot is NULL
+        if (super.getMeetingDateFrom() == null && super.getMeetingDateTo() == null && super.getTimeSlots() == null) {
+            return true;    // patch라서 통과
+        } else {
+            return TimeSlotValidator.validAllConditions(super.getTimeSlots());
+        }
+    }
 }

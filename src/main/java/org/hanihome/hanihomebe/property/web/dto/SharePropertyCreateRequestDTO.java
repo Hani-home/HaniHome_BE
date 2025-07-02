@@ -1,14 +1,20 @@
 package org.hanihome.hanihomebe.property.web.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
+import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
+import org.hanihome.hanihomebe.property.domain.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public record SharePropertyCreateRequestDTO(
@@ -31,7 +37,12 @@ public record SharePropertyCreateRequestDTO(
         boolean immediate,
         boolean negotiable,
         ParkingOption parkingOption,                // 주차 옵션
-        Set<LocalDateTime> possibleMeetingDates,    // 뷰잉 가능 날짜 집합
+//        Set<LocalDateTime> possibleMeetingDates,    // 뷰잉 가능 날짜 집합
+        @NotNull LocalDate meetingDateFrom,
+        @NotNull LocalDate meetingDateTo,
+        @NotNull @Size(min = 1, max = 3)
+        @Valid //값 객체 내부도 검증
+        List<TimeSlot> timeSlots,
         String description,                         // 매물 소개
         SharePropertySubType sharePropertySubType,  //고유필드 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
         Double internalArea,                        //고유필드 2-1. 실제 사용 면적
@@ -42,15 +53,17 @@ public record SharePropertyCreateRequestDTO(
         Integer propertyFloor,                      //고유필드 2-6. 해당 매물의 층수
         CapacityShare capacityShare                 //고유필드 3. 수용 인원
 ) implements PropertyCreateRequestDTO {
-    public SharePropertyCreateRequestDTO {
+    public SharePropertyCreateRequestDTO {          // compact 생성자: AllArgsConstructor와 동일
         if (photoUrls == null) {
             photoUrls = new ArrayList<>();
         }
         if (optionItemIds == null) {
             optionItemIds = new ArrayList<>();
         }
-        if (possibleMeetingDates == null) {
-            possibleMeetingDates = new HashSet<>();
+        // 뷰잉 가능 시간 검증
+        boolean isValidTimeSlots = TimeSlotValidator.validAllConditions(timeSlots);
+        if(!isValidTimeSlots) {
+            throw new CustomException(ServiceCode.INVALID_PROPERTY_TIME_SLOT);
         }
     }
 }
