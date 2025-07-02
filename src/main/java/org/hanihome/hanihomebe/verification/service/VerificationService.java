@@ -65,10 +65,12 @@ public class VerificationService {
         List<Verification> verifications = verificationRepository.findAll();
         return VerificationConverter.toVerificationResponseDTOList(verifications);
     }
-    //Read. 관리자 개별 신원인증 불러오기
-    public Verification getVerificationById(Long verificationId) {
-        return verificationRepository.findById(verificationId)
+
+    public VerificationResponseDTO getVerificationById(Long verificationId) {
+        Verification findVerification = verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
+
+        return VerificationConverter.toVerificationResponseDTO(findVerification);
     }
 
     //Update. 관리자가 신원 인증 승인 or 반려
