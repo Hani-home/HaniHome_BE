@@ -26,7 +26,7 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
 
     /**
      * 필터링
-     * 필터링 기준: 매물 종류, 매물 유형, 1주당 예산 범위, 빌포함, 입주가능일, 즉시입주가능, 협의 가능
+     * 필터링 기준: 매물 종류, 매물 유형, 1주당 예산 범위, 빌포함, 입주가능일, 즉시입주가능, 협의 가능, 지하철역부터 Nkm
      * @param cond 필터링 기준
      * @return 필터링된 매물 리스트
      */
@@ -88,6 +88,7 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
         }
 
         // 지하철역 기준 Nkm 필터
+        // TODO: 품질보증: 오차 범위가 어떻게되는지 확인이 필요
         if (
                 cond.getMetroStopLatitude() != null
                 && cond.getMetroStopLongitude() != null
