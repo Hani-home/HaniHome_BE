@@ -20,8 +20,7 @@ public class MetroStopSyncScheduler {
     private final MetroStopComparator metroStopComparator;
     private final MetroStopApiClient metroStopApiClient;
 
-//    @Scheduled(cron = "0 0 0 * * *")    // 매일 00시
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *", zone = "UTC")    // 매일 00시
     public void synchronizeStops() {
         log.info("지하철역 동기화 스케줄링 시작");
         try {
