@@ -165,9 +165,13 @@ public class Member extends BaseEntity {
     }
 
     public void removeWishItem(WishTargetType targetType, Long targetId) {
-        this.wishItems.removeIf(wish ->
+        boolean removed = wishItems.removeIf(wish ->
                 wish.getTargetType() == targetType &&
                         wish.getTargetId().equals(targetId)
         );
+
+        if (!removed) {
+            throw new CustomException(ServiceCode.NOT_A_WISH);
+        }
     }
 }

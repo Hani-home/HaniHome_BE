@@ -18,6 +18,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     //회원가입 시 존재하는 유저인지 확인을 위해 사용
     boolean existsByEmail(String email);
+
+    boolean existsByNickname(String nickname);
 }
 
 

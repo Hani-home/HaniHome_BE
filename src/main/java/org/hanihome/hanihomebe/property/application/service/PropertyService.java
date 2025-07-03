@@ -21,6 +21,8 @@ import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.RentPropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.SharePropertyResponseDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
+import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
+import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -40,6 +42,7 @@ public class PropertyService {
     private final PropertyMapper propertyMapper;
     private final Validator validator;
     private final OptionItemRepository optionItemRepository;
+    private final WishItemRepository wishItemRepository; //Property 삭제 시 WishItem도 삭제하기 위해 추가
 
     //create
     /**
@@ -203,6 +206,8 @@ public class PropertyService {
         if (!propertyRepository.existsById(id)) {
             throw new RuntimeException("Property not found: " + id);
         }
+        wishItemRepository.deleteAllByTargetTypeAndTargetId(WishTargetType.PROPERTY, id); //해당 찜하기 삭제
+
         propertyRepository.deleteById(id);
     }
 
@@ -220,4 +225,3 @@ public class PropertyService {
     }
 
 }
-
