@@ -96,6 +96,7 @@ public class WishItemServiceTest {
                 memberId, // memberId
                 PropertySuperType.SHARE,
                 GenderPreference.ANY,
+
                 region,
                 photoUrls,
                 weeklyCost,
