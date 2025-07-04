@@ -251,4 +251,20 @@ public class ViewingService {
                 .toList();
         return checklistItemIds;
     }
+
+    /**
+     * 자신의 status 상태인 뷰잉의 모든 시간을 조회한다
+     * @param memberId 내 id
+     * @param status 조회할 뷰잉 상태
+     * @return 조회된 뷰잉들의 시간
+     */
+    public Map<LocalDate, List<LocalTime>> getMyViewingDatesByStatus(Long memberId, ViewingStatus status) {
+        List<Viewing> myViewingsByStatus = viewingRepository.findByMemberIdAndStatus(memberId, status);
+
+        Map<LocalDate, List<LocalTime>> response = myViewingsByStatus.stream()
+                .collect(Collectors.groupingBy(viewing -> viewing.getMeetingDay().toLocalDate(),
+                        TreeMap::new,
+                        Collectors.mapping(viewing -> viewing.getMeetingDay().toLocalTime(), Collectors.toList())));
+        return response;
+    }
 }
