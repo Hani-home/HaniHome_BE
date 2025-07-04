@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.TimeSlot;
+import org.hanihome.hanihomebe.property.domain.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
@@ -67,6 +68,7 @@ public sealed interface PropertyCreateRequestDTO permits
     LocalDate meetingDateFrom();
     LocalDate meetingDateTo();
     List<TimeSlot> timeSlots();
+    List<ViewingAvailableDateTime> viewingAvailableDateTimes();
 
     String description();
 
