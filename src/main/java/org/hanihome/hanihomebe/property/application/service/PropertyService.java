@@ -28,8 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -146,10 +148,12 @@ public class PropertyService {
 
         Map<LocalDate, List<TimeWithReserved>> response = dateTimes.stream()
                 .collect(Collectors.groupingBy(dateTime -> dateTime.getDate(),
+                        TreeMap::new,
                         Collectors.mapping(dateTime -> {
                     return new TimeWithReserved(dateTime.getTime(), dateTime.isReserved());
                 }, Collectors.toList())));
-
+        response.forEach((date, times) ->
+                times.sort(Comparator.comparing(timeWithReserved -> timeWithReserved.time())));
         return response;
     }
 

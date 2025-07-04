@@ -265,6 +265,7 @@ public class ViewingService {
                 .collect(Collectors.groupingBy(viewing -> viewing.getMeetingDay().toLocalDate(),
                         TreeMap::new,
                         Collectors.mapping(viewing -> viewing.getMeetingDay().toLocalTime(), Collectors.toList())));
+        response.forEach((date, times) -> times.sort(Comparator.naturalOrder()));
         return response;
     }
 }
