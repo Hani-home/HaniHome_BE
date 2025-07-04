@@ -32,9 +32,6 @@ public record SharePropertyResponseDTO(
         Boolean negotiable,
         Boolean immediate,
         ParkingOption parkingOption,
-        LocalDate meetingDateFrom,
-        LocalDate meetingDateTo,
-        List<TimeSlot> timeSlots,
         String description,
         SharePropertySubType sharePropertySubType,                // 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
         Double internalArea,                                     // 2-1. 실제 사용 면적
@@ -44,6 +41,10 @@ public record SharePropertyResponseDTO(
         Integer totalFloors,                                     // 2-5. 건물 총 층수
         Integer propertyFloor,                                   // 2-6. 해당 매물의 층수
         CapacityShare capacityShare                             // 3. 수용 인원
+//        LocalDate meetingDateFrom,
+//        LocalDate meetingDateTo,
+//        List<TimeSlot> timeSlots,
+        // viewingAvailableDateTime는 응답에서 제외
 ) implements PropertyResponseDTO {
     public static SharePropertyResponseDTO from(ShareProperty shareProperty) {
         if (shareProperty == null) {
@@ -81,7 +82,7 @@ public record SharePropertyResponseDTO(
                 new ArrayList<>(shareProperty.getPhotoUrls()) : // 방어적 복사
                 Collections.emptyList();
 
-        List<TimeSlot> timeSlots = new ArrayList<>(shareProperty.getTimeSlots());
+//        List<TimeSlot> timeSlots = new ArrayList<>(shareProperty.getTimeSlots());
 
         return new SharePropertyResponseDTO(
                 shareProperty.getId(),
@@ -104,9 +105,6 @@ public record SharePropertyResponseDTO(
                 shareProperty.isNegotiable(),
                 shareProperty.isImmediate(),
                 shareProperty.getParkingOption(),
-                shareProperty.getMeetingDateFrom(),
-                shareProperty.getMeetingDateTo(),
-                timeSlots,
                 shareProperty.getDescription(),
                 shareProperty.getSharePropertySubType(),     // 1. 매물 유형
                 shareProperty.getInternalArea(),             // 2-1. 실제 사용 면적
@@ -116,6 +114,9 @@ public record SharePropertyResponseDTO(
                 shareProperty.getTotalFloors(),              // 2-5. 건물 총 층수
                 shareProperty.getPropertyFloor(),            // 2-6. 해당 매물의 층수
                 shareProperty.getCapacityShare()             // 3. 수용 인원
+//                shareProperty.getMeetingDateFrom(),
+//                shareProperty.getMeetingDateTo(),
+//                timeSlots,
         );
     }
 }

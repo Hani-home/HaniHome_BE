@@ -45,10 +45,10 @@ public sealed interface PropertyResponseDTO
     Boolean negotiable();
     Boolean immediate();
     ParkingOption parkingOption();
-//    Set<LocalDateTime> possibleMeetingDates();
-    LocalDate meetingDateFrom();
-    LocalDate meetingDateTo();
-    List<TimeSlot> timeSlots();
     String description();
+//    LocalDate meetingDateFrom();
+//    LocalDate meetingDateTo();
+//    List<TimeSlot> timeSlots();
+    // viewingAvailableDates는 일반적인 매물 조회 결과에서 불필요하므로 제외
 
 }
