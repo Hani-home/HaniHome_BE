@@ -44,6 +44,7 @@ public enum ServiceCode {
     VIEWING_NUMBER_NOT_SATISFIED(HttpStatus.BAD_REQUEST, "요청 가능한 뷰잉 시간대는 최소 1개 최대 3개입니다"),
     VIEWING_ALREADY_PRESCHEDULED(HttpStatus.BAD_REQUEST, "요청한 뷰잉 시간대는 모두 사용자의 뷰잉 예약 일정과 겹칩니다"),
     VIEWING_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 뷰잉은 존재하지 않습니다"),
+    VIEWING_TIME_MISMATCH(HttpStatus.BAD_REQUEST, "선택한 시간대는 예약이 완료되었거나 뷰잉 가능 시간대에 속하지 않습니다."),
 
     // OptionCategory
     OPTION_CATEGORY_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 카테고리는 아직 초기화 되지 않았습니다"),
