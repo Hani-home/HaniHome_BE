@@ -12,6 +12,7 @@ import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.property.domain.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
@@ -20,12 +21,15 @@ import org.hanihome.hanihomebe.property.web.dto.*;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.RentPropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.SharePropertyResponseDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -131,6 +135,24 @@ public class PropertyService {
                 .toList();
         return dtos;
     }
+
+    /**
+     * 특정 매물의 뷰잉 가능 시각 조회
+     */
+    public Map<LocalDate, List<TimeWithReserved>> getViewingAvailableDateTimes(Long propertyId) {
+        Property findProperty = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
+        List<ViewingAvailableDateTime> dateTimes = findProperty.getViewingAvailableDateTimes();
+
+        Map<LocalDate, List<TimeWithReserved>> response = dateTimes.stream()
+                .collect(Collectors.groupingBy(dateTime -> dateTime.getDate(),
+                        Collectors.mapping(dateTime -> {
+                    return new TimeWithReserved(dateTime.getTime(), dateTime.isReserved());
+                }, Collectors.toList())));
+
+        return response;
+    }
+
 
     //update
     /* json-patch(매물이 더 복잡해질 경우 고려 가능)
