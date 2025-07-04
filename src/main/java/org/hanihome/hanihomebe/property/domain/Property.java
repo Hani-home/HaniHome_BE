@@ -23,6 +23,7 @@ import java.util.Set;
 
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
+
 //TODO: 엔티티들 제약조건 모두 작성필요
 //  DTO도 검증 제약조건 작성 필요
 @EntityListeners(AuditingEntityListener.class)
@@ -35,7 +36,8 @@ import static lombok.AccessLevel.*;
 @Entity
 public abstract class Property {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "property_id")
     private Long id;
     // TODO: 시간관리 클래스인 BaseEntity 별개로 사용되다보니 유지보수에 혼란이 있어보임. BaseEntity를 interface로 두고 implements를 여러개 생성하는 방식으로라도 관리가 필요할듯
@@ -46,7 +48,9 @@ public abstract class Property {
     @LastModifiedDate
     private LocalDateTime lastModifiedAt;
 
-    /** 소유자 */
+    /**
+     * 소유자
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -63,18 +67,24 @@ public abstract class Property {
     @Enumerated(EnumType.STRING)
     private TradeStatus tradeStatus = TradeStatus.BEFORE;
 
-    /**1. 매물 종류: SHARE / RENT */
+    /**
+     * 1. 매물 종류: SHARE / RENT
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private PropertySuperType kind;
 
 
-    /** 4. 선호 성별 */
+    /**
+     * 4. 선호 성별
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private GenderPreference genderPreference;
 
-    /** 5. 주소 */
+    /**
+     * 5. 주소
+     */
     @Embedded
     private Region region;
 
@@ -88,7 +98,9 @@ public abstract class Property {
     @Column(name = "photo_urls", nullable = false)
     private List<String> photoUrls = new ArrayList<>();
 
-    /** 8. 거래 비용 */
+    /**
+     * 8. 거래 비용
+     */
     // 8-1. 비용 (주 단위)
     @Column(nullable = false)
     private BigDecimal weeklyCost;
@@ -110,7 +122,9 @@ public abstract class Property {
     // 8-5. 키 보증금
     private BigDecimal keyDeposit;
 
-    /** 10. 거주 조건 */
+    /**
+     * 10. 거주 조건
+     */
     // 10-1. 노티스 (주 단위)
     private Integer noticePeriodWeeks;
 
@@ -128,7 +142,9 @@ public abstract class Property {
     private boolean isImmediate;
     private boolean isNegotiable;
 
-    /** 12. 기타 허용/불가 */
+    /**
+     * 12. 기타 허용/불가
+     */
 /* OptionItem에서 처리
     private Boolean smokerAllowed;
     private Boolean petAllowed;
@@ -158,13 +174,13 @@ public abstract class Property {
 
     /**
      * 15-1 뷰잉 가능 날짜
-     * */
+     */
     private LocalDate meetingDateFrom;
     private LocalDate meetingDateTo;
 
     /**
      * 15-2 뷰잉 가능 시간
-     * 최소 1개, 최대 3개
+     * 최소 1개, 최대 3개(아침, 점심, 저녁)
      */
     @ElementCollection
     @CollectionTable(name = "property_time_slot",
@@ -179,12 +195,39 @@ public abstract class Property {
                     column = @Column(name = "time_to", nullable = false)
             )
     })
-    private List<TimeSlot> timeSlots = new ArrayList<>();   // 00:00 ~ 24:00, 단위: 30분
+    private List<TimeSlot> timeSlots = new ArrayList<>();
 
-    /** 16. 매물 소개 */
+    @ElementCollection
+    @CollectionTable(name = "property_viewing_available_date_time",
+        joinColumns = @JoinColumn(name = "property_id"))
+    @AttributeOverrides({
+            @AttributeOverride(
+                    name = "date",
+                    column = @Column(name = "date", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "time",
+                    column = @Column(name = "time", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "isReserved",
+                    column = @Column(name = "is_reserved", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "timeInterval",
+                    column = @Column(name = "time_interval", nullable = false)
+            )
+    })
+    private List<ViewingAvailableDateTime> viewingAvailableDateTimes = new ArrayList<>(); // 00:00 ~ 24:00, 단위: 30분
+
+    /**
+     * 16. 매물 소개
+     */
     private String description;
 
-    /** 17. 찜한 수*/
+    /**
+     * 17. 찜한 수
+     */
     @Column(name = "wish_count", nullable = false)
     private int wishCount = 0;
 
@@ -192,16 +235,18 @@ public abstract class Property {
     public void incrementWishCount() {
         this.wishCount++;
     }
+
     //찜한 수 down => 찜하기 삭제 서비스 로직에서 사용 예정
     public void decrementWishCount() {
-        if(this.wishCount >0){
+        if (this.wishCount > 0) {
             this.wishCount--;
         }
     }
 
 
-
-    /** 공통 DTO 변환 메서드 */
+    /**
+     * 공통 DTO 변환 메서드
+     */
     public void addPropertyOptionItem(PropertyOptionItem propertyOptionItem) {
         optionItems.add(propertyOptionItem);
         propertyOptionItem.setProperty(this);
@@ -250,7 +295,7 @@ public abstract class Property {
         if (dto.getMeetingDateFrom() != null) {
             this.meetingDateFrom = dto.getMeetingDateFrom();
         }
-        if(dto.getMeetingDateTo() != null) {
+        if (dto.getMeetingDateTo() != null) {
             this.meetingDateTo = dto.getMeetingDateTo();
         }
         if (dto.getTimeSlots() != null) {
@@ -262,7 +307,7 @@ public abstract class Property {
         if (dto.getDisplayStatus() != null) {
             this.displayStatus = dto.getDisplayStatus();
         }
-        if(dto.getTradeStatus() != null) {
+        if (dto.getTradeStatus() != null) {
             this.tradeStatus = dto.getTradeStatus();
         }
     }
