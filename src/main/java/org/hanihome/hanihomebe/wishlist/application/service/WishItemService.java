@@ -71,6 +71,10 @@ public class WishItemService {
         //검증 실행
         validator.validate(targetId);
 
+        /*
+         TODO: 찜 중복 확인
+         */
+
 
 
         WishItem wishItem = WishItem.createFrom(member, targetType, targetId);

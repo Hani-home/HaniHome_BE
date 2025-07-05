@@ -76,6 +76,8 @@ public enum ServiceCode {
     INVALID_SORT_OPTION(HttpStatus.BAD_REQUEST, "지원하지 않는 정렬타입입니다."),
     NOT_A_WISH(HttpStatus.BAD_REQUEST, "찜한 매물만 취소할 수 있습니다."),
 
+    PROPERTY_REPORT(HttpStatus.BAD_REQUEST,"매물 신고만 가능합니다"),
+
     // not defined
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
     NOTIFICATION_SEND_FAILED(HttpStatus.BAD_REQUEST, "알림 전송에 실패했습니다"),
