@@ -138,8 +138,9 @@ public class ViewingService {
                 LocalDateTime existingTimeStart = viewing.getMeetingDay();
                 LocalDateTime existingTimeEnd = existingTimeStart.plusMinutes(MINUTE30.getNumber());
 
-            // newTime이 기존 뷰잉 시간의 30분 구간 내에 있는지 확인
-            return !(newTime.isBefore(existingTimeStart) || newTime.isAfter(existingTimeEnd));
+                // newTime이 기존 뷰잉 시간의 30분 구간 내에 있는지 확인
+                // start 이상 end 미만
+                return newTime.isEqual(existingTimeStart) || (newTime.isAfter(existingTimeStart) && newTime.isBefore(existingTimeEnd));
         });
     }
 

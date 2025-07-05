@@ -72,7 +72,7 @@ public class PropertyController {
     }
 */
     @PatchMapping("/properties/{propertyId}")
-    public PropertyResponseDTO patch(@PathVariable("propertyId") Long propertyId, @RequestBody PropertyPatchRequestDTO dto) throws JsonPatchException, IOException {
+    public PropertyResponseDTO patch(@PathVariable("propertyId") Long propertyId, @RequestBody @Valid PropertyPatchRequestDTO dto) throws JsonPatchException, IOException {
         return propertyService.patch(propertyId, dto);
     }
 

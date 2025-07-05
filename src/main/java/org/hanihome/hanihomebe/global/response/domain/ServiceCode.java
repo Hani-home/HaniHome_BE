@@ -76,9 +76,15 @@ public enum ServiceCode {
     INVALID_SORT_OPTION(HttpStatus.BAD_REQUEST, "지원하지 않는 정렬타입입니다."),
     NOT_A_WISH(HttpStatus.BAD_REQUEST, "찜한 매물만 취소할 수 있습니다."),
 
+    //metroStop
+    METRO_STOP_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 지하철 정거장은 존재하지 않습니다"),
+    METRO_STOP_SYNCHRONIZE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "시드니 지하철역 동기화 중 오류가 발생했습니다"),
+    METRO_STOPS_FILE_IS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "저장된 stops.txt 파일이 비어있습니다."),
+
     // not defined
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
     NOTIFICATION_SEND_FAILED(HttpStatus.BAD_REQUEST, "알림 전송에 실패했습니다"),
+
     ;
 
     private final HttpStatus httpStatus;
