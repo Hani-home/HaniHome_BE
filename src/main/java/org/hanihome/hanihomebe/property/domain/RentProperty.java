@@ -59,6 +59,7 @@ public class RentProperty extends Property {
                 .meetingDateFrom(dto.meetingDateFrom())
                 .meetingDateTo(dto.meetingDateTo())
                 .timeSlots(dto.timeSlots())
+                .viewingAvailableDateTimes(dto.viewingAvailableDateTimes())
                 .description(dto.description())
                 .rentPropertySubType(dto.rentPropertySubType())             // 고유필드 1
                 .isRealEstateIntervention(dto.isRealEstateIntervention())   // 고유필드 2

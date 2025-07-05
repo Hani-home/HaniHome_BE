@@ -7,6 +7,7 @@ import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.TimeSlot;
+import org.hanihome.hanihomebe.property.domain.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.web.dto.PropertySearchConditionDTO;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
@@ -100,6 +101,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
@@ -133,6 +135,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.SECOND_ROOM,
                 10.0, // internalArea
@@ -167,6 +170,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 // Rent 전용 필드
                 RentPropertySubType.HOUSE,
@@ -198,6 +202,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 // Rent 전용 필드
                 RentPropertySubType.UNIT,
@@ -416,6 +421,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
@@ -478,6 +484,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea

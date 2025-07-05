@@ -14,6 +14,7 @@ import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.notification.application.service.EmitterService;
 import org.hanihome.hanihomebe.notification.application.service.NotificationService;
 import org.hanihome.hanihomebe.property.domain.Property;
+import org.hanihome.hanihomebe.property.domain.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
 import org.hanihome.hanihomebe.viewing.domain.ViewingOptionItem;
@@ -26,9 +27,14 @@ import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval.MINUTE30;
 
@@ -66,7 +72,7 @@ public class ViewingService {
             throw new CustomException(ServiceCode.VIEWING_NUMBER_NOT_SATISFIED);
         }
         
-        // 2. 사용자의 기존 다가오는 뷰잉 스케줄 조회
+        // 2. 게스트의 기존 다가오는 뷰잉 스케줄 조회
         List<Viewing> existingViewings = viewingRepository.findByMemberAndMeetingDayAfterAndStatus(findMemberGuest, LocalDateTime.now(), ViewingStatus.REQUESTED);
 
         // 3. 시간대 중복 체크
@@ -80,6 +86,20 @@ public class ViewingService {
             .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_ALREADY_PRESCHEDULED));
         
         // 5. 뷰잉 생성 및 저장
+        // 연결된 매물의 뷰잉가능시각 상태를 reserved로 변경
+        ViewingAvailableDateTime viewingAvailableDateTime = findProperty.getViewingAvailableDateTimes()
+                .stream()
+                .filter(availableTime -> {
+                    LocalDate date = availableTime.getDate();
+                    LocalTime time = availableTime.getTime();
+                    LocalDateTime availableDay = LocalDateTime.of(date, time);
+
+                    return availableDay.isEqual(confirmedTime) && availableTime.isReserved() == false;
+                })
+                .findFirst().orElseThrow(() -> new CustomException(ServiceCode.VIEWING_TIME_MISMATCH));
+        viewingAvailableDateTime.updateReservation(true);
+        propertyRepository.save(findProperty);
+
         Viewing viewing = Viewing.create(findMemberGuest, findProperty, confirmedTime);
         viewingRepository.save(viewing);
 
@@ -89,7 +109,7 @@ public class ViewingService {
     /**
      * 사용자별 뷰잉 조회
      */
-    public List<ViewingResponseDTO> getUserViewings(Long memberId) {
+    public List<ViewingResponseDTO> getViewingByMemberId(Long memberId) {
         return viewingRepository.findByMemberId(memberId).stream()
                 .map(viewing -> ViewingResponseDTO.from(viewing))
                 .toList();
@@ -107,12 +127,21 @@ public class ViewingService {
         Viewing findViewing = viewingRepository.findById(dto.getViewingId())
             .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
+        // 매물 예약된 시간 릴리즈
+        LocalDateTime meetingDay = findViewing.getMeetingDay();
+        ViewingAvailableDateTime reservedAvailableDateTime = findViewing.getProperty().getViewingAvailableDateTimes()
+                .stream()
+                .filter(availableDateTime ->
+                        LocalDateTime.of(availableDateTime.getDate(), availableDateTime.getTime()).isEqual(meetingDay))
+                .findFirst().orElseThrow(() -> new CustomException(ServiceCode.VIEWING_TIME_MISMATCH));
+        reservedAvailableDateTime.updateReservation(false);
+        propertyRepository.save(findViewing.getProperty());
+
+        // 뷰잉 취소 옵션 아이템 추가
         List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(dto.getAllOptionItemIds())
                 .stream()
                 .map(ViewingOptionItem::create)
                 .toList();
-
-
 
         findViewing.cancel(dto.getReason(), viewingOptionItems);
 
@@ -183,7 +212,7 @@ public class ViewingService {
 
     /**
      * 뷰잉 체크리스트에 사용자가 체크한 항목을 저장합니다
-     * @param dto: 사용자가 체크한 아이템 식별자
+     * @param dto: 사용자가 체크한 모든 아이템 식별자(체크리스트 아이템 식별자만 제공하는 것이 아님)
      * @return : 체크리스트에서 사용자가 체크한 아이템 식별자
      */
     @Transactional
@@ -194,11 +223,11 @@ public class ViewingService {
         List<OptionItem> optionItems = optionItemRepository.findAllById(dto.allOptionItemIds());
 
         // ViewingOptionItem 생성(체크리스트 아이템)
-        List<ViewingOptionItem> viewingOptionItems = optionItems.stream()
+        List<ViewingOptionItem> allViewingOptionItems = optionItems.stream()
                 .map(optionItem -> ViewingOptionItem.create(optionItem))
                 .toList();
 
-        findViewing.updateViewingOptionItem(viewingOptionItems);
+        findViewing.updateChecklist(allViewingOptionItems);
         viewingRepository.save(findViewing);
 
         return ViewingChecklistResponseDTO.from(findViewing.getId(), optionItems.stream().map(OptionItem::getId).toList());
@@ -221,5 +250,22 @@ public class ViewingService {
                 .map(viewingOptionItem -> viewingOptionItem.getOptionItem().getId())
                 .toList();
         return checklistItemIds;
+    }
+
+    /**
+     * 자신의 status 상태인 뷰잉의 모든 시간을 조회한다
+     * @param memberId 내 id
+     * @param status 조회할 뷰잉 상태
+     * @return 조회된 뷰잉들의 시간
+     */
+    public Map<LocalDate, List<LocalTime>> getMyViewingDatesByStatus(Long memberId, ViewingStatus status) {
+        List<Viewing> myViewingsByStatus = viewingRepository.findByMemberIdAndStatus(memberId, status);
+
+        Map<LocalDate, List<LocalTime>> response = myViewingsByStatus.stream()
+                .collect(Collectors.groupingBy(viewing -> viewing.getMeetingDay().toLocalDate(),
+                        TreeMap::new,
+                        Collectors.mapping(viewing -> viewing.getMeetingDay().toLocalTime(), Collectors.toList())));
+        response.forEach((date, times) -> times.sort(Comparator.naturalOrder()));
+        return response;
     }
 }
