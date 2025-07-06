@@ -54,7 +54,7 @@ public class ReportService {
         return ReportResponseDTO.from(report.getTargetType(), report.getTargetId(), report);
     }
 
-
+    //관리자 조회
 
 
 }

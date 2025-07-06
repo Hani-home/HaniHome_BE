@@ -71,9 +71,12 @@ public class WishItemService {
         //검증 실행
         validator.validate(targetId);
 
-        /*
-         TODO: 찜 중복 확인
-         */
+        boolean alreadyExists = wishItemRepository.existsByMemberAndTargetTypeAndTargetId(
+                member, targetType, targetId
+        );
+        if (alreadyExists) {
+            throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
+        }
 
 
 
