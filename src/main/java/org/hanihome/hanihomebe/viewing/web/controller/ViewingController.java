@@ -2,10 +2,10 @@ package org.hanihome.hanihomebe.viewing.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.notification.application.service.*;
-import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingNotificationService;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
+import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.web.dto.*;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
@@ -15,7 +15,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Validated
@@ -46,7 +49,7 @@ public class ViewingController {
     // 사용자별 뷰잉 조회
     @GetMapping("/my-viewings")
     public ResponseEntity<List<ViewingResponseDTO>> getUserViewings(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<ViewingResponseDTO> viewings = viewingService.getUserViewings(userDetails.getUserId());
+        List<ViewingResponseDTO> viewings = viewingService.getViewingByMemberId(userDetails.getUserId());
         return ResponseEntity.ok(viewings);
     }
 
@@ -54,6 +57,14 @@ public class ViewingController {
     @GetMapping("/{viewingId}")
     public ViewingResponseDTO getViewingById(@PathVariable Long viewingId) {
         return viewingService.getViewingById(viewingId);
+    }
+
+    // REQUESTED 상태인 내 뷰잉 시각 조회
+    @GetMapping("/my-viewings/dates")
+    public Map<LocalDate, List<LocalTime>> getMyViewingDates(@RequestParam ViewingStatus status,
+                                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return viewingService.getMyViewingDatesByStatus(userDetails.getUserId(), status);
+
     }
 
     // cancel

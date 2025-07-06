@@ -7,6 +7,7 @@ import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.TimeSlot;
+import org.hanihome.hanihomebe.property.domain.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.web.dto.PropertySearchConditionDTO;
 import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
@@ -26,7 +27,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,7 +63,7 @@ class PropertySearchServiceTest {
          * 매물 종류 / 매물 유형 / 예산 범위 / 입주 가능일 / 지하철역
          *
          */
-        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(150), BigDecimal.valueOf(0));
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(0), BigDecimal.valueOf(0));
         List<String> photoUrls = List.of("https://example.com/1.jpg", "https://example.com/2.jpg");
         BigDecimal deposit = new BigDecimal("800.00");
         BigDecimal keyDeposit = new BigDecimal("100.00");
@@ -101,6 +101,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
@@ -134,6 +135,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.SECOND_ROOM,
                 10.0, // internalArea
@@ -168,6 +170,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 // Rent 전용 필드
                 RentPropertySubType.HOUSE,
@@ -199,6 +202,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 // Rent 전용 필드
                 RentPropertySubType.UNIT,
@@ -417,6 +421,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
@@ -479,6 +484,7 @@ class PropertySearchServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
@@ -547,6 +553,88 @@ class PropertySearchServiceTest {
             assertTrue(result.isEmpty());
         });
     }
+
+    @Test
+    void shouldReturnZeroProperty_whenFilterByDistantMetroStop() {
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(90.0000), BigDecimal.valueOf(0.0000));
+        BigDecimal metroStopLongitude = BigDecimal.valueOf(90.0000);
+        BigDecimal metroStopLatitude = BigDecimal.valueOf(0.0000);
+        BigDecimal radiusKm = BigDecimal.valueOf(100);
+
+        Map<PropertySuperType, List<PropertyResponseDTO>> results = propertySearchService.search(
+                PropertySearchConditionDTO.builder()
+                        .metroStopLongitude(metroStopLongitude)
+                        .metroStopLatitude(metroStopLatitude)
+                        .radiusKm(radiusKm)
+                        .build()
+        );
+
+        logging(results);
+        results.forEach((PropertySuperType kind, List<PropertyResponseDTO> result) -> {
+            assertTrue(result.isEmpty());
+        });
+    }
+
+    @Test
+    void shouldReturnFourProperty_whenFilterByExactMetroStop() {
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(90.0000), BigDecimal.valueOf(0.0000));
+        BigDecimal metroStopLongitude = BigDecimal.valueOf(0.0000);
+        BigDecimal metroStopLatitude = BigDecimal.valueOf(0.0000);
+        BigDecimal radiusKm = BigDecimal.valueOf(100);
+
+        Map<PropertySuperType, List<PropertyResponseDTO>> results = propertySearchService.search(
+                PropertySearchConditionDTO.builder()
+                        .metroStopLongitude(metroStopLongitude)
+                        .metroStopLatitude(metroStopLatitude)
+                        .radiusKm(radiusKm)
+                        .build()
+        );
+
+        logging(results);
+        assertEquals(4, results.get(PropertySuperType.RENT).size() + (results.get(PropertySuperType.SHARE).size()));
+    }
+    @Test
+    void shouldReturnFourProperty_whenFilterByNearMetroStop() {
+        // 경도 1도 : 111.32km
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(90.0000), BigDecimal.valueOf(0.0000));
+        BigDecimal metroStopLongitude = BigDecimal.valueOf(1.0000);
+        BigDecimal metroStopLatitude = BigDecimal.valueOf(0.0000);
+        BigDecimal radiusKm = BigDecimal.valueOf(115);
+
+        Map<PropertySuperType, List<PropertyResponseDTO>> results = propertySearchService.search(
+                PropertySearchConditionDTO.builder()
+                        .metroStopLongitude(metroStopLongitude)
+                        .metroStopLatitude(metroStopLatitude)
+                        .radiusKm(radiusKm)
+                        .build()
+        );
+
+        logging(results);
+        assertEquals(4, results.get(PropertySuperType.RENT).size() + (results.get(PropertySuperType.SHARE).size()));
+    }
+    @Test
+    void shouldReturnTwoProperty_whenFilterByMetroStop_andKinds() {
+        // 경도 1도 : 111.32km
+        Region region = new Region("Australia", "2067", "NSW", "Chatswood", "Smith St", "25", "1203", "Chatswood Central Apartments", BigDecimal.valueOf(90.0000), BigDecimal.valueOf(0.0000));
+        BigDecimal metroStopLongitude = BigDecimal.valueOf(1.0000);
+        BigDecimal metroStopLatitude = BigDecimal.valueOf(0.0000);
+        BigDecimal radiusKm = BigDecimal.valueOf(115);
+
+        Map<PropertySuperType, List<PropertyResponseDTO>> results = propertySearchService.search(
+                PropertySearchConditionDTO.builder()
+                        .kinds(List.of(PropertySuperType.SHARE))
+                        .metroStopLongitude(metroStopLongitude)
+                        .metroStopLatitude(metroStopLatitude)
+                        .radiusKm(radiusKm)
+                        .build()
+        );
+
+        logging(results);
+        assertEquals(2, results.get(PropertySuperType.RENT).size() + (results.get(PropertySuperType.SHARE).size()));
+    }
+
+
+
     private static void logging(Map<PropertySuperType, List<PropertyResponseDTO>> results) {
         log.info("results: {}", results);
         results.forEach((k, v) -> {

@@ -27,13 +27,6 @@ public class PropertySearchService {
 
 
     public Map<PropertySuperType, List<PropertyResponseDTO>> search(PropertySearchConditionDTO conditionDTO) {
-/*
-        List<Property> findProperties = propertyRepository.search(conditionDTO);
-
-        Map<PropertySuperType, List<PropertyResponseDTO>> dtoMap = findProperties.stream()
-                .map(property -> propertyMapper.toResponseDto(property))
-                .collect(Collectors.groupingBy(dto -> dto.kind(), Collectors.toList()));
-*/
         EnumMap<PropertySuperType, List<PropertyResponseDTO>> dtoMap = new EnumMap<>(PropertySuperType.class);
         for(PropertySuperType kind: PropertySuperType.values()) {
             dtoMap.put(kind, new ArrayList<>());

@@ -30,6 +30,7 @@ public class PropertySearchConditionDTO {
     private Boolean immediate;
     private Boolean negotiable;
 
-    private String stationCode;      // 역 코드
-    private Double radiusKm;         // 반경 (킬로미터)
+    private BigDecimal metroStopLatitude;      // 역 코드
+    private BigDecimal metroStopLongitude;
+    private BigDecimal radiusKm;         // 반경 (킬로미터)
 }

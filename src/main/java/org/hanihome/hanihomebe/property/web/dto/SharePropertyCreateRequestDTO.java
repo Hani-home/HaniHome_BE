@@ -3,20 +3,24 @@ package org.hanihome.hanihomebe.property.web.dto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.TimeSlot;
+import org.hanihome.hanihomebe.property.domain.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.domain.enums.*;
+import org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Slf4j
 public record SharePropertyCreateRequestDTO(
         Long memberId,                              // 소유자 회원 ID
         PropertySuperType kind,                     // 매물 종류 (SHARE / RENT)
@@ -43,6 +47,7 @@ public record SharePropertyCreateRequestDTO(
         @NotNull @Size(min = 1, max = 3)
         @Valid //값 객체 내부도 검증
         List<TimeSlot> timeSlots,
+        List<ViewingAvailableDateTime> viewingAvailableDateTimes,
         String description,                         // 매물 소개
         SharePropertySubType sharePropertySubType,  //고유필드 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
         Double internalArea,                        //고유필드 2-1. 실제 사용 면적
@@ -60,10 +65,37 @@ public record SharePropertyCreateRequestDTO(
         if (optionItemIds == null) {
             optionItemIds = new ArrayList<>();
         }
+        if(viewingAvailableDateTimes == null) {
+            viewingAvailableDateTimes = new ArrayList<>();
+        }
         // 뷰잉 가능 시간 검증
         boolean isValidTimeSlots = TimeSlotValidator.validAllConditions(timeSlots);
         if(!isValidTimeSlots) {
             throw new CustomException(ServiceCode.INVALID_PROPERTY_TIME_SLOT);
         }
+
+        // ViewingAvailableDateTime 변환
+        LocalDate tempDate = meetingDateFrom;
+        while (tempDate.isBefore(meetingDateTo) || tempDate.isEqual(meetingDateTo)) {
+            log.info("현재 DTO 생성중의 date:{}", tempDate.toString() );
+            LocalDate finalTempDate = tempDate;
+            List<ViewingAvailableDateTime> finalViewingAvailableDateTimes = viewingAvailableDateTimes;
+            timeSlots.forEach(timeSlot -> {
+                LocalTime timeFrom = timeSlot.getTimeFrom();
+                LocalTime timeTo = timeSlot.getTimeTo();
+                while(timeFrom.isBefore(timeTo)) {
+                    ViewingAvailableDateTime viewingAvailableDateTime = new ViewingAvailableDateTime(finalTempDate,
+                            timeFrom,
+                            false,
+                            ViewingTimeInterval.MINUTE30);
+                    finalViewingAvailableDateTimes.add(viewingAvailableDateTime);
+                    timeFrom = timeFrom.plusMinutes(30);
+                }
+            });
+            tempDate = tempDate.plusDays(1);
+        }
+        log.info("meetingDateFrom: {}, meetingDateTo: {}", meetingDateFrom, meetingDateTo);
+        log.info("viewingAvailableDateTimes: {}", viewingAvailableDateTimes.stream().map(viewingAvailableDateTime -> viewingAvailableDateTime.getTime()).toList());
+
     }
 }

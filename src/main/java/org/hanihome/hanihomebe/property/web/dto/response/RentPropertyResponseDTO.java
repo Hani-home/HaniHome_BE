@@ -32,14 +32,15 @@ public record RentPropertyResponseDTO(
         Boolean negotiable,
         Boolean immediate,
         ParkingOption parkingOption,
-        LocalDate meetingDateFrom,
-        LocalDate meetingDateTo,
-        List<TimeSlot> timeSlots,
         String description,
         RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
         RealEstateType isRealEstateIntervention,    // (RentProperty 고유) 부동산 중개 여부
         CapacityRent capacityRent,                  // (RentProperty 고유) 수용인원-렌트
         Exposure exposure                           // (RentProperty 고유) 남향북향
+        //        LocalDate meetingDateFrom,
+//        LocalDate meetingDateTo,
+//        List<TimeSlot> timeSlots,
+        // viewingAvailableDateTime는 응답에서 제외
 )implements PropertyResponseDTO {
     public static RentPropertyResponseDTO from(RentProperty rentProperty) {
 
@@ -61,9 +62,9 @@ public record RentPropertyResponseDTO(
             new ArrayList<>(rentProperty.getPhotoUrls()) :
             Collections.emptyList();
 
+          // possibleMeetingDates 추출 (방어적 복사)
+//        List<TimeSlot> timeSlots = new ArrayList<>(rentProperty.getTimeSlots());
 
-        // possibleMeetingDates 추출 (방어적 복사)
-        List<TimeSlot> timeSlots = new ArrayList<>(rentProperty.getTimeSlots());
 
         return new RentPropertyResponseDTO(
                 rentProperty.getId(),
@@ -86,14 +87,14 @@ public record RentPropertyResponseDTO(
                 rentProperty.isNegotiable(),
                 rentProperty.isImmediate(),
                 rentProperty.getParkingOption(),
-                rentProperty.getMeetingDateFrom(),
-                rentProperty.getMeetingDateTo(),
-                timeSlots,
                 rentProperty.getDescription(),
                 rentProperty.getRentPropertySubType(),           // (RentProperty 고유) 1. 매물 유형
                 rentProperty.getIsRealEstateIntervention(),     // (RentProperty 고유) 2. 부동산 중개 여부
                 rentProperty.getCapacityRent(),                 // (RentProperty 고유) 3. 수용인원-렌트
                 rentProperty.getExposure()                      // (RentProperty 고유) 4. 남향북향
+//                rentProperty.getMeetingDateFrom(),
+//                rentProperty.getMeetingDateTo(),
+//                timeSlots,
         );
 }
 }

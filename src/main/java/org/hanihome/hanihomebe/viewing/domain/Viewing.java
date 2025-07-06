@@ -79,11 +79,18 @@ public class Viewing extends BaseEntity {
                 .build();
     }
 
-    /** 상태 변경 로직 등 도메인 메서드도 이곳에 추가 가능 */
+    /** 뷰잉 취소 */
     public void cancel(String cancelReason, List<ViewingOptionItem> cancelReasonItems) {
         this.status = ViewingStatus.CANCELLED;
         this.cancelReason = cancelReason;
         updateViewingOptionItem(cancelReasonItems);
+    }
+
+    /**
+     * 체크리스트 업로드/업데이트
+     */
+    public void updateChecklist(List<ViewingOptionItem> allOptionItems) {
+        updateViewingOptionItem(allOptionItems);
     }
 
     public void complete() {
@@ -92,7 +99,7 @@ public class Viewing extends BaseEntity {
 
     // 연관관계 편의 메서드
     // TODO: 현재는 옵션아이템을 하나씩 넣어주고 있음. but, 서로 다른 카테고리의 옵션 아이템이 동시에 존재하므로 수정이 어려움
-    //  => OptionItem을 변경하는 모든 요청은 해당 엔티티가 소유한 모든 옵션아이템의 식별자를 제공하고, 그것으로 PUT하는 거로 결정
+    //  => OptionItem을 변경하는 모든 요청은 해당 엔티티가 소유한 모든 옵션아이템의 식별자를 제공하고, 그것으로 PUT하는 거로 결정(PUT 동작)
 /*    public void addViewingOptionItem(ViewingOptionItem viewingOptionItem) {
         viewingOptionItem.setViewing(this);
         this.viewingOptionItems.add(viewingOptionItem);

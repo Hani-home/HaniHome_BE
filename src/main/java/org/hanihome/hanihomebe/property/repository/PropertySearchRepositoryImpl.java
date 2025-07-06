@@ -1,6 +1,8 @@
 package org.hanihome.hanihomebe.property.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +15,8 @@ import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.web.dto.PropertySearchConditionDTO;
 import org.springframework.stereotype.Repository;
-
+import java.lang.*;
+import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -23,7 +26,7 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
 
     /**
      * 필터링
-     * 필터링 기준: 매물 종류, 매물 유형, 1주당 예산 범위, 빌포함, 입주가능일, 즉시입주가능, 협의 가능
+     * 필터링 기준: 매물 종류, 매물 유형, 1주당 예산 범위, 빌포함, 입주가능일, 즉시입주가능, 협의 가능, 지하철역부터 Nkm
      * @param cond 필터링 기준
      * @return 필터링된 매물 리스트
      */
@@ -84,19 +87,29 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
             baseBuilder.and(p.isNegotiable.eq(cond.getNegotiable()));
         }
 
-        // 지하철역
-        /*
-        if (cond.getStationCode() != null && cond.getRadiusKm() != null) {
-            Station station = stationRepository.findByCode(cond.getStationCode())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid station code"));
-            Point coord = station.getLocation();
-            NumberExpression<Double> distance = com.querydsl.core.types.dsl.Expressions
-                    .numberTemplate(Double.class,
-                            "ST_Distance_Sphere({0}, {1})",
-                            p.location, coord);
-            base.and(distance.loe(cond.getRadiusKm() * 1000));
+        // 지하철역 기준 Nkm 필터
+        // TODO: 품질보증: 오차 범위가 어떻게되는지 확인이 필요
+        if (
+                cond.getMetroStopLatitude() != null
+                && cond.getMetroStopLongitude() != null
+                && cond.getRadiusKm() != null
+        ) {
+            // km => m
+            BigDecimal radiusMeters = cond.getRadiusKm().multiply(BigDecimal.valueOf(1000));
+            BooleanExpression metroFilter = Expressions.booleanTemplate(
+                    "ST_Distance_Sphere(" +
+                            "ST_GeomFromText('POINT(' || {0} || ' ' || {1} || ')', 4326), " +   // property point
+                            "ST_GeomFromText('POINT(' || {2} || ' ' || {3} || ')', 4326)" +     // metro point
+                            ") <= {4}",
+                    p.region.longitude,
+                    p.region.latitude,
+                    cond.getMetroStopLongitude(),
+                    cond.getMetroStopLatitude(),
+                    radiusMeters
+            );
+
+            baseBuilder.and(metroFilter);
         }
-        */
 
         JPAQuery<Property> query = queryFactory
                 .selectFrom(p)

@@ -122,6 +122,7 @@ class PropertyServiceTest {
                 meetingDateFrom,
                 meetingDateTo,
                 timeSlots,
+                null,
                 "깨끗하고 조용한 마스터룸입니다.",
                 SharePropertySubType.MASTER_ROOM,
                 10.0, // internalArea
