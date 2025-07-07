@@ -2,7 +2,6 @@ package org.hanihome.hanihomebe.s3.web;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.s3.web.dto.S3ProfileRequestDTO;
-import org.hanihome.hanihomebe.s3.web.dto.S3ReportRequestDTO;
 import org.hanihome.hanihomebe.s3.web.dto.S3RequestDTO;
 import org.hanihome.hanihomebe.s3.web.dto.S3ResponseDTO;
 import org.hanihome.hanihomebe.s3.service.S3Service;
@@ -78,16 +77,5 @@ public class S3Controller {
         String extension = dto.getFileExtension();
         String fileName = userDetails.getUserId() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + UUID.randomUUID() + "." + extension;
         return s3Service.generatePresignedUrl(fileName, "profile");
-    }
-
-    @PostMapping("/reports/presigned-url")//파일 이름에 신고에 대한 정보를 더 담고 싶은데 담을 수 가 없네...
-    public List<S3ResponseDTO> getReportPresingedUrl(@RequestBody S3ReportRequestDTO dto) {
-        List<S3ResponseDTO> dtos = dto.getFileExtensions().stream()
-                .map(extension -> {
-                    String fileName = dto.getReportTargetType() + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + UUID.randomUUID() + "." + extension;
-                    return s3Service.generatePresignedUrl(fileName, "report");
-        }).toList();
-
-        return dtos;
     }
 }
