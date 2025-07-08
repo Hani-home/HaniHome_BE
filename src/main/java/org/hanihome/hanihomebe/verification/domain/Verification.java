@@ -39,7 +39,7 @@ public class Verification {
     private Member member;
 
 
-    //신원 인증 종류 ex. ID_CARD(신분증), PASSWORD(여권), DRIVER_LICENSE(운전 면허)
+    //신원 인증 종류 ex. ID_CARD(신분증), PASSWORD(여권)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VerificationType type;
