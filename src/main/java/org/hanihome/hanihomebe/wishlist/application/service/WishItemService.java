@@ -71,7 +71,12 @@ public class WishItemService {
         //검증 실행
         validator.validate(targetId);
 
-
+        boolean alreadyExists = wishItemRepository.existsByMemberAndTargetTypeAndTargetId(
+                member, targetType, targetId
+        );
+        if (alreadyExists) {
+            throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
+        }
 
         WishItem wishItem = WishItem.createFrom(member, targetType, targetId);
 
