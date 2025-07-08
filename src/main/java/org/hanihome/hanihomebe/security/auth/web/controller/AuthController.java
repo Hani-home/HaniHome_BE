@@ -40,8 +40,8 @@ public class AuthController {
 
 
     @PostMapping("/social/login")
-    public ResponseEntity<LoginResponseDTO> googleCodeLogin(@RequestBody GoogleLoginRequestDTO dto) {
-        LoginResponseDTO tokens = authService.googleCodeLogin(dto.getCode());
+    public ResponseEntity<LoginResponseDTO> googleCodeLogin(@RequestBody GoogleLoginRequestDTO dto, HttpServletRequest request) {
+        LoginResponseDTO tokens = authService.googleCodeLogin(dto.getCode(), request);
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", tokens.getRefreshToken())
                 .httpOnly(true)
