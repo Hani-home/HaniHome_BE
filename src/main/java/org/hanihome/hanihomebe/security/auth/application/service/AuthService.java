@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.security.auth.application.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import jakarta.servlet.http.HttpServletRequest;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -33,14 +34,17 @@ import java.util.Optional;
 public class AuthService {
 
 
-    @Value("${GOOGLE_CLIENT_ID}")
+    @Value("${oauth.google.client-id}")
     private String clientId;
 
-    @Value("${GOOGLE_CLIENT_SECRET}")
+    @Value("${oauth.google.client-secret}")
     private String clientSecret;
 
-    @Value("${GOOGLE_REDIRECT_URI}")
-    private String redirectUri;
+    @Value("${oauth.google.redirect-uri-local}")
+    private String redirectUriLocal;
+
+    @Value("${oauth.google.redirect-uri-prod}")
+    private String redirectUriProd;
 
 
 
@@ -67,7 +71,7 @@ public class AuthService {
 
 
     @Transactional
-    public LoginResponseDTO googleCodeLogin(String code) {
+    public LoginResponseDTO googleCodeLogin(String code, HttpServletRequest request) {
         /*
         전반적인 로직 :
             프론트가 code를 받아서 해당 api로 보냄.
@@ -78,7 +82,7 @@ public class AuthService {
             결과 프론트에 전달
          */
 
-        Map<String, Object> responseBody = requestGoogleToken(code);
+        Map<String, Object> responseBody = requestGoogleToken(code, request);
 
         //토큰 받아온 response에서 id_token 추출
         String idToken = (String) responseBody.get("id_token");
@@ -109,13 +113,27 @@ public class AuthService {
         return new LoginResponseDTO(accessToken, refreshToken, isNewUser);
     }
 
-    private Map<String, Object> requestGoogleToken(String code) {
+    private Map<String, Object> requestGoogleToken(String code, HttpServletRequest httpRequest) {
         //HTTP 요청을 보내기 위한 Spring class
         RestTemplate restTemplate = new RestTemplate();
 
         //요청 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        //Origin 기준으로 로컬인지 배포 환경인지 판단
+
+        String origin = httpRequest.getHeader("Origin");
+        String referer = httpRequest.getHeader("Referer");
+
+        String redirectUri;
+        if ((origin != null && origin.contains("localhost")) ||
+                (referer != null && referer.contains("localhost"))) {
+            redirectUri = redirectUriLocal;
+        } else {
+            redirectUri = redirectUriProd;
+        }
+
 
         // 구글에 넘길 파라미터 설정
         Map<String, String> params = new HashMap<>();
