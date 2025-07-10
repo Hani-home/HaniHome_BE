@@ -65,7 +65,7 @@ public class PropertyService {
 
             RentProperty save = propertyRepository.save(rentProperty);//RentProperty 테이블에도 JPA가 insert
             log.info("RentPrperty 생성 저장 성공");
-            return propertyMapper.toResponseDto(save);
+            return propertyMapper.toResponseDTO(save);
         } else if (dto instanceof SharePropertyCreateRequestDTO){
             ShareProperty shareProperty = ShareProperty.create((SharePropertyCreateRequestDTO) dto, findMember);
 
@@ -74,7 +74,7 @@ public class PropertyService {
 
             ShareProperty save = propertyRepository.save(shareProperty);
             log.info("SharaProperty 생성 저장 성공");
-            return propertyMapper.toResponseDto(save);
+            return propertyMapper.toResponseDTO(save);
         }
 
         throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
@@ -90,7 +90,7 @@ public class PropertyService {
      */
     public List<PropertyResponseDTO> getAllProperties() {
         return propertyRepository.findAll().stream()
-                .map(property -> propertyMapper.toResponseDto(property))
+                .map(property -> propertyMapper.toResponseDTO(property))
                 .collect(Collectors.toList());
     }
 
@@ -101,7 +101,7 @@ public class PropertyService {
         Property findProperty = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found: " + id));
 
-        return propertyMapper.toResponseDto(findProperty);
+        return propertyMapper.toResponseDTO(findProperty);
     }
 
     /**
@@ -120,7 +120,7 @@ public class PropertyService {
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         List<PropertyResponseDTO> dtos = propertyRepository.findByMemberAndDisplayStatus(findMember, displayStatus).stream()
-                .map(property -> propertyMapper.toResponseDto(property))
+                .map(property -> propertyMapper.toResponseDTO(property))
                 .toList();
         return dtos;
     }
@@ -133,7 +133,7 @@ public class PropertyService {
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         List<PropertyResponseDTO> dtos = propertyRepository.findByMemberAndDisplayStatus(findMember, null).stream()
-                .map(property -> propertyMapper.toResponseDto(property))
+                .map(property -> propertyMapper.toResponseDTO(property))
                 .toList();
         return dtos;
     }

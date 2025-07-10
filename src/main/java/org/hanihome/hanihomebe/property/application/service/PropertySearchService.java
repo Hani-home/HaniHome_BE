@@ -5,10 +5,8 @@ import org.hanihome.hanihomebe.property.application.PropertyMapper;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
-import org.hanihome.hanihomebe.property.repository.PropertySearchRepositoryImpl;
 import org.hanihome.hanihomebe.property.web.dto.PropertySearchConditionDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +32,7 @@ public class PropertySearchService {
 
         List<Property> findProperties = propertyRepository.search(conditionDTO);
         findProperties.stream()
-                .map(property -> propertyMapper.toResponseDto(property))
+                .map(property -> propertyMapper.toResponseDTO(property))
                 .collect(Collectors.groupingBy(dto -> dto.kind(), Collectors.toList()))
                 .forEach((kind, list) -> dtoMap.put(kind, list));
 
