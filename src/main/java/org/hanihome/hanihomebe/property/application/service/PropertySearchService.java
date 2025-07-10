@@ -32,7 +32,7 @@ public class PropertySearchService {
 
         List<Property> findProperties = propertyRepository.search(conditionDTO);
         findProperties.stream()
-                .map(property -> propertyMapper.toResponseDTO(property))
+                .map(property -> propertyMapper.toResponseDTO(property, getOptionItemResponseDTOS(property)))
                 .collect(Collectors.groupingBy(dto -> dto.kind(), Collectors.toList()))
                 .forEach((kind, list) -> dtoMap.put(kind, list));
 
