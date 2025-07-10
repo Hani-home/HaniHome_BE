@@ -9,5 +9,5 @@ public enum GenderPreference {
     FEMALE_ONLY("여자만"),
     COUPLE("커플 가능")
     ;
-    private final String value;
+    private final String description;
 }

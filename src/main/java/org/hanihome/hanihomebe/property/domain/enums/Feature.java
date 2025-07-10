@@ -20,5 +20,5 @@ public enum Feature {
     SOUNDPROOF("방음이 잘 돼요"),
     SAFE_NEIGHBORHOOD("치안이 좋아요");
 
-    private final String name;
+    private final String description;
 }
