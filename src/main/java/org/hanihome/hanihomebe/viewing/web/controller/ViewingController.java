@@ -6,10 +6,16 @@ import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingNotificationService;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
-import org.hanihome.hanihomebe.viewing.web.dto.*;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingDTOByView;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.cancel.ViewingCancelRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.cancel.ViewingCancelResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.checklist.ViewingChecklistRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.checklist.ViewingChecklistResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.note.ViewingNotesResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingCreateDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.note.ViewingNotesRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.enums.ViewingViewType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -48,8 +54,9 @@ public class ViewingController {
 
     // 사용자별 뷰잉 조회
     @GetMapping("/my-viewings")
-    public ResponseEntity<List<ViewingResponseDTO>> getUserViewings(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<ViewingResponseDTO> viewings = viewingService.getViewingByMemberId(userDetails.getUserId());
+    public ResponseEntity<List<? extends ViewingDTOByView>> getUserViewings(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                            @RequestParam(required = false) ViewingViewType view) {
+        List<? extends ViewingDTOByView> viewings = viewingService.getViewingByMemberId(userDetails.getUserId(), view);
         return ResponseEntity.ok(viewings);
     }
 
