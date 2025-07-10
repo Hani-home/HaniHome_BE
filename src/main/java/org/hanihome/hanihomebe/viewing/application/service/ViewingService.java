@@ -1,6 +1,5 @@
 package org.hanihome.hanihomebe.viewing.application.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
@@ -11,8 +10,6 @@ import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
-import org.hanihome.hanihomebe.notification.application.service.EmitterService;
-import org.hanihome.hanihomebe.notification.application.service.NotificationService;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
@@ -20,26 +17,29 @@ import org.hanihome.hanihomebe.viewing.domain.Viewing;
 import org.hanihome.hanihomebe.viewing.domain.ViewingOptionItem;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
-import org.hanihome.hanihomebe.viewing.web.dto.*;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.converter.ViewingConverter;
+import org.hanihome.hanihomebe.viewing.web.dto.cancel.ViewingCancelRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.checklist.ViewingChecklistRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingCreateDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.note.ViewingNotesRequestDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.cancel.ViewingCancelResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.checklist.ViewingChecklistResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.note.ViewingNotesResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.enums.ViewingViewType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval.MINUTE30;
 
 @Slf4j
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class ViewingService {
@@ -49,8 +49,23 @@ public class ViewingService {
     private final PropertyRepository propertyRepository;
     private final OptionItemRepository optionItemRepository;
     private final OptionCategoryRepository optionCategoryRepository;
-    private final NotificationService notificationService;
-    private final EmitterService emitterService;
+    private final Map<ViewingViewType, ViewingConverter<?>> converterMap = new EnumMap<>(ViewingViewType.class);
+
+    @Autowired
+    public ViewingService(ViewingRepository viewingRepository,
+                          MemberRepository memberRepository,
+                          PropertyRepository propertyRepository,
+                          OptionItemRepository optionItemRepository,
+                          OptionCategoryRepository optionCategoryRepository,
+                          List<ViewingConverter<?>> converters) {
+        this.viewingRepository = viewingRepository;
+        this.memberRepository = memberRepository;
+        this.propertyRepository = propertyRepository;
+        this.optionItemRepository = optionItemRepository;
+        this.optionCategoryRepository = optionCategoryRepository;
+        converters.forEach(c ->
+                converterMap.put(c.supports(), c));
+    }
 
     /**
      * 뷰잉 생성
@@ -109,11 +124,19 @@ public class ViewingService {
     /**
      * 사용자별 뷰잉 조회
      */
-    public List<ViewingResponseDTO> getViewingByMemberId(Long memberId) {
+    public <T> List<T> getViewingByMemberId(Long memberId, ViewingViewType view) {
+        @SuppressWarnings("unchecked")
+        ViewingConverter<T> converter =
+                (ViewingConverter<T>) converterMap.getOrDefault(
+                        view,
+                        converterMap.get(ViewingViewType.DEFAULT)
+                );
+
         return viewingRepository.findByMemberId(memberId).stream()
-                .map(viewing -> ViewingResponseDTO.from(viewing))
+                .map(viewing -> converter.convert(viewing))
                 .toList();
     }
+
     public ViewingResponseDTO getViewingById(Long viewingId) {
         return ViewingResponseDTO.from(viewingRepository.findById(viewingId)
                 .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS)));
