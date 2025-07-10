@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.viewing.web.dto;
+package org.hanihome.hanihomebe.viewing.web.dto.cancel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

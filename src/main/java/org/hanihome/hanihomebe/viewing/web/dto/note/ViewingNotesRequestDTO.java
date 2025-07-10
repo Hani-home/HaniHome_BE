@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.viewing.web.dto;
+package org.hanihome.hanihomebe.viewing.web.dto.note;
 
 import java.util.List;
 

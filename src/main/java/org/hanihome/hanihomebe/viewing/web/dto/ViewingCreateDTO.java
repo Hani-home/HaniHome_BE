@@ -1,8 +1,7 @@
-package org.hanihome.hanihomebe.viewing.web.dto.request;
+package org.hanihome.hanihomebe.viewing.web.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

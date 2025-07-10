@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.viewing.web.dto.request;
+package org.hanihome.hanihomebe.viewing.web.dto.cancel;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

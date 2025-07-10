@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.viewing.web.dto;
+package org.hanihome.hanihomebe.viewing.web.dto.checklist;
 
 import java.util.List;
 

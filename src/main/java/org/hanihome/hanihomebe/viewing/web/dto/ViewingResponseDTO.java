@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.viewing.web.dto.response;
+package org.hanihome.hanihomebe.viewing.web.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,12 +10,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Viewing 엔티티를 API 응답으로 변환하는 DTO
- */
+
 @Getter
 @Builder
-public class ViewingResponseDTO {
+public class ViewingResponseDTO implements ViewingDTOByView {
     private final Long id;
 
     private final Long memberId;
@@ -34,9 +32,7 @@ public class ViewingResponseDTO {
 
     private final List<String> optionItemNames; // 체크리스트
 
-    /**
-     * Viewing 엔티티를 DTO로 변환
-     */
+
     public static ViewingResponseDTO from(Viewing viewing) {
         List<String> photoUrls = viewing.getPhotoUrls() == null
                 ? List.of()
