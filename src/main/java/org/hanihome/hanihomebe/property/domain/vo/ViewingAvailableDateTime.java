@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.property.domain;
+package org.hanihome.hanihomebe.property.domain.vo;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
