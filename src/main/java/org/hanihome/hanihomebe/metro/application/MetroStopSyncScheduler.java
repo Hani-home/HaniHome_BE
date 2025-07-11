@@ -16,7 +16,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class MetroStopSyncScheduler {
-    private final MetroStopService metroStopService;
     private final MetroStopComparator metroStopComparator;
     private final MetroStopApiClient metroStopApiClient;
 

@@ -23,6 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+// TODO: 레포지토리를 가지고 있으니 서비스계층으로 올리는 것이 맞아보임. 또한 MetroService에서 생성과 수정하는 함수는 없애고
+//   아래의 내용으로 통합하는것이 필요해보임
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
