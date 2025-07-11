@@ -28,6 +28,8 @@ import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyCreateReque
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
+import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
+import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -47,15 +49,17 @@ public class PropertyService {
     private final PropertyMapper propertyMapper;
     private final Validator validator;
     private final OptionItemRepository optionItemRepository;
+    private final WishItemRepository wishItemRepository; //Property 삭제 시 WishItem도 삭제하기 위해 추가
     private final OptionItemConverterForProperty optionItemConverter;
     private final Map<PropertyViewType, PropertyConverter<?>> propertyConverterMap = new EnumMap<>(PropertyViewType.class);
 
-    public PropertyService(PropertyRepository propertyRepository, 
-                           MemberRepository memberRepository, 
-                           ObjectMapper objectMapper, 
-                           PropertyMapper propertyMapper, 
-                           Validator validator, 
-                           OptionItemRepository optionItemRepository, 
+    public PropertyService(PropertyRepository propertyRepository,
+                           MemberRepository memberRepository,
+                           ObjectMapper objectMapper,
+                           PropertyMapper propertyMapper,
+                           Validator validator,
+                           OptionItemRepository optionItemRepository,
+                           WishItemRepository wishItemRepository,
                            OptionItemConverterForProperty optionItemConverter,
                            List<PropertyConverter<?>> propertyConverters) {
         this.propertyRepository = propertyRepository;
@@ -64,6 +68,7 @@ public class PropertyService {
         this.propertyMapper = propertyMapper;
         this.validator = validator;
         this.optionItemRepository = optionItemRepository;
+        this.wishItemRepository = wishItemRepository;
         this.optionItemConverter = optionItemConverter;
         propertyConverters.forEach(converter ->
                 propertyConverterMap.put(converter.supports(), converter));
@@ -119,8 +124,6 @@ public class PropertyService {
                 )
                 .collect(Collectors.toList());
     }
-    
-
 
     /**
      * 4) 단일 Property 조회 (부모 타입으로 조회)
@@ -141,7 +144,7 @@ public class PropertyService {
      */
     public <T> List<T> getPropertiesByMemberId(Long memberId, CustomUserDetails userDetails, TradeStatus tradeStatus, PropertyViewType view) {
         DisplayStatus displayStatus = chooseDisplayStatusByOwnership(memberId, userDetails);
-        
+
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
         List<Property> findProperties = propertyRepository.findByMemberAndDisplayStatusAndTradeStatus(findMember, displayStatus, tradeStatus);
@@ -304,6 +307,8 @@ public class PropertyService {
         if (!propertyRepository.existsById(id)) {
             throw new RuntimeException("Property not found: " + id);
         }
+        wishItemRepository.deleteAllByTargetTypeAndTargetId(WishTargetType.PROPERTY, id); //해당 찜하기 삭제
+
         propertyRepository.deleteById(id);
     }
 

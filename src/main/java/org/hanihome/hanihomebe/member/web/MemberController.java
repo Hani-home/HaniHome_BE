@@ -2,10 +2,12 @@ package org.hanihome.hanihomebe.member.web;
 
 import org.hanihome.hanihomebe.member.service.MemberService;
 import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberNicknameCheckResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
+import org.hanihome.hanihomebe.security.auth.user.detail.UserDetailsServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
-    public MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService, UserDetailsServiceImpl userDetailsServiceImpl) {
         this.memberService = memberService;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
     //테스트 유정 생성 및 사용을 위한 회원가입, 로그인 => 추후 일반유저 확장한다면 그대로 써도 됨.
@@ -32,6 +37,15 @@ public class MemberController {
     public ResponseEntity<?> signup(@RequestBody MemberSignupRequestDTO memberSignupRequestDTO) {
         memberService.signup(memberSignupRequestDTO);
         return ResponseEntity.ok("회원가입 성공");
+    }
+
+
+    //내 정보 조회
+    @GetMapping("/me")
+    public ResponseEntity<MemberResponseDTO> getMyMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memberId = userDetails.getUserId();
+        MemberResponseDTO memberResponseDTO = memberService.getMemberById(memberId); //요정도는 재사용해도 되겠죠..? id로 조회하는 거랑 service가 같아서..
+        return ResponseEntity.ok(memberResponseDTO);
     }
 
     //유저 정보 조회
@@ -47,7 +61,11 @@ public class MemberController {
         return ResponseEntity.ok("회원 등록 성공");
     }
 
-
+    @GetMapping("/check-nickname")
+    public ResponseEntity<MemberNicknameCheckResponseDTO> checkNickname(@AuthenticationPrincipal CustomUserDetails userDetails , @RequestParam String nickname) {
+        MemberNicknameCheckResponseDTO dto = memberService.checkNickname(nickname);
+        return ResponseEntity.ok(dto);
+    }
 
     /*
     지금은 멤버 아이디만 있으면 다 가져올 수 있지만,
@@ -55,15 +73,10 @@ public class MemberController {
     주석을 통해 구현
      */
     //프로필 수정
-    @PatchMapping("/{memberId}")
-    public ResponseEntity<?> updateMember(@PathVariable Long memberId, @RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO /*, @@AuthenticationPrincipal CustomUserDetails userDetails*/) {
+    @PatchMapping("/me")
+    public ResponseEntity<?> updateMember(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO) {
 
-        /*
-        if (!userDetails.getId().equals(memberId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
-        }
-         */
-
+        Long memberId = userDetails.getUserId();
 
         memberService.updateMember(memberId, memberUpdateRequestDTO);
         return ResponseEntity.ok("회원정보가 수정되었습니다.");
@@ -72,14 +85,12 @@ public class MemberController {
     /*
     이것도 updateMember와 마찬가지로 추후에 자신의 계정만 삭제할 수 있게 수정하겠습니다
      */
-    @DeleteMapping("/{memberId}")
-    public ResponseEntity<?> deleteMember(@PathVariable Long memberId /*, @@AuthenticationPrincipal CustomUserDetails userDetails*/) {
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        /*
-        if (!userDetails.getId().equals(memberId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
-        }
-         */
+        Long memberId = userDetails.getUserId();
+
+
         memberService.deleteMember(memberId);
         return ResponseEntity.ok("회원 삭제 처리 되었습니다.");
     }

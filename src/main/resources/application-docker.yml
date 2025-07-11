@@ -11,7 +11,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create     # 처음에는 update, 이후에는 validate 추천
+      ddl-auto: update     # 처음에는 update, 이후에는 validate 추천
     show-sql: true
     properties:
       hibernate:
@@ -36,3 +36,15 @@ cloud:
     credentials:
       access-key: ${S3_ACCESS_KEY}
       secret-key: ${S3_SECRET_KEY}
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  access-expiration: ${JWT_ACCESS_EXP}
+  refresh-expiration: ${JWT_REFRESH_EXP}
+
+oauth:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}
+    client-secret: ${GOOGLE_CLIENT_SECRET}
+    redirect-uri-local: ${GOOGLE_REDIRECT_URI}
+    redirect-uri-prod: ${GOOGLE_REDIRECT_URL_PROD}

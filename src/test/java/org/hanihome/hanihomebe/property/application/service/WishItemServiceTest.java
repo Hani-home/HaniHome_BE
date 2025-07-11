@@ -18,6 +18,7 @@ import org.hanihome.hanihomebe.wishlist.application.service.WishItemService;
 import org.hanihome.hanihomebe.wishlist.domain.WishItem;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
+import org.hanihome.hanihomebe.wishlist.web.dto.WishItemDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -146,13 +147,14 @@ public class WishItemServiceTest {
     @Test
     @DisplayName("올바른 요청일 때 찜 추가")
     void addWishItemTest() {
-        WishItem wishItem = wishItemService.addWishItem(memberId, WishTargetType.PROPERTY, propertyId);
+        WishItemDTO dto = wishItemService.addWishItem(memberId, WishTargetType.PROPERTY, propertyId);
 
-        assertThat(wishItem).isNotNull();
-        assertThat(wishItem.getId()).isNotNull();
-        assertThat(wishItem.getTargetId()).isEqualTo(propertyId);
-        assertThat(wishItem.getTargetType()).isEqualTo(WishTargetType.PROPERTY);
+        assertThat(dto).isNotNull();
+        assertThat(dto.getTargetId()).isNotNull();
+        assertThat(dto.getTargetId()).isEqualTo(propertyId);
+        assertThat(dto.getTargetType()).isEqualTo(WishTargetType.PROPERTY);
     }
+
 
 
 
