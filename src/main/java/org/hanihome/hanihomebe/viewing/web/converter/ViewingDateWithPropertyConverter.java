@@ -3,7 +3,7 @@ package org.hanihome.hanihomebe.viewing.web.converter;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.property.application.PropertyMapper;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
-import org.hanihome.hanihomebe.viewing.web.dto.PropertySummaryDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingDateWithPropertyDTO;
 import org.hanihome.hanihomebe.viewing.web.enums.ViewingViewType;
 import org.springframework.stereotype.Component;

@@ -1,5 +1,7 @@
 package org.hanihome.hanihomebe.viewing.web.dto;
 
+import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
+
 import java.time.LocalDateTime;
 
 public record ViewingDateWithPropertyDTO(
