@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class MetroStopComparator {
     private final MetroStopRepository metroStopRepository;
 
-    @Value("${SYDNEY_METRO_STOP_STORAGE_DIRECTORY}")
+    @Value("${nsw.sydney.metro.stop.storage.directory}")
     private String storagePath;
 
     /**
