@@ -82,6 +82,7 @@ public abstract class Property {
     @Column(nullable = false, length = 20)
     private GenderPreference genderPreference;
 
+    private boolean lgbtAvailable;
     /**
      * 5. 주소
      */
@@ -97,6 +98,9 @@ public abstract class Property {
             joinColumns = @JoinColumn(name = "property_id"))
     @Column(name = "photo_urls", nullable = false)
     private List<String> photoUrls = new ArrayList<>();
+
+    //TODO: 썸네일 생성 및 경로 설정 생각이 필요할듯
+    private String thumbnailUrl;
 
     /**
      * 8. 거래 비용
@@ -219,6 +223,8 @@ public abstract class Property {
             )
     })
     private List<ViewingAvailableDateTime> viewingAvailableDateTimes = new ArrayList<>(); // 00:00 ~ 24:00, 단위: 30분
+
+    boolean viewingAlwaysAvailable;
 
     /**
      * 16. 매물 소개
