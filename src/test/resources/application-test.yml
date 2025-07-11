@@ -46,3 +46,13 @@ oauth:
     client-secret: ${GOOGLE_CLIENT_SECRET}
     redirect-uri-local: ${GOOGLE_REDIRECT_URI}
     redirect-uri-prod: ${GOOGLE_REDIRECT_URL_PROD}
+
+nsw:
+  sydney:
+    metro:
+      stop:
+        url: ${SYDNEY_METRO_STOP_URL}
+        storage:
+          directory: ${SYDNEY_METRO_STOP_STORAGE_DIRECTORY}
+  api:
+    key: ${NSW_API_KEY}
