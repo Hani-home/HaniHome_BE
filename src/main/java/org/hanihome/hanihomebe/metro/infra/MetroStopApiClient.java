@@ -29,9 +29,9 @@ public class MetroStopApiClient {
 
     public MetroStopApiClient(
             RestTemplateBuilder builder,
-            @Value("${SYDNEY_METRO_STOP_URL}") String metroStopUrl,
-            @Value("${NSW_API_KEY}") String apiKey,
-            @Value("${SYDNEY_METRO_STOP_STORAGE_DIRECTORY}") String storagePath
+            @Value("${nsw.sydney.metro.stop.url}") String metroStopUrl,
+            @Value("${nsw.api.key}") String apiKey,
+            @Value("${nsw.sydney.metro.stop.storage.directory}") String storagePath
     ) {
         this.restTemplate = builder.build();
         this.metroStopUrl = metroStopUrl;
