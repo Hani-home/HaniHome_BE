@@ -1,7 +1,5 @@
-package org.hanihome.hanihomebe.item.application;
+package org.hanihome.hanihomebe.item.application.init;
 
-import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.item.application;
+package org.hanihome.hanihomebe.item.application.init;
 
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.OptionCategory;

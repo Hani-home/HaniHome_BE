@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.item.application;
+package org.hanihome.hanihomebe.item.application.init;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.global.exception.CustomException;
