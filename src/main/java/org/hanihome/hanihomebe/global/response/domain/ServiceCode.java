@@ -52,6 +52,7 @@ public enum ServiceCode {
 
     // OptionItem
     OPTION_ITEM_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 옵션 아이템은 존재하지 않습니다"),
+    OPTION_ITEM_CONVERTER_MISMATCH(HttpStatus.BAD_REQUEST, "잘못된 옵션아이템 컨버터를 선택하였습니다."),
 
     // ScopeType
     SCOPE_TYPE_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 스코프는 아직 초기화되지 않았습니다"),
