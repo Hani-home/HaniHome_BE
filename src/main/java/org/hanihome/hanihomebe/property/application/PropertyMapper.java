@@ -2,21 +2,26 @@ package org.hanihome.hanihomebe.property.application;
 
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
+import org.hanihome.hanihomebe.property.domain.command.RentPropertyPatchCommand;
+import org.hanihome.hanihomebe.property.domain.command.SharePropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
-import org.hanihome.hanihomebe.property.web.dto.RentPropertyPatchRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.SharePropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.RentPropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.RentPropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.SharePropertyResponseDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.PropertySummaryDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.RentPropertySummaryDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.SharePropertySummaryDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.summary.RentPropertySummaryDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.summary.SharePropertySummaryDTO;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.mapstruct.*;
+
+import java.util.List;
 
 
 @Mapper(componentModel = "spring")  // 구현 클래스 생성해서 스프링빈으로 등록함
@@ -36,21 +41,21 @@ public interface PropertyMapper {
 
     /* 실제 update 호출: DTO값을 엔티티에 반영 – setter 사용 없이 도메인 메서드 호출 */
     @AfterMapping
-    default void callUpdate(RentPropertyPatchRequestDTO dto, @MappingTarget RentProperty entity) {
-        entity.update(dto); }
+    default void callUpdate(RentPropertyPatchCommand cmd, @MappingTarget RentProperty entity) {
+        entity.update(cmd); }
 
     @AfterMapping
-    default void callUpdate(SharePropertyPatchRequestDTO dto, @MappingTarget ShareProperty entity) {
-        entity.update(dto); }
+    default void callUpdate(SharePropertyPatchCommand cmd, @MappingTarget ShareProperty entity) {
+        entity.update(cmd); }
 
 
-    default PropertyResponseDTO toResponseDTO(Property entity) {
+    default PropertyResponseDTO toResponseDTO(Property entity, List<OptionItemResponseDTO> optionItems) {
         PropertySuperType propertyType = entity.getKind();
         switch (propertyType) {
             case SHARE:
-                return SharePropertyResponseDTO.from(safeCast(entity, ShareProperty.class));
+                return SharePropertyResponseDTO.from(safeCast(entity, ShareProperty.class), optionItems);
             case RENT:
-                return RentPropertyResponseDTO.from(safeCast(entity, RentProperty.class));
+                return RentPropertyResponseDTO.from(safeCast(entity, RentProperty.class), optionItems);
             default:
                 throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
         }

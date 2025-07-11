@@ -1,7 +1,7 @@
 package org.hanihome.hanihomebe.property.repository;
 
 import org.hanihome.hanihomebe.property.domain.Property;
-import org.hanihome.hanihomebe.property.web.dto.PropertySearchConditionDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.PropertySearchConditionDTO;
 
 import java.util.List;
 

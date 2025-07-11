@@ -1,26 +1,31 @@
 package org.hanihome.hanihomebe.property.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.item.application.OptionItemConverterForProperty;
+import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.hanihome.hanihomebe.property.application.PropertyConverter;
 import org.hanihome.hanihomebe.property.application.PropertyMapper;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
-import org.hanihome.hanihomebe.property.domain.ViewingAvailableDateTime;
+import org.hanihome.hanihomebe.property.domain.vo.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
+import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
-import org.hanihome.hanihomebe.property.web.dto.*;
+import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
+import org.hanihome.hanihomebe.property.web.dto.request.PropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.PropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.RentPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.RentPropertyResponseDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.SharePropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.stereotype.Service;
@@ -28,14 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class PropertyService {
@@ -46,6 +47,27 @@ public class PropertyService {
     private final PropertyMapper propertyMapper;
     private final Validator validator;
     private final OptionItemRepository optionItemRepository;
+    private final OptionItemConverterForProperty optionItemConverter;
+    private final Map<PropertyViewType, PropertyConverter<?>> propertyConverterMap = new EnumMap<>(PropertyViewType.class);
+
+    public PropertyService(PropertyRepository propertyRepository, 
+                           MemberRepository memberRepository, 
+                           ObjectMapper objectMapper, 
+                           PropertyMapper propertyMapper, 
+                           Validator validator, 
+                           OptionItemRepository optionItemRepository, 
+                           OptionItemConverterForProperty optionItemConverter,
+                           List<PropertyConverter<?>> propertyConverters) {
+        this.propertyRepository = propertyRepository;
+        this.memberRepository = memberRepository;
+        this.objectMapper = objectMapper;
+        this.propertyMapper = propertyMapper;
+        this.validator = validator;
+        this.optionItemRepository = optionItemRepository;
+        this.optionItemConverter = optionItemConverter;
+        propertyConverters.forEach(converter ->
+                propertyConverterMap.put(converter.supports(), converter));
+    }
 
     //create
     /**
@@ -65,7 +87,8 @@ public class PropertyService {
 
             RentProperty save = propertyRepository.save(rentProperty);//RentProperty 테이블에도 JPA가 insert
             log.info("RentPrperty 생성 저장 성공");
-            return propertyMapper.toResponseDTO(save);
+
+            return propertyMapper.toResponseDTO(save, getOptionItemResponseDTOS(rentProperty));
         } else if (dto instanceof SharePropertyCreateRequestDTO){
             ShareProperty shareProperty = ShareProperty.create((SharePropertyCreateRequestDTO) dto, findMember);
 
@@ -74,13 +97,12 @@ public class PropertyService {
 
             ShareProperty save = propertyRepository.save(shareProperty);
             log.info("SharaProperty 생성 저장 성공");
-            return propertyMapper.toResponseDTO(save);
+
+            return propertyMapper.toResponseDTO(save, getOptionItemResponseDTOS(shareProperty));
         }
 
         throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
     }
-
-
 
 
     // read
@@ -88,11 +110,17 @@ public class PropertyService {
      * 3) 전체 Property 조회
      *    - 모든 서브타입(RentProperty, ShareProperty)을 섞어서 반환합니다.
      */
-    public List<PropertyResponseDTO> getAllProperties() {
+    public <T> List<T> getAllProperties(PropertyViewType view) {
+        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(view);
+
         return propertyRepository.findAll().stream()
-                .map(property -> propertyMapper.toResponseDTO(property))
+                .map(property ->
+                        converter.convert(property, getOptionItemResponseDTOS(property))
+                )
                 .collect(Collectors.toList());
     }
+    
+
 
     /**
      * 4) 단일 Property 조회 (부모 타입으로 조회)
@@ -101,13 +129,31 @@ public class PropertyService {
         Property findProperty = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found: " + id));
 
-        return propertyMapper.toResponseDTO(findProperty);
+        return propertyMapper.toResponseDTO(findProperty, getOptionItemResponseDTOS(findProperty));
     }
 
     /**
      * 회원 별 Property 조회
      */
-    public List<PropertyResponseDTO> getPropertiesByMemberId(Long memberId, CustomUserDetails userDetails) {
+    /**
+     * 회원 별 Property 조회
+     * TradeStatus와 PropertyViewType을 인자로 받아 해당 조건에 맞는 매물을 조회하고 변환
+     */
+    public <T> List<T> getPropertiesByMemberId(Long memberId, CustomUserDetails userDetails, TradeStatus tradeStatus, PropertyViewType view) {
+        DisplayStatus displayStatus = chooseDisplayStatusByOwnership(memberId, userDetails);
+        
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+        List<Property> findProperties = propertyRepository.findByMemberAndDisplayStatusAndTradeStatus(findMember, displayStatus, tradeStatus);
+
+        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(view);
+
+        return findProperties.stream()
+                .map(property -> converter.convert(property, getOptionItemResponseDTOS(property)))
+                .collect(Collectors.toList());
+    }
+
+    private static DisplayStatus chooseDisplayStatusByOwnership(Long memberId, CustomUserDetails userDetails) {
         DisplayStatus displayStatus;
         if (userDetails == null) {                        // 일반 사용자별 매물 조회
             displayStatus = DisplayStatus.ACTIVE;
@@ -116,27 +162,33 @@ public class PropertyService {
         } else {
             displayStatus = DisplayStatus.ACTIVE;
         }
-        Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
-
-        List<PropertyResponseDTO> dtos = propertyRepository.findByMemberAndDisplayStatus(findMember, displayStatus).stream()
-                .map(property -> propertyMapper.toResponseDTO(property))
-                .toList();
-        return dtos;
+        return displayStatus;
     }
 
     /**
      * 내 Property 조회
      * */
-    public List<PropertyResponseDTO> getMyProperty(Long memberId) {
+//    public <T> List<T> getMyProperty(Long memberId, PropertyViewType view) {
+//        Member findMember = memberRepository.findById(memberId)
+//                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+//
+//        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(view);
+//
+//        return propertyRepository.findByMemberAndDisplayStatus(findMember, null).stream()
+//                .map(property -> converter.convert(property, getOptionItemResponseDTOS(property)))
+//                .collect(Collectors.toList());
+//    }
+    public <T> List<T> getMyProperty(Long memberId, TradeStatus tradeStatus, DisplayStatus displayStatus, PropertyViewType view) {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
-        List<PropertyResponseDTO> dtos = propertyRepository.findByMemberAndDisplayStatus(findMember, null).stream()
-                .map(property -> propertyMapper.toResponseDTO(property))
-                .toList();
-        return dtos;
+        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(view);
+
+        return propertyRepository.findByMemberAndDisplayStatusAndTradeStatus(findMember, displayStatus, tradeStatus).stream()
+                .map(property -> converter.convert(property, getOptionItemResponseDTOS(property)))
+                .collect(Collectors.toList());
     }
+
 
     /**
      * 특정 매물의 뷰잉 가능 시각 조회
@@ -211,15 +263,38 @@ public class PropertyService {
     @Transactional
     public PropertyResponseDTO patch(Long propertyId, PropertyPatchRequestDTO dto) {
         Property findProperty = propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found: " + propertyId));
+        List<PropertyOptionItem> propertyOptionItems = dto.getOptionItemsIds() == null ? null
+                : createPropertyOptionItems(dto, findProperty);
 
-        Property updated = findProperty.update(dto);
-
-        PropertyResponseDTO responseDTO = (updated instanceof ShareProperty) ? SharePropertyResponseDTO.from((ShareProperty) updated)
-                : (updated instanceof RentProperty) ? RentPropertyResponseDTO.from((RentProperty) updated)
-                : null;
-
-        return responseDTO;
+        Property updated = findProperty.update(dto.toCommand(propertyOptionItems));
+        return propertyMapper.toResponseDTO(updated, getOptionItemResponseDTOS(updated));
     }
+
+    private List<PropertyOptionItem> createPropertyOptionItems(PropertyPatchRequestDTO dto, Property findProperty) {
+        return dto.getOptionItemsIds().stream()
+                .map(optionItemId ->
+                        {
+                            OptionItem optionItem = optionItemRepository.findById(optionItemId).orElseThrow(() -> new RuntimeException("해당하는 선택목록 식별자가 없습니다."));
+                            PropertyOptionItem propertyOptionItem = PropertyOptionItem.builder()
+                                    .property(findProperty)
+                                    .optionItem(optionItem)
+                                    .optionItemName(optionItem.getItemName())
+                                    .build();
+                            return propertyOptionItem;
+                        }
+                )
+                .toList();
+    }
+
+    private List<OptionItemResponseDTO> getOptionItemResponseDTOS(Property property) {
+        List<OptionItemResponseDTO> optionItemsDTOs = optionItemConverter.toResponseDTO(property.getOptionItems());
+        return optionItemsDTOs;
+    }
+
+    private PropertyConverter<?> getConverterByView(PropertyViewType view) {
+        return propertyConverterMap.getOrDefault(view, propertyConverterMap.get(PropertyViewType.DEFAULT));
+    }
+
 
     /**
      * 6) 삭제 예시
@@ -245,5 +320,13 @@ public class PropertyService {
         });
     }
 
-}
+ /*   public <T> List<T> findByMemberIdAndDisplayStatus(Long memberId, DisplayStatus displayStatus, PropertyViewType view) {
+        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(view);
 
+        return propertyRepository.findByMember_IdAndDisplayStatus(memberId, displayStatus)
+                .stream()
+                .map(property -> converter.convert(property, getOptionItemResponseDTOS(property)))
+                .toList();
+
+    }*/
+}
