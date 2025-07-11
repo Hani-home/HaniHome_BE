@@ -10,5 +10,5 @@ public enum CapacityShare {
     OTHER("n인 1실")
     ;
 
-    private final String value;
+    private final String description;
 }

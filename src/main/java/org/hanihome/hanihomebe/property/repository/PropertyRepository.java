@@ -3,12 +3,15 @@ package org.hanihome.hanihomebe.property.repository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
+import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
+import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -28,4 +31,14 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, Prope
     @Modifying
     @Query("UPDATE Property p SET p.wishCount = :count WHERE p.id = :id")
     void updateWishCount(@Param("id") Long id, @Param("count") long count);
+
+    @Query("select p from Property p where p.member=:member and (:tradeStatus is null or :tradeStatus = p.tradeStatus)")
+    List<Property> findByMemberAndTradeStatus(Member member, TradeStatus tradeStatus);
+
+    @Query("select p from Property p where p.member=:member " +
+            "and (:tradeStatus is null or :tradeStatus = p.tradeStatus) " +
+            "and (:displayStatus is null or :displayStatus = p.displayStatus)")
+    List<Property> findByMemberAndDisplayStatusAndTradeStatus(Member member, DisplayStatus displayStatus, TradeStatus tradeStatus);
+
+    List<Property> findByMember_IdAndDisplayStatus(Long memberId, DisplayStatus displayStatus);
 }

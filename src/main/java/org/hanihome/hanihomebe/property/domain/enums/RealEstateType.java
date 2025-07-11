@@ -8,5 +8,5 @@ public enum RealEstateType {
     REAL_ESTATE("부동산 중개")
     ;
 
-    private final String value;
+    private final String description;
 }
