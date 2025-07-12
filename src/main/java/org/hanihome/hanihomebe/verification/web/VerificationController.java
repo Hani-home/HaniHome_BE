@@ -76,7 +76,7 @@ public class VerificationController {
     @PreAuthorize("hasRole('ADMIN')")
      */
     @PatchMapping("/admin/{verificationId}/approve")
-    public ResponseEntity<String> approveVerification(@PathVariable Long verificationId) {
+    public ResponseEntity<Void> approveVerification(@PathVariable Long verificationId) {
         verificationService.approveVerification(verificationId);
 
         // 승인 시 문의자에게 알림
@@ -85,7 +85,7 @@ public class VerificationController {
     }
 
     @PatchMapping("/admin/{verificationId}/reject")
-    public ResponseEntity<String> rejectVerification(@RequestBody VerificationRejectRequestDTO verificationRejectRequestDTO, @PathVariable Long verificationId) {
+    public ResponseEntity<Void> rejectVerification(@RequestBody VerificationRejectRequestDTO verificationRejectRequestDTO, @PathVariable Long verificationId) {
         verificationService.rejectVerification(verificationRejectRequestDTO.getReason(), verificationId);
 
         // 거부 시 문의자에게 알림
