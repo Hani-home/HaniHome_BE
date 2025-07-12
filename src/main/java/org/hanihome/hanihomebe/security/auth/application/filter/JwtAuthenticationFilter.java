@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
@@ -28,6 +29,7 @@ import java.util.Optional;
  */
 // TODO: doFilterInternal이 너무 길어서 리팩터링 필요함
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
@@ -72,26 +74,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if (accessToken == null) {
+                log.info("Access token is null should passed");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             if (jwtUtils.validateToken(accessToken)) {
+                log.info("Access token is valid");
                 processAccessToken(accessToken, filterChain, request, response);
             } else {
                 if (refreshToken != null && jwtUtils.validateToken(refreshToken)) {
+                    log.info("Refresh token is valid");
                     String newAccessToken = authService.reissueAccessToken(refreshToken);
                     response.setHeader("Authorization", "Bearer " + newAccessToken);
                     processAccessToken(newAccessToken, filterChain, request, response);
                 } else {
+                    log.info("Refresh token is expired");
                     throw new CustomException(ServiceCode.ACCESS_TOKEN_EXPIRED);
                 }
             }
         } catch (CustomException e) {
+            log.info("Custom");
             ServiceCode code = e.getServiceCode();
             setErrorResponse(response, code.name(), code.getMessage());
         } catch (Exception e) {
+            log.info("Exception");
             setErrorResponse(response, "AUTH_EXCEPTION", "Authentication failed: " + e.getMessage());
+            //여기가 문제넹...
         }
     }
 
