@@ -17,7 +17,8 @@ public class WebConfig {
                         .allowedOrigins("http://localhost:3000",
                                 "https://hani-home.vercel.app",
                                 "https://hanihome.app",
-                                "https://www.hanihome.app"
+                                "https://www.hanihome.app",
+                                "https://api.hanihome.app"
 
                         ) // 프론트 주소
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
