@@ -48,6 +48,7 @@ public class AuthController {
                 .secure(true)
                 .sameSite("None")
                 .path("/")
+                .domain("hanihome.app")
                 .maxAge(Duration.ofDays(7))
                 .build();
 
