@@ -16,7 +16,9 @@ public class WebConfig {
                 registry.addMapping("/**") // 모든 URL에 대해
                         .allowedOrigins("http://localhost:3000",
                                 "https://hani-home.vercel.app",
-                                "https://hanihome.app"
+                                "https://hanihome.app",
+                                "https://www.hanihome.app"
+
                         ) // 프론트 주소
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
