@@ -37,7 +37,9 @@ public class SecurityConfig {
                                 "/health",
                                 "/api/v1/properties",
                                 "/api/v1/auth/refresh",
-                                "/api/v1/members/check-nickname").permitAll()
+                                "/api/v1/members/check-nickname",
+                                "/actuator/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
