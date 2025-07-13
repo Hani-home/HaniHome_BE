@@ -54,8 +54,11 @@ public class MetroStopService {
     }
 
     // 조회 (전체)
-    public List<MetroStop> getAllStops() {
-        return metroStopRepository.findAll();
+    public List<MetroStopResponseDTO> getAllStops() {
+        return metroStopRepository.findAll()
+                .stream()
+                .map(stop -> MetroStopResponseDTO.from(stop))
+                .toList();
     }
 
     // 조회 (단건)
