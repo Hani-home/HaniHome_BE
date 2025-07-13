@@ -13,7 +13,7 @@ import org.hanihome.hanihomebe.property.domain.QShareProperty;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
-import org.hanihome.hanihomebe.property.web.dto.PropertySearchConditionDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.PropertySearchConditionDTO;
 import org.springframework.stereotype.Repository;
 import java.lang.*;
 import java.math.BigDecimal;
@@ -63,28 +63,28 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
         // TODO: 논의 사항 존재. 매물 등록시에 적은 요금이 (빌포함 요금, 빌 미포함 요금) 이 두가지 요금을 가지고 있어야하는게 아닌가..
         //  지금은 조건에 빌포함을 누르면, 빌포함을 체크한 매물만 조회됨
         if (cond.getMinWeeklyCost() != null && cond.getMaxWeeklyCost() != null) {
-            baseBuilder.and(p.weeklyCost.between(cond.getMinWeeklyCost(), cond.getMaxWeeklyCost()));
+            baseBuilder.and(p.costDetails.weeklyCost.between(cond.getMinWeeklyCost(), cond.getMaxWeeklyCost()));
         }
 
         // 빌포함
         if(cond.getBillIncluded() != null){
-            baseBuilder.and(p.isBillIncluded.eq(cond.getBillIncluded()));
+            baseBuilder.and(p.costDetails.isBillIncluded.eq(cond.getBillIncluded()));
         }
 
         // 입주 가능일
         BooleanBuilder availableBuilder = new BooleanBuilder();
         if (cond.getAvailableFrom() != null && cond.getAvailableTo() != null) {
-            availableBuilder.and(p.availableFrom.loe(cond.getAvailableTo()));
-            availableBuilder.and(p.availableTo.goe(cond.getAvailableFrom()));
+            availableBuilder.and(p.moveInInfo.availableFrom.loe(cond.getAvailableTo()));
+            availableBuilder.and(p.moveInInfo.availableTo.goe(cond.getAvailableFrom()));
         }
         baseBuilder.and(availableBuilder);
 
         // 즉시 입주가능, 협의 가능
         if (cond.getImmediate() != null) {
-            baseBuilder.and(p.isImmediate.eq(cond.getImmediate()));
+            baseBuilder.and(p.moveInInfo.isImmediate.eq(cond.getImmediate()));
         }
         if (cond.getNegotiable() != null) {
-            baseBuilder.and(p.isNegotiable.eq(cond.getNegotiable()));
+            baseBuilder.and(p.moveInInfo.isNegotiable.eq(cond.getNegotiable()));
         }
 
         // 지하철역 기준 Nkm 필터

@@ -33,3 +33,26 @@ cloud:
       access-key: ${S3_ACCESS_KEY}
       secret-key: ${S3_SECRET_KEY}
 
+
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  access-expiration: ${JWT_ACCESS_EXP}
+  refresh-expiration: ${JWT_REFRESH_EXP}
+
+oauth:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}
+    client-secret: ${GOOGLE_CLIENT_SECRET}
+    redirect-uri-local: ${GOOGLE_REDIRECT_URI}
+    redirect-uri-prod: ${GOOGLE_REDIRECT_URL_PROD}
+
+nsw:
+  sydney:
+    metro:
+      stop:
+        url: ${SYDNEY_METRO_STOP_URL}
+        storage:
+          directory: ${SYDNEY_METRO_STOP_STORAGE_DIRECTORY}
+  api:
+    key: ${NSW_API_KEY}

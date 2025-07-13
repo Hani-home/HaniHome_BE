@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.wishlist.web;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.wishlist.application.service.WishItemService;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
@@ -34,9 +35,9 @@ public class WishItemController {
     }
 
     @GetMapping("/properties")
-    public ResponseEntity<List<PropertyResponseDTO>> getWishProperty(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "latest") String sort ) { //sort latest, popular
+    public ResponseEntity<List<PropertySummaryDTO>> getWishProperty(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "latest") String sort ) { //sort latest, popular
 
-        List<PropertyResponseDTO> response = wishItemService.getWishProperties(userDetails.getUserId(), sort);
+        List<PropertySummaryDTO> response = wishItemService.getWishProperties(userDetails.getUserId(), sort);
 
         return ResponseEntity.ok(response);
     }

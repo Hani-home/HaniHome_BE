@@ -4,9 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hanihome.hanihomebe.member.domain.Gender;
 import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.verification.domain.Verification;
+import org.hanihome.hanihomebe.verification.domain.VerificationStatus;
+import org.hanihome.hanihomebe.verification.domain.VerificationType;
+import org.hanihome.hanihomebe.verification.web.dto.VerificationResponseDTO;
+import org.hanihome.hanihomebe.verification.web.dto.VerificationSummaryDTO;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 //고민: role은 안 넣어도 되겠지? 지금은 myPage에서 보여주는 회원정보 조회라고 생각해서 role은 안 넣겠음
 @Getter
@@ -21,8 +30,32 @@ public class MemberResponseDTO {
     private String phoneNumber;
     private Gender gender;
     private LocalDateTime createdAt;
+    private boolean isVerifiedUser;
+    private List<VerificationSummaryDTO> verifications;
 
     public static MemberResponseDTO CreateFrom(Member member) {
+        List<Verification> verifications = member.getVerifications();
+
+        List<VerificationSummaryDTO> verificationSummaries = new ArrayList<>();
+
+        for (VerificationType type : VerificationType.values()) {
+            //각 타입에 해당하는 인증 목록
+            List<Verification> filtered = verifications.stream()
+                    .filter(v -> v.getType()==type)
+                    .collect(Collectors.toList());
+
+            //가장 최근 요청
+            Verification latest = filtered.stream()
+                    .max(Comparator.comparing(Verification::getApprovedAt))
+                    .orElse(null);
+
+            boolean isVerified = latest !=null && latest.getStatus() == VerificationStatus.APPROVED;
+
+            verificationSummaries.add(new VerificationSummaryDTO(type, isVerified));
+        }
+
+        boolean isVerifiedUser = verificationSummaries.stream().anyMatch(VerificationSummaryDTO::isVerified);
+
         return new MemberResponseDTO(
                 member.getId(),
                 member.getEmail(),
@@ -32,7 +65,9 @@ public class MemberResponseDTO {
                 member.getBirthDate(),
                 member.getPhoneNumber(),
                 member.getGender(),
-                member.getCreatedAt()
+                member.getCreatedAt(),
+                isVerifiedUser,
+                verificationSummaries
         );
     }
 

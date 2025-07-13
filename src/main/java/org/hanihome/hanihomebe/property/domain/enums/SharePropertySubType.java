@@ -12,5 +12,5 @@ public enum SharePropertySubType {
     ,LIVING_SHARE("거실 쉐어")
     ;
 
-    private final String name;
+    private final String description;
 }

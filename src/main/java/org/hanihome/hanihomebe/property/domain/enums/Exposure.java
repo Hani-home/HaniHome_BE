@@ -11,5 +11,5 @@ public enum Exposure {
     NORTHEASTERN("북동향"),
     NORTHWESTERN("북서향")
     ;
-    private final String value;
+    private final String description;
 }
