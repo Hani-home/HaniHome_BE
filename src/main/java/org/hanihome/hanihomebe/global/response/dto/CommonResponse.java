@@ -37,8 +37,8 @@ public class CommonResponse<T> {
     public static <T> CommonResponse<T> failure(T data) {
         return CommonResponse.<T>builder()
                 .isSuccess(false)
-                .serviceCode(ServiceCode.NOT_DEFINED_ERROR.name())
-                .message(ServiceCode.NOT_DEFINED_ERROR.getMessage())
+                .serviceCode(ServiceCode.NOT_DEFINED_ERROR_FROM_WRAPPER.name())
+                .message(ServiceCode.NOT_DEFINED_ERROR_FROM_WRAPPER.getMessage())
                 .data(data)
                 .build();
     }
@@ -49,6 +49,15 @@ public class CommonResponse<T> {
                 .serviceCode(code.name())
                 .message(code.getMessage())
                 .data(data)
+                .build();
+    }
+
+    public static <T> CommonResponse<T> failure(ServiceCode code) {
+        return CommonResponse.<T>builder()
+                .isSuccess(false)
+                .serviceCode(code.name())
+                .message(code.getMessage())
+                .data(null)
                 .build();
     }
 }
