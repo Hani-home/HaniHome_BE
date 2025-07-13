@@ -75,18 +75,22 @@ public class VerificationService {
 
     //Update. 관리자가 신원 인증 승인 or 반려
     @Transactional
-    public void approveVerification(Long verificationId) {
+    public VerificationResponseDTO approveVerification(Long verificationId) {
         Verification verification = verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
 
         verification.approve();
+
+        return VerificationConverter.toVerificationResponseDTO(verification);
     }
 
     @Transactional
-    public void rejectVerification(String reason, Long verificationId) {
+    public VerificationResponseDTO rejectVerification(String reason, Long verificationId) {
         Verification verification = verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
 
         verification.reject(reason);
+
+        return VerificationConverter.toVerificationResponseDTO(verification);
     }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 @Getter
 public class MemberCompleteProfileRequestDTO {
     private String name;
-    private String email;
     private String phoneNumber;
     private String profileImage;
 
