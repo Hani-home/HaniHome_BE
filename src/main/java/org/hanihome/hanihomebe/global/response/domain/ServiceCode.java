@@ -60,6 +60,7 @@ public enum ServiceCode {
 
     // Notification
     NOTIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 알림은 존재하지 않습니다"),
+    NOTIFICATION_SEND_FAILED(HttpStatus.BAD_REQUEST, "알림 전송에 실패했습니다"),
 
     // OneOnOneConsult
     ONE_ON_ONE_CONSULT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 일대일 상담문의글은 존재하지 않습니다"),
@@ -83,11 +84,11 @@ public enum ServiceCode {
     METRO_STOP_SYNCHRONIZE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "시드니 지하철역 동기화 중 오류가 발생했습니다"),
     METRO_STOPS_FILE_IS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "저장된 stops.txt 파일이 비어있습니다."),
 
+    // Report
     PROPERTY_REPORT(HttpStatus.BAD_REQUEST,"매물 신고만 가능합니다"),
 
     // not defined
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
-    NOTIFICATION_SEND_FAILED(HttpStatus.BAD_REQUEST, "알림 전송에 실패했습니다"),
     ;
 
     private final HttpStatus httpStatus;
