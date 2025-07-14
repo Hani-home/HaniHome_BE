@@ -90,13 +90,6 @@ public enum ServiceCode {
     NOTIFICATION_SEND_FAILED(HttpStatus.BAD_REQUEST, "알림 전송에 실패했습니다"),
     NOT_DEFINED_ERROR_FROM_FILTER(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다 from 필터"),
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
-
-    //dispacherservlet
-    BAD_REQUEST(HttpStatus.BAD_REQUEST, "올바른 요청이 아닙니다."),
-    NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 URL입니다."),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러"),
-    FORBIDDEN(HttpStatus.FORBIDDEN, "사용자가 인증되지 않았습니다"),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증은 되었지만 권한이 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
