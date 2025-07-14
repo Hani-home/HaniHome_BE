@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.item.application.service.ItemService;
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.ScopeCode;
+import org.hanihome.hanihomebe.item.web.controller.OptionItemController;
 import org.hanihome.hanihomebe.item.web.dto.OptionCategoryResponseDTO;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemCreateDTO;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemPatchDTO;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/properties")
 @RestController
-public class PropertyOptionItemController {
+public class PropertyOptionItemController implements OptionItemController {
     private final ItemService itemService;
 
     /**
@@ -33,6 +34,7 @@ public class PropertyOptionItemController {
     }
 
     // 카테고리별 옵션아이템 조회
+    @Override
     @GetMapping("/categories/{categoryCode}/option-items")
     public List<OptionItemResponseDTO> getOptionItems(@PathVariable CategoryCode categoryCode) {
         return itemService.getOptionItemsByCategoryCode(categoryCode);
@@ -43,6 +45,7 @@ public class PropertyOptionItemController {
      */
 
     // 특정 카테고리에 속한 옵션아이템 생성
+    @Override
     @PostMapping("/categories/{categoryCode}/option-items")
     public Long createOptionItem(@PathVariable CategoryCode categoryCode, @RequestBody OptionItemCreateDTO dto) {
         return itemService.createOptionItem(dto);
@@ -51,6 +54,7 @@ public class PropertyOptionItemController {
     /**
      * 아이템 수정
      */
+    @Override
     @PutMapping("/categories/{categoryCode}/option-items/{optionItemId}")
     public OptionItemResponseDTO modifyOptionItem(@PathVariable Long optionItemId,
                                                   @RequestBody OptionItemPatchDTO dto) {
