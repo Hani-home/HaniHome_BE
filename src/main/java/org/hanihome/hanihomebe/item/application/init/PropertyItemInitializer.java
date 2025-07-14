@@ -83,7 +83,7 @@ public class PropertyItemInitializer extends OptionItemInitializer {
 
         // 기타 아이템
         super.saveParentChildItems(category, "기타", Arrays.asList(
-                "Wifi", "청소기"
+                "Wifi", "청소기", "에어컨", "엘레베이터"
         ));
     }
 
