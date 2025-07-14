@@ -84,6 +84,7 @@ public enum ServiceCode {
     METRO_STOP_SYNCHRONIZE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "시드니 지하철역 동기화 중 오류가 발생했습니다"),
     METRO_STOPS_FILE_IS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "저장된 stops.txt 파일이 비어있습니다."),
 
+    // Report
     PROPERTY_REPORT(HttpStatus.BAD_REQUEST,"매물 신고만 가능합니다"),
 
     // not defined
