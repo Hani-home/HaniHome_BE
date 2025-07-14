@@ -1,25 +1,22 @@
 package org.hanihome.hanihomebe.property.domain;
 
-import com.querydsl.core.BooleanBuilder;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
-import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
@@ -82,6 +79,7 @@ public abstract class Property {
     @Column(nullable = false, length = 20)
     private GenderPreference genderPreference;
 
+    private boolean lgbtAvailable;
     /**
      * 5. 주소
      */
@@ -98,79 +96,38 @@ public abstract class Property {
     @Column(name = "photo_urls", nullable = false)
     private List<String> photoUrls = new ArrayList<>();
 
+    //TODO: 썸네일 생성 및 경로 설정 생각이 필요할듯
+    private String thumbnailUrl;
+
     /**
      * 8. 거래 비용
      */
-    // 8-1. 비용 (주 단위)
-    @Column(nullable = false)
-    private BigDecimal weeklyCost;
-    private boolean isBillIncluded;
+    @Embedded
+    private CostDetails costDetails;
 
-    // 8-2. 포함된 비용항목: 수도세, 전기세 ...
+    // 8-2. 옵션 아이템: 수도세, 전기세 ...
     // 해당 엔티티는 독립적인 CRUD가 없을거라고 예상되므로 양방향+cascade해도 무방해보임
     @Builder.Default
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<PropertyOptionItem> optionItems = new ArrayList<>();
 
-    // 8-3. bill 설명
-    @Column(columnDefinition = "TEXT")
-    private String costDescription;
-
-    // 8-4. 보증금
-    private BigDecimal deposit;
-
-    // 8-5. 키 보증금
-    private BigDecimal keyDeposit;
-
     /**
      * 10. 거주 조건
      */
-    // 10-1. 노티스 (주 단위)
-    private Integer noticePeriodWeeks;
 
-    // 10-2. 최소 거주 기간 (주 단위)
-    private Integer minimumStayWeeks;
-
-    // 10-3. 계약 형태 설명
-    private String contractTerms;
+    @Embedded
+    private LivingConditions livingConditions;
 
     /**
      * 11. 입주 가능일 (시간 단위)
      */
-    private LocalDateTime availableFrom;
-    private LocalDateTime availableTo;
-    private boolean isImmediate;
-    private boolean isNegotiable;
-
-    /**
-     * 12. 기타 허용/불가
-     */
-/* OptionItem에서 처리
-    private Boolean smokerAllowed;
-    private Boolean petAllowed;
-    private Boolean visitorAllowed;
-    private Boolean kitchenUseAllowed;
-*/
+    @Embedded
+    private MoveInInfo moveInInfo;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private ParkingOption parkingOption;
 
-
-    /** 13. 기본 제공 가전·가구 */
-    /* OptionItem에서 처리
-    @OneToMany(mappedBy = "property")
-    private Set<PropertyAmenityItem> amenities;
-*/
-    /** 14. 매물의 장점 */
-/* OptionItem에서 처리
-    @ElementCollection(targetClass = Feature.class)
-    @CollectionTable(name = "property_features",
-            joinColumns = @JoinColumn(name = "property_id"))
-    @Enumerated(EnumType.STRING)
-    @Column(name = "feature")
-    private Set<Feature> features;
-*/
 
     /**
      * 15-1 뷰잉 가능 날짜
@@ -220,6 +177,8 @@ public abstract class Property {
     })
     private List<ViewingAvailableDateTime> viewingAvailableDateTimes = new ArrayList<>(); // 00:00 ~ 24:00, 단위: 30분
 
+    boolean viewingAlwaysAvailable;
+
     /**
      * 16. 매물 소개
      */
@@ -252,66 +211,61 @@ public abstract class Property {
         propertyOptionItem.setProperty(this);
     }
 
-    protected void updateBase(PropertyPatchRequestDTO dto) {
-        if (dto.getGenderPreference() != null) {
-            this.genderPreference = dto.getGenderPreference();
+    protected void updateBase(PropertyPatchCommand cmd) {
+        if (cmd.getGenderPreference() != null) {
+            this.genderPreference = cmd.getGenderPreference();
         }
-        if (dto.getRegion() != null) {
-            this.region = dto.getRegion();
+        if (cmd.getLgbtAvailable() != null) {
+            this.lgbtAvailable = cmd.getLgbtAvailable();
         }
-        if (dto.getPhotoUrls() != null) {
-            this.photoUrls = dto.getPhotoUrls();
+        if (cmd.getRegion() != null) {
+            this.region = cmd.getRegion();
         }
-        if (dto.getWeeklyCost() != null) {
-            this.weeklyCost = dto.getWeeklyCost();
+        if (cmd.getPhotoUrls() != null) {
+            this.photoUrls = cmd.getPhotoUrls();
         }
-        if (dto.getOptionItems() != null) {
-            this.optionItems = dto.getOptionItems();
+        if (cmd.getCostDetails() != null) {
+            this.costDetails = cmd.getCostDetails();
         }
-        if (dto.getCostDescription() != null) {
-            this.costDescription = dto.getCostDescription();
+        if (cmd.getOptionItems() != null) {
+            this.optionItems.clear();
+            this.optionItems.addAll(cmd.getOptionItems());
         }
-        if (dto.getDeposit() != null) {
-            this.deposit = dto.getDeposit();
+        if (cmd.getLivingConditions() != null) {
+            this.livingConditions = cmd.getLivingConditions();
         }
-        if (dto.getKeyDeposit() != null) {
-            this.keyDeposit = dto.getKeyDeposit();
+        if (cmd.getMoveInInfo() != null) {
+            this.moveInInfo = cmd.getMoveInInfo();
         }
-        if (dto.getNoticePeriodWeeks() != null) {
-            this.noticePeriodWeeks = dto.getNoticePeriodWeeks();
+        if (cmd.getParkingOption() != null) {
+            this.parkingOption = cmd.getParkingOption();
         }
-        if (dto.getMinimumStayWeeks() != null) {
-            this.minimumStayWeeks = dto.getMinimumStayWeeks();
+        if (cmd.getMeetingDateFrom() != null) {
+            this.meetingDateFrom = cmd.getMeetingDateFrom();
         }
-        if (dto.getContractTerms() != null) {
-            this.contractTerms = dto.getContractTerms();
+        if (cmd.getMeetingDateTo() != null) {
+            this.meetingDateTo = cmd.getMeetingDateTo();
         }
-        if (dto.getAvailableFrom() != null) {
-            this.availableFrom = dto.getAvailableFrom();
+        if (cmd.getTimeSlots() != null) {
+            this.timeSlots = cmd.getTimeSlots();
         }
-        if (dto.getParkingOption() != null) {
-            this.parkingOption = dto.getParkingOption();
+        if (cmd.getViewingAlwaysAvailable() != null) {
+            this.viewingAlwaysAvailable = cmd.getViewingAlwaysAvailable();
         }
-        if (dto.getMeetingDateFrom() != null) {
-            this.meetingDateFrom = dto.getMeetingDateFrom();
+        if (cmd.getDescription() != null) {
+            this.description = cmd.getDescription();
         }
-        if (dto.getMeetingDateTo() != null) {
-            this.meetingDateTo = dto.getMeetingDateTo();
+        if (cmd.getDisplayStatus() != null) {
+            this.displayStatus = cmd.getDisplayStatus();
         }
-        if (dto.getTimeSlots() != null) {
-            this.timeSlots = dto.getTimeSlots();
+        if (cmd.getTradeStatus() != null) {
+            this.tradeStatus = cmd.getTradeStatus();
         }
-        if (dto.getDescription() != null) {
-            this.description = dto.getDescription();
-        }
-        if (dto.getDisplayStatus() != null) {
-            this.displayStatus = dto.getDisplayStatus();
-        }
-        if (dto.getTradeStatus() != null) {
-            this.tradeStatus = dto.getTradeStatus();
+        if (cmd.getViewingAlwaysAvailable() != null) {
+            this.viewingAlwaysAvailable = cmd.getViewingAlwaysAvailable();
         }
     }
 
 
-    public abstract Property update(PropertyPatchRequestDTO dto);
+    public abstract Property update(PropertyPatchCommand cmd);
 }

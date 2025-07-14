@@ -1,6 +1,6 @@
 package org.hanihome.hanihomebe.property.application;
 
-import org.hanihome.hanihomebe.property.domain.TimeSlot;
+import org.hanihome.hanihomebe.property.domain.vo.TimeSlot;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

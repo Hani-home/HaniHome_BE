@@ -4,14 +4,15 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.property.application.service.PropertyService;
-import org.hanihome.hanihomebe.property.web.dto.PropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
+import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
+import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
+import org.hanihome.hanihomebe.property.web.dto.request.PropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.PropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.PropertyDTOByView;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,14 +37,10 @@ public class PropertyController {
 
     //read
     @GetMapping("/properties")
-    public List<PropertyResponseDTO> getAll() {
-        return propertyService.getAllProperties();
-    }
+    public List<?> getAll(
+            @RequestParam(required = false) PropertyViewType view) {
 
-    // 내 매물 조회
-    @GetMapping("/properties/my-properties")
-    public List<PropertyResponseDTO> getMyProperties(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return propertyService.getMyProperty(userDetails.getUserId());
+        return propertyService.getAllProperties(view);
     }
 
     @GetMapping("/properties/{propertyId}")
@@ -51,10 +48,27 @@ public class PropertyController {
         return propertyService.getPropertyById(propertyId);
     }
 
+    // 내 매물 조회
+    @GetMapping("/properties/my-properties")
+    public List<?> getMyProperties(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                     @RequestParam(required = false) TradeStatus tradeStatus,
+                                                     @RequestParam(required = false) DisplayStatus displayStatus,
+                                                     @RequestParam(required = false) PropertyViewType view) {
+        return propertyService.getMyProperty(userDetails.getUserId(), tradeStatus, displayStatus, view);
+    }
+/*
+    @GetMapping("/properties/hidden")
+    public List<? extends PropertyDTOByView> getMyHiddenProperties(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                   @RequestParam(required = false) PropertyViewType view) {
+        return propertyService.findByMemberIdAndDisplayStatus(userDetails.getUserId(), DisplayStatus.INACTIVE, view);
+    }*/
+
     // 회원의 매물 조회
     @GetMapping("/members/{memberId}/properties")
-    public List<PropertyResponseDTO> getPropertiesByMember(@PathVariable Long memberId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return propertyService.getPropertiesByMemberId(memberId, userDetails);
+    public List<?> getPropertiesByMember(@PathVariable Long memberId, @AuthenticationPrincipal CustomUserDetails userDetails,
+                                                           @RequestParam(required = false) TradeStatus tradeStatus,
+                                                           @RequestParam(required = false) PropertyViewType view) {
+        return propertyService.getPropertiesByMemberId(memberId, userDetails, tradeStatus, view);
     }
 
     // 매물 별 뷰잉 가능 시각 조회(예약됨, 예약안됨 모두 포함)

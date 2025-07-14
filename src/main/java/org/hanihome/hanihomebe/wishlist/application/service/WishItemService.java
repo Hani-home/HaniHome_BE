@@ -8,6 +8,7 @@ import org.hanihome.hanihomebe.property.application.PropertyMapper;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.hanihome.hanihomebe.wishlist.application.validation.WishTargetValidator;
 import org.hanihome.hanihomebe.wishlist.domain.WishItem;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
@@ -137,7 +138,7 @@ public class WishItemService {
     근데 또 막상이러니 Property, PropertyRepository, propertyMapper 다 주입해서 더 별로인 거 같기도 하네요... 이것도 validate한거처럼 수정하는 게 더 나을지도..
      */
     @Transactional(readOnly = true)
-    public List<PropertyResponseDTO> getWishProperties(Long memberId, String sort) {
+    public List<PropertySummaryDTO> getWishProperties(Long memberId, String sort) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
@@ -161,14 +162,14 @@ public class WishItemService {
                     .map(WishItem::getTargetId)
                     .map(propertyMap::get)
                     .filter(Objects::nonNull)
-                    .map(propertyMapper::toResponseDto)
+                    .map(propertyMapper::toSummaryDTO)
                     .toList();
         }
 
         if ("popular".equalsIgnoreCase(sort)) {
             return properties.stream()
                     .sorted(Comparator.comparing(Property::getWishCount).reversed())
-                    .map(propertyMapper::toResponseDto)
+                    .map(propertyMapper::toSummaryDTO)
                     .toList();
         }
 

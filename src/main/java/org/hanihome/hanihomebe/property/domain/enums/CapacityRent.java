@@ -11,5 +11,5 @@ public enum CapacityRent {
     OTHER("5명 이상")
     ;
 
-    private final String value;
+    private final String description;
 }

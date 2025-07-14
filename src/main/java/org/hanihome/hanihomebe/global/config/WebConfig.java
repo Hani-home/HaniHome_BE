@@ -20,7 +20,7 @@ public class WebConfig {
                                 "https://hani-home.vercel.app",
                                 "https://hanihome.app",
                                 "https://www.hanihome.app",
-                                "http://localhost:8080"
+                                "https://api.hanihome.app"
 
                         ) // 프론트 주소
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")

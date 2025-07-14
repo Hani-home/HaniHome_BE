@@ -6,14 +6,10 @@ import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.property.application.service.PropertyService;
 import org.hanihome.hanihomebe.verification.service.VerificationService;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCancelRequestDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.request.ViewingCreateDTO;
-import org.hanihome.hanihomebe.viewing.web.dto.response.ViewingResponseDTO;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingResponseDTO;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.View;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 

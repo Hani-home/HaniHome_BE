@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
+import org.hanihome.hanihomebe.property.domain.command.RentPropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityRent;
 import org.hanihome.hanihomebe.property.domain.enums.Exposure;
 import org.hanihome.hanihomebe.property.domain.enums.RealEstateType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
-import org.hanihome.hanihomebe.property.web.dto.PropertyPatchRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.RentPropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.RentPropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.domain.vo.RentInternalDetails;
+import org.hanihome.hanihomebe.property.web.dto.request.RentPropertyCreateRequestDTO;
 
 @Entity
 @DiscriminatorValue("RENT")
@@ -21,19 +22,25 @@ import org.hanihome.hanihomebe.property.web.dto.RentPropertyPatchRequestDTO;
 @SuperBuilder @PrimaryKeyJoinColumn(name = "property_id")
 public class RentProperty extends Property {
 
-    /** 1. 매물 유형 */
+    /** 매물 유형 */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private RentPropertySubType rentPropertySubType;
 
-    /** 2.  부동산 중개 여부*/
+    /**  부동산 중개 여부*/
     @Enumerated(EnumType.STRING)
     private RealEstateType isRealEstateIntervention;
 
-    /** 3. 거주 인원  */
+    /**
+     * 매물 정보
+     */
+    @Embedded
+    private RentInternalDetails rentInternalDetails;
+
+    /**  거주 인원  */
     private CapacityRent capacityRent;
 
-    /** 4. 남향,북향 */
+    /**  남향,북향 */
     private Exposure exposure;
 
     public static RentProperty create(RentPropertyCreateRequestDTO dto, Member member) {
@@ -41,43 +48,44 @@ public class RentProperty extends Property {
                 .member(member)
                 .kind(dto.kind())
                 .genderPreference(dto.genderPreference())
+                .lgbtAvailable(dto.lgbtAvailable())
                 .region(dto.region())
                 .photoUrls(dto.photoUrls())
-                .weeklyCost(dto.weeklyCost())
-                .isBillIncluded(dto.billIncluded())
-                .costDescription(dto.costDescription())
-                .deposit(dto.deposit())
-                .keyDeposit(dto.keyDeposit())
-                .noticePeriodWeeks(dto.noticePeriodWeeks())
-                .minimumStayWeeks(dto.minimumStayWeeks())
-                .contractTerms(dto.contractTerms())
-                .availableFrom(dto.availableFrom())
-                .availableTo(dto.availableTo())
-                .isImmediate(dto.immediate())
-                .isNegotiable(dto.negotiable())
+                .costDetails(dto.costDetails())
+                .livingConditions(dto.livingConditions())
+                .moveInInfo(dto.moveInInfo())
                 .parkingOption(dto.parkingOption())
                 .meetingDateFrom(dto.meetingDateFrom())
                 .meetingDateTo(dto.meetingDateTo())
                 .timeSlots(dto.timeSlots())
                 .viewingAvailableDateTimes(dto.viewingAvailableDateTimes())
+                .viewingAlwaysAvailable(dto.viewingAlwaysAvailable())
                 .description(dto.description())
-                .rentPropertySubType(dto.rentPropertySubType())             // 고유필드 1
-                .isRealEstateIntervention(dto.isRealEstateIntervention())   // 고유필드 2
-                .capacityRent(dto.capacityRent())                           // 고유필드 3
-                .exposure(dto.exposure())                                   // 고유필드 4
+                .rentPropertySubType(dto.rentPropertySubType())             // 고유필드
+                .isRealEstateIntervention(dto.isRealEstateIntervention())   // 고유필드
+                .rentInternalDetails(dto.internalDetails())                 // 고유필드
+                .capacityRent(dto.capacityRent())                           // 고유필드
+                .exposure(dto.exposure())                                   // 고유필드
                 .build();
     }
 
     @Override
-    public Property update(PropertyPatchRequestDTO dto) {
-        if(!(dto instanceof RentPropertyPatchRequestDTO)) throw new RuntimeException("타입 미스매칭");
-        RentPropertyPatchRequestDTO rentDTO = (RentPropertyPatchRequestDTO) dto;
+    public Property update(PropertyPatchCommand cmd) {
+        if(!(cmd instanceof RentPropertyPatchCommand)) throw new RuntimeException("타입 미스매칭");
+        RentPropertyPatchCommand rentDTO = (RentPropertyPatchCommand) cmd;
         // 자식 필드 업데이트
         if (rentDTO.getRentPropertySubType() != null) this.rentPropertySubType = rentDTO.getRentPropertySubType();
-        /*if (rentDTO.getIsRealEstateIntervention() != null)
-            this.isRealEstateIntervention = rentDTO.getIsRealEstateIntervention();*/
+
+        if(rentDTO.getRealEstateIntervention()!=null) this.isRealEstateIntervention = rentDTO.getRealEstateIntervention();
+
+        if(rentDTO.getInternalDetails()!=null) this.rentInternalDetails = rentDTO.getInternalDetails();
+
+        if(rentDTO.getCapacityRent()!=null) this.capacityRent = rentDTO.getCapacityRent();
+
+        if(rentDTO.getExposure()!=null) this.exposure = rentDTO.getExposure();
+
         // 부모 필드 업데이트
-        super.updateBase(dto);
+        super.updateBase(cmd);
 
         return this;
     }
