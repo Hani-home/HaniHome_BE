@@ -2,6 +2,11 @@ spring:
   config:
     activate:
       on-profile: docker
+  web:
+    resources:
+      add-mappings: false
+
+
 
   datasource:
     url: ${DOCKER_SPRING_DATASOURCE_URL}

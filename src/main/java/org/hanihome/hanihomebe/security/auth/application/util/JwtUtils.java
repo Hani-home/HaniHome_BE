@@ -4,10 +4,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -84,8 +88,14 @@ public class JwtUtils {
             return true;
         } catch (ExpiredJwtException e) {
             return false;  // 만료는 false로 처리
-        } catch (JwtException | IllegalArgumentException e) {
-            throw e;  // 나머지는 예외로 던짐 → 필터에서 인증 실패로 처리
+        } catch (MalformedJwtException e) {
+            throw new CustomException(ServiceCode.MALFORMED_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            throw new CustomException(ServiceCode.UNSUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ServiceCode.INVALID_TOKEN);
+        } catch (JwtException e) {
+            throw new CustomException(ServiceCode.INVALID_TOKEN);  // 기타 JWT 에러 fallback
         }
     }
 

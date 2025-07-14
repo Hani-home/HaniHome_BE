@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.verification.service;
 
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.verification.domain.VerificationStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -14,7 +15,9 @@ import org.hanihome.hanihomebe.verification.web.dto.VerificationRequestDTO;
 import org.hanihome.hanihomebe.verification.web.dto.VerificationResponseDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +33,24 @@ public class VerificationService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
+
+
         VerificationType type = verificationRequestDTO.getType();
+
+        //member에서 verification 가져옴.
+        List<Verification> verifications = member.getVerifications();
+
+        //type 맞는 거 가져오고 젤 최신 가져오기
+        Verification latest = verifications.stream()
+                .filter(v ->v.getType()==type)
+                .max(Comparator.comparing(Verification::getRequestedAt))  // or getApprovedAt if that's more reliable
+                .orElse(null);
+
+        //젤 최근에꺼를 확인해서 pending이거나 Approved이면 예외 던짐
+        if (latest != null &&(latest.getStatus() == VerificationStatus.APPROVED || latest.getStatus() == VerificationStatus.PENDING)){
+            throw new CustomException(ServiceCode.VERIFICATION_NOT_ALLOW);
+        }
+
         List<String> documentImageUrls = verificationRequestDTO.getDocumentImageUrls();
 
         Verification verification = Verification.createRequestFrom(member, type, documentImageUrls);

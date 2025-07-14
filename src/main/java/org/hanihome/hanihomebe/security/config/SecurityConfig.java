@@ -42,9 +42,11 @@ public class SecurityConfig {
                                 "/api/v1/properties",
                                 "/api/v1/auth/refresh",
                                 "/api/v1/members/check-nickname",
-                                "/actuator/**"
+                                "/actuator/**",
+                                "/error"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated()//위 url 제외하고는 인증 필요
+
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

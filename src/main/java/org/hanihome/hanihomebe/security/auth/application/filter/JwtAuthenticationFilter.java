@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.global.response.dto.CommonResponse;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
 import org.hanihome.hanihomebe.security.auth.application.service.AuthService;
 import org.hanihome.hanihomebe.security.auth.application.util.JwtUtils;
@@ -20,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import static org.hanihome.hanihomebe.global.response.domain.ServiceCode.NOT_DEFINED_ERROR_FROM_FILTER;
 
 //OnceperRequestFilter: 모든 HTTP 요청마다 실행됨
 /*
@@ -91,16 +94,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 } else {
                     log.info("Refresh token is expired");
                     throw new CustomException(ServiceCode.ACCESS_TOKEN_EXPIRED);
-                }
+                } //refresh 토큰이 null인 경우도 고려해야할까
             }
         } catch (CustomException e) {
-            log.info("Custom");
-            ServiceCode code = e.getServiceCode();
-            setErrorResponse(response, code.name(), code.getMessage());
+            log.warn("JWT Filter CustomException occurred: {}", e.getServiceCode().name());
+            setErrorResponse(response, e.getServiceCode());
         } catch (Exception e) {
-            log.info("Exception");
-            setErrorResponse(response, "AUTH_EXCEPTION", "Authentication failed: " + e.getMessage());
-            //여기가 문제넹...
+            log.error("Unexpected error in JwtAuthenticationFilter", e);
+            setErrorResponse(response, NOT_DEFINED_ERROR_FROM_FILTER);
         }
     }
 
@@ -120,6 +121,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     //TODO: 에러 코드 및 메시지 세분화 예정
+    /*
     private void setErrorResponse(HttpServletResponse response, String errorCode, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
@@ -128,18 +130,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 
-    // 간단한 에러 DTO
-    public static class ErrorResponse {
-        private String errorCode;
-        private String message;
+     */
+    //mapper NONO
+    private void setErrorResponse(HttpServletResponse response, ServiceCode serviceCode) throws IOException {
+        response.setStatus(serviceCode.getHttpStatus().value());
+        response.setContentType("application/json; charset=utf-8");
 
-        public ErrorResponse(String errorCode, String message) {
-            this.errorCode = errorCode;
-            this.message = message;
-        }
-        public String getErrorCode() { return errorCode; }
-        public String getMessage() { return message; }
+        ObjectMapper objectMapper = new ObjectMapper();
+        CommonResponse<Object> errorResponse = CommonResponse.failure(serviceCode);
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
+
 
 
 }
