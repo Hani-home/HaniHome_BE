@@ -69,7 +69,8 @@ public enum ServiceCode {
 
 
     //verification
-    VERIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 신원 인증 요청은 존재하지 않습니다"),
+    VERIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 신원 인증 요청은 존재하지 않습니다."),
+    VERIFICATION_NOT_ALLOW(HttpStatus.BAD_REQUEST, "이미 진행 중이거나 허가된 요청이 존재합니다."),
 
 
     //wishItem

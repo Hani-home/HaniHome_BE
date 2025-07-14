@@ -98,6 +98,13 @@
         implementation 'software.amazon.awssdk:s3control:2.27.3'
         implementation 'software.amazon.awssdk:s3outposts:2.27.3'
 
+        // logging
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+        // Spring Java Mail
+        implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     }
 
     def querydslDir = "build/generated/querydsl"
