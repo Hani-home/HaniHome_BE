@@ -70,7 +70,8 @@ public enum ServiceCode {
 
 
     //verification
-    VERIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 신원 인증 요청은 존재하지 않습니다"),
+    VERIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 신원 인증 요청은 존재하지 않습니다."),
+    VERIFICATION_NOT_ALLOW(HttpStatus.BAD_REQUEST, "이미 진행 중이거나 허가된 요청이 존재합니다."),
 
 
     //wishItem
@@ -88,6 +89,8 @@ public enum ServiceCode {
     PROPERTY_REPORT(HttpStatus.BAD_REQUEST,"매물 신고만 가능합니다"),
 
     // not defined
+    NOT_DEFINED_ERROR_FROM_WRAPPER(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다 from Wrapper"),
+    NOT_DEFINED_ERROR_FROM_FILTER(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다 from 필터"),
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
     ;
 

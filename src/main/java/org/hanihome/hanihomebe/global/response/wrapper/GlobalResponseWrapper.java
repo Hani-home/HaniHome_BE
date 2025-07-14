@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /*
-* 기능: 응답의 body만 wrapping함.
-* 그 외의 status, header를 건드는건 목적이 아님
-* */
+ * 기능: 응답의 body만 wrapping함.
+ * 그 외의 status, header를 건드는건 목적이 아님
+ * */
 @Order(2)
 @RestControllerAdvice
 public class GlobalResponseWrapper implements ResponseBodyAdvice {
@@ -51,6 +51,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice {
         if (serviceCode.equals(ServiceCode.SUCCESS)) {
             commonResponse = CommonResponse.success(body);
         } else {
+            // TODO: GlobalExceptionHandler 에서 NOT_DEFINED_ERROR도 쳐내도록 해야할듯
             commonResponse = CommonResponse.failure(body);   // 원래 Exception은 여기까지 안옴: 전역예외 핸들러에서 CommonResponse로 변환 되었어야했음.
         }
 
