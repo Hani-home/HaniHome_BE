@@ -37,8 +37,9 @@ public class SecurityConfig {
                                 "/health",
                                 "/api/v1/properties",
                                 "/api/v1/auth/refresh",
-                                "/api/v1/members/check-nickname").permitAll()
-                        .anyRequest().authenticated()
+                                "/api/v1/members/check-nickname",
+                                "/error").permitAll()
+                        .anyRequest().authenticated()//위 url 제외하고는 인증 필요
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

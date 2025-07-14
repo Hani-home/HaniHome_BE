@@ -2,6 +2,11 @@ spring:
   config:
     activate:
       on-profile: docker
+  web:
+    resources:
+      add-mappings: false
+
+
 
   datasource:
     url: ${DOCKER_SPRING_DATASOURCE_URL}
@@ -11,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create     # 처음에는 update, 이후에는 validate 추천
+      ddl-auto: update     # 처음에는 update, 이후에는 validate 추천
     show-sql: true
     properties:
       hibernate:
