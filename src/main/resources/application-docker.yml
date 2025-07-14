@@ -32,6 +32,39 @@ spring:
   jackson:
     time-zone: UTC
 
+    mail:
+      host: smtp.gmail.com         # SMTP 서버 호스트
+      port: 587                    # SMTP 포트 (TLS)
+      username: ${SPRING_MAIL_USERNAME}
+      password: ${SPRING_MAIL_PASSWORD}  # Gmail의 경우 앱 비밀번호
+      properties:
+        mail:
+          transport:
+            protocol: smtp
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+  # 응답 인코딩 UTF-8로 고정
+  server:
+    servlet:
+      encoding:
+        enabled: true
+        charset: UTF-8
+        force: true
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health, info, metrics, prometheus
+    endpoint:
+      metrics:
+        enabled: true
+      prometheus:
+        enabled: true
+
+
 cloud:
   aws:
     s3:
@@ -63,3 +96,9 @@ nsw:
           directory: ${SYDNEY_METRO_STOP_STORAGE_DIRECTORY}
   api:
     key: ${NSW_API_KEY}
+
+admin:
+  alert:
+    emails:
+      - ${ADMIN_ALERT_EMAIL_1}
+      - ${ADMIN_ALERT_EMAIL_2}
