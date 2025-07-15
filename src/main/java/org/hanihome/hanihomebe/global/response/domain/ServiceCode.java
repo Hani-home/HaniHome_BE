@@ -40,12 +40,15 @@ public enum ServiceCode {
     INVALID_PROPERTY_TYPE(HttpStatus.BAD_REQUEST, "해당하는 Property SuperType이 없습니다."),
     INVALID_PROPERTY_TIME_SLOT(HttpStatus.BAD_REQUEST, "뷰잉 가능 시간 (from, to)는 30분 단위이며 최소 1개 최대 3개입니다"),
     INVALID_LATITUDE_LONGITUDE(HttpStatus.BAD_REQUEST, "위도와 경도는 각각 +-90, +-180 내에 있어야합니다"),
+    PROPERTY_PATCH_COMMAND_MISMATCH(HttpStatus.BAD_REQUEST, "매물 수정 Command의 타입이 잘못되었습니다"),
+    PROPERTY_CONVERTER_MISMATCH(HttpStatus.BAD_REQUEST, "잘못된 PropertyConverter가 사용되었습니다"),
 
     // Viewing
     VIEWING_NUMBER_NOT_SATISFIED(HttpStatus.BAD_REQUEST, "요청 가능한 뷰잉 시간대는 최소 1개 최대 3개입니다"),
     VIEWING_ALREADY_PRESCHEDULED(HttpStatus.BAD_REQUEST, "요청한 뷰잉 시간대는 모두 사용자의 뷰잉 예약 일정과 겹칩니다"),
     VIEWING_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 뷰잉은 존재하지 않습니다"),
     VIEWING_TIME_MISMATCH(HttpStatus.BAD_REQUEST, "선택한 시간대는 예약이 완료되었거나 뷰잉 가능 시간대에 속하지 않습니다."),
+    PROPERTY_IN_VIEWING_CONVERT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "뷰잉에 포함된 매물을 DTO로 변환하는 중에 오류가 발생"),
 
     // OptionCategory
     OPTION_CATEGORY_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 카테고리는 아직 초기화 되지 않았습니다"),
@@ -85,6 +88,9 @@ public enum ServiceCode {
     METRO_STOP_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 지하철 정거장은 존재하지 않습니다"),
     METRO_STOP_SYNCHRONIZE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "시드니 지하철역 동기화 중 오류가 발생했습니다"),
     METRO_STOPS_FILE_IS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "저장된 stops.txt 파일이 비어있습니다."),
+
+    // NearestMetroStop
+    NEAREST_METRO_STOP_NOT_EXISTS(HttpStatus.INTERNAL_SERVER_ERROR, "가장 가까운 지하철역이 존재하지 않습니다"),
 
     // Report
     PROPERTY_REPORT(HttpStatus.BAD_REQUEST,"매물 신고만 가능합니다"),
