@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.command.RentPropertyPatchCommand;
@@ -71,18 +73,20 @@ public class RentProperty extends Property {
 
     @Override
     public Property update(PropertyPatchCommand cmd) {
-        if(!(cmd instanceof RentPropertyPatchCommand)) throw new RuntimeException("타입 미스매칭");
-        RentPropertyPatchCommand rentDTO = (RentPropertyPatchCommand) cmd;
+        if (!(cmd instanceof RentPropertyPatchCommand)) {
+            throw new CustomException(ServiceCode.PROPERTY_PATCH_COMMAND_MISMATCH);
+        }
+        RentPropertyPatchCommand rentCmd = (RentPropertyPatchCommand) cmd;
         // 자식 필드 업데이트
-        if (rentDTO.getRentPropertySubType() != null) this.rentPropertySubType = rentDTO.getRentPropertySubType();
+        if (rentCmd.getRentPropertySubType() != null) this.rentPropertySubType = rentCmd.getRentPropertySubType();
 
-        if(rentDTO.getRealEstateIntervention()!=null) this.isRealEstateIntervention = rentDTO.getRealEstateIntervention();
+        if(rentCmd.getRealEstateIntervention()!=null) this.isRealEstateIntervention = rentCmd.getRealEstateIntervention();
 
-        if(rentDTO.getInternalDetails()!=null) this.rentInternalDetails = rentDTO.getInternalDetails();
+        if(rentCmd.getInternalDetails()!=null) this.rentInternalDetails = rentCmd.getInternalDetails();
 
-        if(rentDTO.getCapacityRent()!=null) this.capacityRent = rentDTO.getCapacityRent();
+        if(rentCmd.getCapacityRent()!=null) this.capacityRent = rentCmd.getCapacityRent();
 
-        if(rentDTO.getExposure()!=null) this.exposure = rentDTO.getExposure();
+        if(rentCmd.getExposure()!=null) this.exposure = rentCmd.getExposure();
 
         // 부모 필드 업데이트
         super.updateBase(cmd);

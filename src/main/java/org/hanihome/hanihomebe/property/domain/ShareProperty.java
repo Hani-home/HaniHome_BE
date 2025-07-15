@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.command.SharePropertyPatchCommand;
@@ -66,15 +68,15 @@ public class ShareProperty extends Property {
     @Override
     public Property update(PropertyPatchCommand cmd) {
         if(!(cmd instanceof SharePropertyPatchCommand)){
-            throw new RuntimeException("업데이트 DTO와 엔티티 타입이 미스매칭");
+            throw new CustomException(ServiceCode.PROPERTY_PATCH_COMMAND_MISMATCH);
         }
-        SharePropertyPatchCommand shareDTO = (SharePropertyPatchCommand) cmd;
+        SharePropertyPatchCommand shareCmd = (SharePropertyPatchCommand) cmd;
         // 자식 필드 업데이트
-        if(shareDTO.getSharePropertySubType()!=null) this.sharePropertySubType = shareDTO.getSharePropertySubType();
+        if(shareCmd.getSharePropertySubType()!=null) this.sharePropertySubType = shareCmd.getSharePropertySubType();
 
-        if(shareDTO.getInternalDetails()!=null) this.shareInternalDetails = shareDTO.getInternalDetails();
+        if(shareCmd.getInternalDetails()!=null) this.shareInternalDetails = shareCmd.getInternalDetails();
 
-        if(shareDTO.getCapacityShare()!=null) this.capacityShare = shareDTO.getCapacityShare();
+        if(shareCmd.getCapacityShare()!=null) this.capacityShare = shareCmd.getCapacityShare();
 
         // 부모 필드 업데이트
         super.updateBase(cmd);

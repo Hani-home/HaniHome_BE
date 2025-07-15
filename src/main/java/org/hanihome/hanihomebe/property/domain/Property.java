@@ -211,6 +211,9 @@ public abstract class Property {
         propertyOptionItem.setProperty(this);
     }
 
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
     protected void updateBase(PropertyPatchCommand cmd) {
         if (cmd.getGenderPreference() != null) {
             this.genderPreference = cmd.getGenderPreference();
