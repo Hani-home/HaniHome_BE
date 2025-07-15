@@ -29,9 +29,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET,
-                                "/api/v1/metro/stops",
                                 "api/v1/properties/categories/**",
-                                "api/v1/properties/search",
                                 "/api/v1/viewings/categories/**"
                         ).permitAll()
                         .requestMatchers(
