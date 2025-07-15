@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.application.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,6 +28,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/metro/stops",
+                                "api/v1/properties/categories/**",
+                                "api/v1/properties/search",
+                                "/api/v1/viewings/categories/**"
+                        ).permitAll()
                         .requestMatchers(
                                 "/api/v1/auth/social/login",
                                 "/api/v1/auth/login",
@@ -38,8 +45,11 @@ public class SecurityConfig {
                                 "/api/v1/properties",
                                 "/api/v1/auth/refresh",
                                 "/api/v1/members/check-nickname",
-                                "/error").permitAll()
+                                "/actuator/**",
+                                "/error"
+                        ).permitAll()
                         .anyRequest().authenticated()//위 url 제외하고는 인증 필요
+
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

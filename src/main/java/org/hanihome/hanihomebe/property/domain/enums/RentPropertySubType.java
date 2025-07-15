@@ -11,7 +11,9 @@ public enum RentPropertySubType {
     APARTMENT("아파트"),
     UNIT("유닛"),
     STUDIO("스튜디오"),
-    GRANNY_FLAT("그래니 플랫");
+    GRANNY_FLAT("그래니 플랫"),
+    TOWN_HOUSE("타운 하우스"),
+    ;
 
     private final String description;
 }

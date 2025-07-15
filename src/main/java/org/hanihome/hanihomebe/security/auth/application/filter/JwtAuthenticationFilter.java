@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.exception.ErrorResponseDTO;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.global.response.dto.CommonResponse;
 import org.hanihome.hanihomebe.security.auth.application.jwt.refresh.RefreshToken;
@@ -137,7 +138,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType("application/json; charset=utf-8");
 
         ObjectMapper objectMapper = new ObjectMapper();
-        CommonResponse<Object> errorResponse = CommonResponse.failure(serviceCode);
+        CommonResponse<Object> errorResponse = CommonResponse.failure(ErrorResponseDTO.of(serviceCode), serviceCode);
+
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 

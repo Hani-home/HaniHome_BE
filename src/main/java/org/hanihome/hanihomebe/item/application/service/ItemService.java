@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+/// 관리자가 조회할 때는 isActive와 무관하게 조회, 사용자가 조회할 때는 isActive=true만 조회
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

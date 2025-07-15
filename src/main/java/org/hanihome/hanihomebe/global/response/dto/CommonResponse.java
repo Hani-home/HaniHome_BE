@@ -51,13 +51,4 @@ public class CommonResponse<T> {
                 .data(data)
                 .build();
     }
-
-    public static <T> CommonResponse<T> failure(ServiceCode code) {
-        return CommonResponse.<T>builder()
-                .isSuccess(false)
-                .serviceCode(code.name())
-                .message(code.getMessage())
-                .data(null)
-                .build();
-    }
 }
