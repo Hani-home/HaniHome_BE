@@ -18,6 +18,7 @@ import org.hanihome.hanihomebe.viewing.domain.ViewingOptionItem;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
 import org.hanihome.hanihomebe.viewing.web.converter.ViewingConverter;
+import org.hanihome.hanihomebe.viewing.web.converter.context.ViewingConvertContext;
 import org.hanihome.hanihomebe.viewing.web.dto.cancel.ViewingCancelRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.checklist.ViewingChecklistRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingCreateDTO;
@@ -132,9 +133,20 @@ public class ViewingService {
                         converterMap.get(ViewingViewType.DEFAULT)
                 );
 
+        Map<String, Object> extra = prepareExtraData(memberId, view);
+
         return viewingRepository.findByMember_idOrderByMeetingDay(memberId).stream()
-                .map(viewing -> converter.convert(viewing))
+                .map(viewing -> converter.convert(ViewingConvertContext.create(viewing, extra)))
                 .toList();
+    }
+
+    private static Map<String, Object> prepareExtraData(Long memberId, ViewingViewType view) {
+        Map<String, Object> extra = new HashMap<>();
+        if (view == ViewingViewType.DATE_PROFILE) {
+            Long requesterId = memberId;
+            extra.put("requesterId", requesterId);
+        }
+        return extra;
     }
 
     public ViewingResponseDTO getViewingById(Long viewingId) {
@@ -277,7 +289,7 @@ public class ViewingService {
 
     /**
      * 자신의 status 상태인 뷰잉의 모든 시간을 조회한다
-     * @param memberId 내 id
+     * @param memberId 내 metroStopId
      * @param status 조회할 뷰잉 상태
      * @return 조회된 뷰잉들의 시간
      */
