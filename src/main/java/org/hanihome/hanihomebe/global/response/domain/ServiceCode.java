@@ -60,6 +60,7 @@ public enum ServiceCode {
 
     // Notification
     NOTIFICATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 알림은 존재하지 않습니다"),
+    NOTIFICATION_SEND_FAILED(HttpStatus.BAD_REQUEST, "알림 전송에 실패했습니다"),
 
     // OneOnOneConsult
     ONE_ON_ONE_CONSULT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 일대일 상담문의글은 존재하지 않습니다"),
@@ -89,7 +90,6 @@ public enum ServiceCode {
 
     // not defined
     NOT_DEFINED_ERROR_FROM_WRAPPER(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다 from Wrapper"),
-    NOTIFICATION_SEND_FAILED(HttpStatus.BAD_REQUEST, "알림 전송에 실패했습니다"),
     NOT_DEFINED_ERROR_FROM_FILTER(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다 from 필터"),
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
     ;

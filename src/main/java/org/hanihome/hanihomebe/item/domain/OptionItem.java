@@ -40,6 +40,7 @@ public class OptionItem {
     private List<OptionItem> child = new ArrayList<>();
 */
 
+    // 화면 노출 여부
     @Builder.Default
     private boolean isActive = true;
 

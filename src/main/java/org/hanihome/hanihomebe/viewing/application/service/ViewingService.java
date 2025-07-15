@@ -132,7 +132,7 @@ public class ViewingService {
                         converterMap.get(ViewingViewType.DEFAULT)
                 );
 
-        return viewingRepository.findByMemberId(memberId).stream()
+        return viewingRepository.findByMember_idOrderByMeetingDay(memberId).stream()
                 .map(viewing -> converter.convert(viewing))
                 .toList();
     }
