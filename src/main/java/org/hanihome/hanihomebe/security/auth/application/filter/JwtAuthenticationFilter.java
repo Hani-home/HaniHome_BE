@@ -74,6 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = jwtUtils.extractAccessTokenFromHeader(request);
         String refreshToken = jwtUtils.extractRefreshTokenFromCookie(request);
+        log.info("리프레시 토큰입니다 {}", refreshToken);
 
         try {
             if (accessToken == null) {

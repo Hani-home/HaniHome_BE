@@ -15,8 +15,10 @@ import org.hanihome.hanihomebe.verification.web.dto.VerificationRequestDTO;
 import org.hanihome.hanihomebe.verification.web.dto.VerificationResponseDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,13 +39,14 @@ public class VerificationService {
 
         VerificationType type = verificationRequestDTO.getType();
 
-        //member에서 verification 가져옴.
-        List<Verification> verifications = member.getVerifications();
+        //member에서 verification 가져옴. 처음 신용요청 시 아무것도 없으니 null 방지
+        List<Verification> verifications = Optional.ofNullable(member.getVerifications())
+                .orElse(Collections.emptyList());
 
         //type 맞는 거 가져오고 젤 최신 가져오기
         Verification latest = verifications.stream()
                 .filter(v ->v.getType()==type)
-                .max(Comparator.comparing(Verification::getRequestedAt))  // or getApprovedAt if that's more reliable
+                .max(Comparator.comparing(Verification::getRequestedAt))
                 .orElse(null);
 
         //젤 최근에꺼를 확인해서 pending이거나 Approved이면 예외 던짐
