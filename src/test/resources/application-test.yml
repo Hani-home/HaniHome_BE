@@ -23,8 +23,8 @@ spring:
   mail:
     host: smtp.gmail.com         # SMTP 서버 호스트
     port: 587                    # SMTP 포트 (TLS)
-    username: rmsghchl0@gmail.com
-    password: pkabaonxxqjsdwtj  # Gmail의 경우 앱 비밀번호
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}  # Gmail의 경우 앱 비밀번호
     properties:
       mail:
         transport:
