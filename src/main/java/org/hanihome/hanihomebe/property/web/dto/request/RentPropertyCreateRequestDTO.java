@@ -60,11 +60,7 @@ public record RentPropertyCreateRequestDTO(
         }
         // 위도, 경도
         if (region.getLatitude() != null && region.getLongitude() != null) {
-            BigDecimal latitude = region.getLatitude();
-            BigDecimal longitude = region.getLongitude();
-            if (isValidLatitudeAndLongitude(latitude, longitude)) {
-                throw new CustomException(ServiceCode.INVALID_LATITUDE_LONGITUDE);
-            }
+            validateLatitudeAndLongitude(region.getLatitude(), region.getLongitude());
         }
         // 뷰잉 가능 시간 검증
         boolean isValidTimeSlots = TimeSlotValidator.validAllConditions(timeSlots);
