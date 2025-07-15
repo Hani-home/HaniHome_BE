@@ -6,6 +6,8 @@ import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.hanihome.hanihomebe.metro.domain.MetroStop;
+import org.hanihome.hanihomebe.metro.repository.MetroStopRepository;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
@@ -43,6 +45,8 @@ class PropertySearchServiceTest {
     PropertyService propertyService;
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    MetroStopRepository metroStopRepository;
 
     @BeforeAll
     static void setupEnv() {
@@ -60,6 +64,18 @@ class PropertySearchServiceTest {
         Long memberId = memberRepository.save(
                 Member.createFrom("alpha", "gno123", Role.GUEST)
         ).getId();
+
+        MetroStop parentStop = MetroStop.createParent(
+                "200030",                            // businessStopId
+                "Martin Place Station",              // stopName
+                new BigDecimal("37.5665"),           // stopLatitude
+                new BigDecimal("126.9780"),          // stopLongitude
+                "1",                                 // locationType (e.g., 1 = parent)
+                true,                                // wheelchairBoarding
+                null                                 // platformCode (null for parent)
+        );
+
+        metroStopRepository.save(parentStop);
 
         // 공통 객체 설정
         Region region = new Region(
