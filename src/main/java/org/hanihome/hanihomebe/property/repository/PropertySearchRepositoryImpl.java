@@ -101,10 +101,10 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
                             "ST_GeomFromText('POINT(' || {0} || ' ' || {1} || ')', 4326), " +   // property point
                             "ST_GeomFromText('POINT(' || {2} || ' ' || {3} || ')', 4326)" +     // metro point
                             ") <= {4}",
-                    p.region.longitude,
                     p.region.latitude,
-                    cond.getMetroStopLongitude(),
+                    p.region.longitude,
                     cond.getMetroStopLatitude(),
+                    cond.getMetroStopLongitude(),
                     radiusMeters
             );
 
