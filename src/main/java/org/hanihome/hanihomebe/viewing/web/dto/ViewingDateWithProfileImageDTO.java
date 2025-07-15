@@ -10,16 +10,17 @@ public record ViewingDateWithProfileImageDTO(
 
           LocalDateTime meetingDay,
 
-          String myImageUrl,
+          String counterpartImageUrl,
 
-          String counterpartImageUrl
+          String propertyThumbnailUrl
+
 ) implements ViewingDTOByView {
-    public static ViewingDateWithProfileImageDTO from(Viewing entity) {
+    public static ViewingDateWithProfileImageDTO from(Viewing entity, String counterpartImageUrl) {
         return new ViewingDateWithProfileImageDTO(
                 entity.getId(),
                 entity.getMeetingDay(),
-                entity.getMember().getProfileImage(),
-                entity.getProperty().getMember().getProfileImage()
+                counterpartImageUrl,
+                entity.getProperty().getThumbnailUrl()
         );
     }
 }
