@@ -8,6 +8,7 @@ import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -53,4 +54,10 @@ public sealed interface PropertyCreateRequestDTO permits
 
     String description();
 
+    default boolean isValidLatitudeAndLongitude(BigDecimal latitude, BigDecimal longitude) {
+        return latitude.compareTo(BigDecimal.valueOf(-90)) >= 0 &&
+                latitude.compareTo(BigDecimal.valueOf(90)) <= 0 &&
+                longitude.compareTo(BigDecimal.valueOf(-180)) >= 0 &&
+                longitude.compareTo(BigDecimal.valueOf(180)) <= 0;
+    }
 }

@@ -9,6 +9,7 @@ import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -48,6 +49,16 @@ public record SharePropertyCreateRequestDTO(
         if(viewingAvailableDateTimes == null) {
             viewingAvailableDateTimes = new ArrayList<>();
         }
+
+        // 위도, 경도
+        if (region.getLatitude() != null && region.getLongitude() != null) {
+            BigDecimal latitude = region.getLatitude();
+            BigDecimal longitude = region.getLongitude();
+            if (!isValidLatitudeAndLongitude(latitude, longitude)) {
+                throw new CustomException(ServiceCode.INVALID_LATITUDE_LONGITUDE);
+            }
+        }
+
         // 뷰잉 가능 시간 검증
         boolean isValidTimeSlots = TimeSlotValidator.validAllConditions(timeSlots);
         if(!isValidTimeSlots) {
