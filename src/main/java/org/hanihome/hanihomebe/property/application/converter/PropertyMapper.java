@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.property.application;
+package org.hanihome.hanihomebe.property.application.converter;
 
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
@@ -14,9 +14,6 @@ import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyPatchReques
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.RentPropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.SharePropertyResponseDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.summary.RentPropertySummaryDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.summary.SharePropertySummaryDTO;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.mapstruct.*;
@@ -61,7 +58,7 @@ public interface PropertyMapper {
         }
     }
 
-    default PropertySummaryDTO toSummaryDTO(Property entity) {
+    /*default PropertySummaryDTO toSummaryDTO(Property entity) {
         PropertySuperType propertyType = entity.getKind();
         switch (propertyType) {
             case SHARE:
@@ -71,7 +68,7 @@ public interface PropertyMapper {
             default:
                 throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
         }
-    }
+    }*/
     private <T> T safeCast(Object entity, Class<T> targetClass) {
         if (entity instanceof HibernateProxy) {
             return targetClass.cast(Hibernate.unproxy(entity));
