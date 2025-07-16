@@ -24,7 +24,7 @@ public record RentPropertySummaryDTO(
         LocalDateTime createdAt,
         int wishCount,
         TradeStatus tradeStatus
-) implements PropertySummaryDTO, PropertyDTOByView {
+) implements PropertySummaryDTO {
     public static RentPropertySummaryDTO from(RentProperty entity, NearestMetroStopResponseDTO nearestMetroStopResponseDTO) {
         return new RentPropertySummaryDTO(
                 entity.getId(),

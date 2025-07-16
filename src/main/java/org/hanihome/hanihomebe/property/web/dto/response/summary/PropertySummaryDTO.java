@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hanihome.hanihomebe.metro.web.dto.nearest.NearestMetroStopResponseDTO;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
+import org.hanihome.hanihomebe.property.web.dto.response.PropertyDTOByView;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,7 +17,9 @@ import java.time.LocalDateTime;
         @JsonSubTypes.Type(value = SharePropertySummaryDTO.class, name = "SHARE"),
         @JsonSubTypes.Type(value = RentPropertySummaryDTO.class, name = "RENT")
 })
-public sealed interface PropertySummaryDTO permits SharePropertySummaryDTO, RentPropertySummaryDTO {
+public sealed interface PropertySummaryDTO
+        extends PropertyDTOByView
+        permits SharePropertySummaryDTO, RentPropertySummaryDTO {
     Long id();
 
     PropertySuperType kind();

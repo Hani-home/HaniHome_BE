@@ -24,7 +24,7 @@ public record SharePropertySummaryDTO(
         LocalDateTime createdAt,
         int wishCount,
         TradeStatus tradeStatus
-) implements PropertySummaryDTO, PropertyDTOByView {
+) implements PropertySummaryDTO {
     public static SharePropertySummaryDTO from(ShareProperty entity, NearestMetroStopResponseDTO nearestMetroStopResponseDTO) {
         return new SharePropertySummaryDTO(
                 entity.getId(),
