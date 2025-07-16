@@ -29,7 +29,7 @@ import org.springframework.http.MediaType;
 
 
 import java.util.Optional;
-
+@Transactional(readOnly = true)
 @Service
 public class AuthService {
 
