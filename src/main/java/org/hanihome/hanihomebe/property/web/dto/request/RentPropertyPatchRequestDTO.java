@@ -58,10 +58,8 @@ public class RentPropertyPatchRequestDTO extends PropertyPatchRequestDTO {
 
                 // RentProperty 전용 필드
                 .rentPropertySubType(this.rentPropertySubType)
-                .realEstateIntervention(this.realEstateIntervention)
                 .internalDetails(this.internalDetails)
                 .capacityRent(this.capacityRent)
-                .exposure(this.exposure)
                 .build();
     }
 

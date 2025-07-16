@@ -98,7 +98,7 @@ public class PropertyService {
         property.setThumbnailUrl(dto.photoUrls() == null ? null : dto.photoUrls().get(0));
 
         // TODO: nearestStation, property 생성 모두 단일책임하도록 분리하고, 별도의 orchestrator 사용이 필요할듯
-        NearestMetroStop nearestMetroStop = createNearestMetroStop(dto, property);
+        NearestMetroStop nearestMetroStop = createNearestMetroStop(property);
         nearestMetroStopRepository.save(nearestMetroStop);
 
         // create PropertyOptionItem
@@ -111,8 +111,8 @@ public class PropertyService {
 
     }
 
-    private NearestMetroStop createNearestMetroStop(PropertyCreateRequestDTO dto, Property property) {
-        NearestMetroStopProjectionDTO nearestMetroAndDistance = metroStopRepository.findNearestMetroAndDistance(dto.region().getLatitude(), dto.region().getLongitude());
+    private NearestMetroStop createNearestMetroStop(Property property) {
+        NearestMetroStopProjectionDTO nearestMetroAndDistance = metroStopRepository.findNearestMetroAndDistance(property.getRegion().getLatitude(), property.getRegion().getLongitude());
 
         MetroStop findMetroStop = metroStopRepository.findById(nearestMetroAndDistance.getId()).orElseThrow(() -> new CustomException(ServiceCode.METRO_STOP_NOT_EXISTS));
         Double distance = nearestMetroAndDistance.getDistance();
