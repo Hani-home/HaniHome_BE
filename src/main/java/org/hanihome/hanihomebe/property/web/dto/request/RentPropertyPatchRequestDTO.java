@@ -27,7 +27,7 @@ public class RentPropertyPatchRequestDTO extends PropertyPatchRequestDTO {
         if (timeSlotIsNull()) {
             return true;    // patch라서 통과
         } else {
-            return TimeSlotValidator.validAllConditions(super.getTimeSlots());
+            return TimeSlotValidator.validateAllConditions(super.getTimeSlots());
         }
     }
 

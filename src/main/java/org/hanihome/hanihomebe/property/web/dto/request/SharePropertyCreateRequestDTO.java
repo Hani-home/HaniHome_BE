@@ -9,7 +9,6 @@ import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public record SharePropertyCreateRequestDTO(
         }
 
         // 뷰잉 가능 시간 검증
-        boolean isValidTimeSlots = TimeSlotValidator.validAllConditions(timeSlots);
+        boolean isValidTimeSlots = TimeSlotValidator.validateAllConditions(timeSlots);
         if(!isValidTimeSlots) {
             throw new CustomException(ServiceCode.INVALID_PROPERTY_TIME_SLOT);
         }

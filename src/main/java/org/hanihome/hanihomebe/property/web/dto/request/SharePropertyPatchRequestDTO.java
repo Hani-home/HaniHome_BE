@@ -24,7 +24,7 @@ public class SharePropertyPatchRequestDTO extends PropertyPatchRequestDTO {
         if (super.getMeetingDateFrom() == null && super.getMeetingDateTo() == null && super.getTimeSlots() == null) {
             return true;    // patch라서 통과
         } else {
-            return TimeSlotValidator.validAllConditions(super.getTimeSlots());
+            return TimeSlotValidator.validateAllConditions(super.getTimeSlots());
         }
     }
 
