@@ -39,6 +39,7 @@ public enum ServiceCode {
     PROPERTY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 매물은 존재하지 않습니다"),
     INVALID_PROPERTY_TYPE(HttpStatus.BAD_REQUEST, "해당하는 Property SuperType이 없습니다."),
     INVALID_PROPERTY_TIME_SLOT(HttpStatus.BAD_REQUEST, "뷰잉 가능 시간 (from, to)는 30분 단위이며 최소 1개 최대 3개입니다"),
+    INVALID_LATITUDE_LONGITUDE(HttpStatus.BAD_REQUEST, "위도와 경도는 각각 +-90, +-180 내에 있어야합니다"),
 
     // Viewing
     VIEWING_NUMBER_NOT_SATISFIED(HttpStatus.BAD_REQUEST, "요청 가능한 뷰잉 시간대는 최소 1개 최대 3개입니다"),

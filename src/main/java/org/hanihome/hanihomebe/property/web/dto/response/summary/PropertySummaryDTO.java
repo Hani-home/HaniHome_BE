@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.property.web.dto.response.summary;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
 
 import java.math.BigDecimal;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 })
 public sealed interface PropertySummaryDTO permits SharePropertySummaryDTO, RentPropertySummaryDTO {
     Long id();
+
+    PropertySuperType kind();
 
     BigDecimal weeklyCost();
 

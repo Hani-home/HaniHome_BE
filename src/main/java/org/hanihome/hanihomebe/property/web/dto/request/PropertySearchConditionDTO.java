@@ -1,5 +1,7 @@
 package org.hanihome.hanihomebe.property.web.dto.request;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
@@ -27,7 +29,9 @@ public class PropertySearchConditionDTO {
     private Boolean immediate;
     private Boolean negotiable;
 
-    private BigDecimal metroStopLatitude;      // 역 코드
+    @DecimalMin("-90.0")  @DecimalMax("90.0")
+    private BigDecimal metroStopLatitude;
+    @DecimalMin("-180.0") @DecimalMax("180.0")
     private BigDecimal metroStopLongitude;
     private BigDecimal radiusKm;         // 반경 (킬로미터)
 }

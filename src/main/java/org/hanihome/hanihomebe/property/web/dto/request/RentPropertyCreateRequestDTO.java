@@ -5,6 +5,7 @@ import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -57,6 +58,10 @@ public record RentPropertyCreateRequestDTO(
         if(viewingAvailableDateTimes == null) {
             viewingAvailableDateTimes = new ArrayList<>();
         }
+        // 위도, 경도
+        if (region.getLatitude() != null && region.getLongitude() != null) {
+            validateLatitudeAndLongitude(region.getLatitude(), region.getLongitude());
+        }
         // 뷰잉 가능 시간 검증
         boolean isValidTimeSlots = TimeSlotValidator.validAllConditions(timeSlots);
         if(!isValidTimeSlots) {
@@ -86,4 +91,6 @@ public record RentPropertyCreateRequestDTO(
         log.info("meetingDateFrom: {}, meetingDateTo: {}", meetingDateFrom, meetingDateTo);
         log.info("viewingAvailableDateTimes: {}", viewingAvailableDateTimes.stream().map(viewingAvailableDateTime -> viewingAvailableDateTime.getTime()).toList());
     }
+
+
 }

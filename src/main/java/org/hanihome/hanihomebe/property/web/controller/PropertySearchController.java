@@ -1,5 +1,6 @@
 package org.hanihome.hanihomebe.property.web.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.property.application.service.PropertySearchService;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
@@ -8,6 +9,7 @@ import org.hanihome.hanihomebe.property.web.dto.request.PropertySearchConditionD
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.viewing.web.enums.ViewingViewType;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +28,7 @@ public class PropertySearchController {
 
     @GetMapping("/search")
     public List<?> searchProperties(
-            @ParameterObject PropertySearchConditionDTO conditionDTO,
+            @ParameterObject @Valid PropertySearchConditionDTO conditionDTO,
             Pageable pageable) {
         return propertySearchService.search(conditionDTO, PropertyViewType.SUMMARY);
     }
