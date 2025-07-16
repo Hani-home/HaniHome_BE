@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.property.web.dto.response.summary;
 
 import org.hanihome.hanihomebe.property.domain.RentProperty;
+import org.hanihome.hanihomebe.metro.web.dto.nearest.NearestMetroStopResponseDTO;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
@@ -18,12 +19,13 @@ public record RentPropertySummaryDTO(
         Double internalArea,
         int totalFloors,
         boolean billIncluded,
+        NearestMetroStopResponseDTO nearestStation,
         String thumbnailUrl,
         LocalDateTime createdAt,
         int wishCount,
         TradeStatus tradeStatus
 ) implements PropertySummaryDTO, PropertyDTOByView {
-    public static RentPropertySummaryDTO from(RentProperty entity) {
+    public static RentPropertySummaryDTO from(RentProperty entity, NearestMetroStopResponseDTO nearestMetroStopResponseDTO) {
         return new RentPropertySummaryDTO(
                 entity.getId(),
                 entity.getKind(),
@@ -33,6 +35,7 @@ public record RentPropertySummaryDTO(
                 entity.getRentInternalDetails().getInternalArea(),
                 entity.getRentInternalDetails().getTotalFloors(),
                 entity.getCostDetails().isBillIncluded(),
+                nearestMetroStopResponseDTO,
                 entity.getThumbnailUrl(),
                 entity.getCreatedAt(),
                 entity.getWishCount(),

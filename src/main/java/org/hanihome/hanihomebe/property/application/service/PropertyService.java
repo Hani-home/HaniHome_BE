@@ -8,12 +8,17 @@ import org.hanihome.hanihomebe.item.application.OptionItemConverterForProperty;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
-import org.hanihome.hanihomebe.property.application.PropertyConverter;
-import org.hanihome.hanihomebe.property.application.PropertyMapper;
+import org.hanihome.hanihomebe.metro.domain.MetroStop;
+import org.hanihome.hanihomebe.metro.domain.NearestMetroStop;
+import org.hanihome.hanihomebe.metro.repository.MetroStopRepository;
+import org.hanihome.hanihomebe.metro.repository.NearestMetroStopRepository;
+import org.hanihome.hanihomebe.property.application.converter.PropertyConverter;
+import org.hanihome.hanihomebe.property.application.converter.PropertyMapper;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.metro.web.dto.nearest.NearestMetroStopProjectionDTO;
 import org.hanihome.hanihomebe.property.domain.vo.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
@@ -30,6 +35,7 @@ import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -50,7 +56,10 @@ public class PropertyService {
     private final Validator validator;
     private final OptionItemRepository optionItemRepository;
     private final WishItemRepository wishItemRepository; //Property 삭제 시 WishItem도 삭제하기 위해 추가
+    private final MetroStopRepository metroStopRepository;
+    private final NearestMetroStopRepository nearestMetroStopRepository;
     private final OptionItemConverterForProperty optionItemConverter;
+    private final PropertyConversionService propertyConversionService;
     private final Map<PropertyViewType, PropertyConverter<?>> propertyConverterMap = new EnumMap<>(PropertyViewType.class);
 
     public PropertyService(PropertyRepository propertyRepository,
@@ -60,8 +69,11 @@ public class PropertyService {
                            Validator validator,
                            OptionItemRepository optionItemRepository,
                            WishItemRepository wishItemRepository,
+                           MetroStopRepository metroStopRepository,
+                           NearestMetroStopRepository nearestMetroStopRepository,
                            OptionItemConverterForProperty optionItemConverter,
-                           List<PropertyConverter<?>> propertyConverters) {
+                           PropertyConversionService propertyConversionService,
+                           List<PropertyConverter<?>> propertyConverters, ConversionService conversionService) {
         this.propertyRepository = propertyRepository;
         this.memberRepository = memberRepository;
         this.objectMapper = objectMapper;
@@ -69,7 +81,10 @@ public class PropertyService {
         this.validator = validator;
         this.optionItemRepository = optionItemRepository;
         this.wishItemRepository = wishItemRepository;
+        this.metroStopRepository = metroStopRepository;
+        this.nearestMetroStopRepository = nearestMetroStopRepository;
         this.optionItemConverter = optionItemConverter;
+        this.propertyConversionService = propertyConversionService;
         propertyConverters.forEach(converter ->
                 propertyConverterMap.put(converter.supports(), converter));
     }
@@ -84,8 +99,12 @@ public class PropertyService {
         Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다"));
 
         if(dto instanceof RentPropertyCreateRequestDTO){
-
             RentProperty rentProperty = RentProperty.create((RentPropertyCreateRequestDTO) dto, findMember);
+            rentProperty.setThumbnailUrl(dto.photoUrls() == null ? null : dto.photoUrls().get(0));
+
+            // TODO: nearestStation, property 생성 모두 단일책임하도록 분리하고, 별도의 orchestrator 사용이 필요할듯
+            NearestMetroStop nearestMetroStop = createNearestMetroStop(dto, rentProperty);
+            nearestMetroStopRepository.save(nearestMetroStop);
 
             // create PropertyOptionItem
             addPropertyOptionItem(dto.optionItemIds(), rentProperty);
@@ -96,6 +115,10 @@ public class PropertyService {
             return propertyMapper.toResponseDTO(save, getOptionItemResponseDTOS(rentProperty));
         } else if (dto instanceof SharePropertyCreateRequestDTO){
             ShareProperty shareProperty = ShareProperty.create((SharePropertyCreateRequestDTO) dto, findMember);
+            shareProperty.setThumbnailUrl(dto.photoUrls() == null ? null : dto.photoUrls().get(0));
+
+            NearestMetroStop nearestMetroStop = createNearestMetroStop(dto, shareProperty);
+            nearestMetroStopRepository.save(nearestMetroStop);
 
             // create PropertyOptionItem
             addPropertyOptionItem(dto.optionItemIds(), shareProperty);
@@ -109,6 +132,15 @@ public class PropertyService {
         throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
     }
 
+    private NearestMetroStop createNearestMetroStop(PropertyCreateRequestDTO dto, Property property) {
+        NearestMetroStopProjectionDTO nearestMetroAndDistance = metroStopRepository.findNearestMetroAndDistance(dto.region().getLatitude(), dto.region().getLongitude());
+
+        MetroStop findMetroStop = metroStopRepository.findById(nearestMetroAndDistance.getId()).orElseThrow(() -> new CustomException(ServiceCode.METRO_STOP_NOT_EXISTS));
+        Double distance = nearestMetroAndDistance.getDistance();
+
+        return NearestMetroStop.create(findMetroStop, property, distance);
+    }
+
 
     // read
     /**
@@ -116,14 +148,11 @@ public class PropertyService {
      *    - 모든 서브타입(RentProperty, ShareProperty)을 섞어서 반환합니다.
      */
     public <T> List<T> getAllProperties(PropertyViewType view) {
-        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(view);
+        List<Property> findProperties = propertyRepository.findAll();
 
-        return propertyRepository.findAll().stream()
-                .map(property ->
-                        converter.convert(property, getOptionItemResponseDTOS(property))
-                )
-                .collect(Collectors.toList());
+        return propertyConversionService.convertProperties(findProperties, view);
     }
+
 
     /**
      * 4) 단일 Property 조회 (부모 타입으로 조회)
@@ -147,13 +176,11 @@ public class PropertyService {
 
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
         List<Property> findProperties = propertyRepository.findByMemberAndDisplayStatusAndTradeStatus(findMember, displayStatus, tradeStatus);
 
-        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(view);
 
-        return findProperties.stream()
-                .map(property -> converter.convert(property, getOptionItemResponseDTOS(property)))
-                .collect(Collectors.toList());
+        return propertyConversionService.convertProperties(findProperties, view);
     }
 
     private static DisplayStatus chooseDisplayStatusByOwnership(Long memberId, CustomUserDetails userDetails) {
@@ -185,13 +212,11 @@ public class PropertyService {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
-        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(view);
 
-        return propertyRepository.findByMemberAndDisplayStatusAndTradeStatus(findMember, displayStatus, tradeStatus).stream()
-                .map(property -> converter.convert(property, getOptionItemResponseDTOS(property)))
-                .collect(Collectors.toList());
+        List<Property> findProperties = propertyRepository.findByMemberAndDisplayStatusAndTradeStatus(findMember, displayStatus, tradeStatus);
+
+        return propertyConversionService.convertProperties(findProperties, view);
     }
-
 
     /**
      * 특정 매물의 뷰잉 가능 시각 조회
@@ -292,10 +317,6 @@ public class PropertyService {
     private List<OptionItemResponseDTO> getOptionItemResponseDTOS(Property property) {
         List<OptionItemResponseDTO> optionItemsDTOs = optionItemConverter.toResponseDTO(property.getOptionItems());
         return optionItemsDTOs;
-    }
-
-    private PropertyConverter<?> getConverterByView(PropertyViewType view) {
-        return propertyConverterMap.getOrDefault(view, propertyConverterMap.get(PropertyViewType.DEFAULT));
     }
 
 

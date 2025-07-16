@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.property.web.dto.response.summary;
 
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
+import org.hanihome.hanihomebe.metro.web.dto.nearest.NearestMetroStopResponseDTO;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
@@ -18,12 +19,13 @@ public record SharePropertySummaryDTO(
         Double internalArea,
         int totalFloors,
         boolean billIncluded,
+        NearestMetroStopResponseDTO nearestStation,
         String thumbnailUrl,
         LocalDateTime createdAt,
         int wishCount,
         TradeStatus tradeStatus
 ) implements PropertySummaryDTO, PropertyDTOByView {
-    public static SharePropertySummaryDTO from(ShareProperty entity) {
+    public static SharePropertySummaryDTO from(ShareProperty entity, NearestMetroStopResponseDTO nearestMetroStopResponseDTO) {
         return new SharePropertySummaryDTO(
                 entity.getId(),
                 entity.getKind(),
@@ -33,6 +35,7 @@ public record SharePropertySummaryDTO(
                 entity.getShareInternalDetails().getInternalArea(),
                 entity.getShareInternalDetails().getTotalFloors(),
                 entity.getCostDetails().isBillIncluded(),
+                nearestMetroStopResponseDTO,
                 entity.getThumbnailUrl(),
                 entity.getCreatedAt(),
                 entity.getWishCount(),

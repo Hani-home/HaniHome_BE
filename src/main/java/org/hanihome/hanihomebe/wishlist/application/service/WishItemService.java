@@ -4,10 +4,11 @@ import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
-import org.hanihome.hanihomebe.property.application.PropertyMapper;
+import org.hanihome.hanihomebe.property.application.converter.PropertyMapper;
+import org.hanihome.hanihomebe.property.application.service.PropertyConversionService;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
-import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
+import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.hanihome.hanihomebe.wishlist.application.validation.WishTargetValidator;
 import org.hanihome.hanihomebe.wishlist.domain.WishItem;
@@ -35,7 +36,6 @@ public class WishItemService {
     private final Map<WishTargetType, WishTargetValidator> validatorMap;
     private final MemberRepository memberRepository;
     private final PropertyRepository propertyRepository;
-    private final PropertyMapper propertyMapper;
     private final Map<WishTargetType, WishTargetService> wishTargetServiceMap;
     /*
     validatorMap = {
@@ -44,18 +44,19 @@ public class WishItemService {
     }
      */
     private final Map<WishTargetType, WishTargetCounter> counterMap;
+    private final PropertyConversionService propertyConversionService;
 
     @Autowired
-    public WishItemService(MemberRepository memberRepository, WishItemRepository wishItemRepository, List<WishTargetValidator> validators, PropertyRepository propertyRepository, PropertyMapper propertyMapper, List<WishTargetService> targetServices, List<WishTargetCounter> targetCounters) {
+    public WishItemService(MemberRepository memberRepository, WishItemRepository wishItemRepository, List<WishTargetValidator> validators, PropertyRepository propertyRepository, PropertyMapper propertyMapper, List<WishTargetService> targetServices, List<WishTargetCounter> targetCounters, PropertyConversionService propertyConversionService) {
         this.memberRepository = memberRepository;
         this.wishItemRepository = wishItemRepository;
         this.validatorMap = validators.stream().collect(Collectors.toMap(WishTargetValidator::getType, v -> v));
         this.propertyRepository = propertyRepository;
-        this.propertyMapper = propertyMapper;
         this.wishTargetServiceMap = targetServices.stream()
                 .collect(Collectors.toMap(WishTargetService::getTargetType, s -> s));
         this.counterMap = targetCounters.stream()
                 .collect(Collectors.toMap(WishTargetCounter::getTargetType, s -> s));
+        this.propertyConversionService = propertyConversionService;
     }
 
     //매물 찜하기 Create
@@ -158,19 +159,21 @@ public class WishItemService {
             Map<Long, Property> propertyMap = properties.stream()
                     .collect(Collectors.toMap(Property::getId, p -> p));
 
-            return propertyWishes.stream()
+            List<Property> wishedProperties = propertyWishes.stream()
                     .map(WishItem::getTargetId)
                     .map(propertyMap::get)
                     .filter(Objects::nonNull)
-                    .map(propertyMapper::toSummaryDTO)
                     .toList();
+
+            return propertyConversionService.convertProperties(wishedProperties, PropertyViewType.SUMMARY);
         }
 
         if ("popular".equalsIgnoreCase(sort)) {
-            return properties.stream()
+            List<Property> popularProperties = properties.stream()
                     .sorted(Comparator.comparing(Property::getWishCount).reversed())
-                    .map(propertyMapper::toSummaryDTO)
                     .toList();
+
+            return propertyConversionService.convertProperties(popularProperties, PropertyViewType.SUMMARY);
         }
 
         throw new CustomException(ServiceCode.INVALID_SORT_OPTION);
