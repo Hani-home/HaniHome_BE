@@ -14,6 +14,7 @@ import org.hanihome.hanihomebe.metro.repository.MetroStopRepository;
 import org.hanihome.hanihomebe.metro.repository.NearestMetroStopRepository;
 import org.hanihome.hanihomebe.property.application.converter.PropertyConverter;
 import org.hanihome.hanihomebe.property.application.converter.PropertyMapper;
+import org.hanihome.hanihomebe.property.application.factory.PropertyFactory;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
@@ -57,6 +58,7 @@ public class PropertyService {
     private final NearestMetroStopRepository nearestMetroStopRepository;
     private final PropertyConversionService propertyConversionService;
     private final Map<PropertyViewType, PropertyConverter<?>> propertyConverterMap = new EnumMap<>(PropertyViewType.class);
+    private final List<PropertyFactory> propertyFactories;
 
     public PropertyService(PropertyRepository propertyRepository,
                            MemberRepository memberRepository,
@@ -67,7 +69,10 @@ public class PropertyService {
                            NearestMetroStopRepository nearestMetroStopRepository,
                            OptionItemConverterForProperty optionItemConverter,
                            PropertyConversionService propertyConversionService,
-                           List<PropertyConverter<?>> propertyConverters, ConversionService conversionService) {
+                           ConversionService conversionService,
+                           List<PropertyConverter<?>> propertyConverters,
+                           List<PropertyFactory> propertyFactories
+    ) {
         this.propertyRepository = propertyRepository;
         this.memberRepository = memberRepository;
         this.optionItemRepository = optionItemRepository;
@@ -77,6 +82,7 @@ public class PropertyService {
         this.propertyConversionService = propertyConversionService;
         propertyConverters.forEach(converter ->
                 propertyConverterMap.put(converter.supports(), converter));
+        this.propertyFactories = propertyFactories;
     }
 
     /// create
@@ -85,15 +91,8 @@ public class PropertyService {
         log.info("property 생성 로직 진입");
         Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다"));
 
-        Property property;
-        if(dto instanceof RentPropertyCreateRequestDTO){
-            property = RentProperty.create((RentPropertyCreateRequestDTO) dto, findMember);
+        Property property = dtoToEntity(dto, findMember);
 
-        }else if(dto instanceof SharePropertyCreateRequestDTO){
-            property = ShareProperty.create((SharePropertyCreateRequestDTO) dto, findMember);
-        } else{
-            throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
-        }
         // TODO: 썸네일을 제대로 처리할 필요가있음
         property.setThumbnailUrl(dto.photoUrls() == null ? null : dto.photoUrls().get(0));
 
@@ -109,6 +108,16 @@ public class PropertyService {
 
         return propertyConversionService.convertProperty(property, PropertyViewType.DEFAULT);
 
+    }
+
+    private Property dtoToEntity(PropertyCreateRequestDTO dto, Member findMember) {
+        PropertyFactory propertyFactory = propertyFactories.stream()
+                .filter(factory -> factory.supports(dto))
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ServiceCode.INVALID_PROPERTY_TYPE));
+
+        Property property = propertyFactory.create(dto, findMember);
+        return property;
     }
 
     private NearestMetroStop createNearestMetroStop(Property property) {
