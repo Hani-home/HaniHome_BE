@@ -9,6 +9,7 @@ import org.hanihome.hanihomebe.metro.repository.MetroStopRepository;
 import org.hanihome.hanihomebe.metro.web.dto.FileParsedDTO;
 import org.hanihome.hanihomebe.metro.web.dto.MetroStopPatchDTO;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Component
+@Service
 public class MetroStopSyncService {
     private final MetroStopRepository metroStopRepository;
     private final MetroStopFileService metroStopFileService;
