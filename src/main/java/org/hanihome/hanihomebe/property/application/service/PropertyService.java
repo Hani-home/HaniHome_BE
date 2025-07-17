@@ -1,25 +1,17 @@
 package org.hanihome.hanihomebe.property.application.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.item.application.OptionItemConverterForProperty;
-import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
-import org.hanihome.hanihomebe.metro.domain.MetroStop;
-import org.hanihome.hanihomebe.metro.domain.NearestMetroStop;
-import org.hanihome.hanihomebe.metro.repository.MetroStopRepository;
-import org.hanihome.hanihomebe.metro.repository.NearestMetroStopRepository;
+import org.hanihome.hanihomebe.metro.application.service.NearestMetroStopService;
 import org.hanihome.hanihomebe.property.application.converter.PropertyConverter;
 import org.hanihome.hanihomebe.property.application.converter.PropertyMapper;
 import org.hanihome.hanihomebe.property.application.factory.PropertyFactory;
 import org.hanihome.hanihomebe.property.domain.Property;
-import org.hanihome.hanihomebe.property.domain.RentProperty;
-import org.hanihome.hanihomebe.property.domain.ShareProperty;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
-import org.hanihome.hanihomebe.metro.web.dto.nearest.NearestMetroStopProjectionDTO;
 import org.hanihome.hanihomebe.property.domain.vo.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
@@ -29,8 +21,6 @@ import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
 import org.hanihome.hanihomebe.property.web.dto.request.PropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.PropertyPatchRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.RentPropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
@@ -39,7 +29,6 @@ import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -54,8 +43,7 @@ public class PropertyService {
     private final MemberRepository memberRepository;
     private final OptionItemRepository optionItemRepository;
     private final WishItemRepository wishItemRepository; //Property 삭제 시 WishItem도 삭제하기 위해 추가
-    private final MetroStopRepository metroStopRepository;
-    private final NearestMetroStopRepository nearestMetroStopRepository;
+    private final NearestMetroStopService nearestMetroStopService;
     private final PropertyConversionService propertyConversionService;
     private final Map<PropertyViewType, PropertyConverter<?>> propertyConverterMap = new EnumMap<>(PropertyViewType.class);
     private final List<PropertyFactory> propertyFactories;
@@ -65,8 +53,7 @@ public class PropertyService {
                            PropertyMapper propertyMapper,
                            OptionItemRepository optionItemRepository,
                            WishItemRepository wishItemRepository,
-                           MetroStopRepository metroStopRepository,
-                           NearestMetroStopRepository nearestMetroStopRepository,
+                           NearestMetroStopService nearestMetroStopService,
                            OptionItemConverterForProperty optionItemConverter,
                            PropertyConversionService propertyConversionService,
                            ConversionService conversionService,
@@ -77,8 +64,7 @@ public class PropertyService {
         this.memberRepository = memberRepository;
         this.optionItemRepository = optionItemRepository;
         this.wishItemRepository = wishItemRepository;
-        this.metroStopRepository = metroStopRepository;
-        this.nearestMetroStopRepository = nearestMetroStopRepository;
+        this.nearestMetroStopService = nearestMetroStopService;
         this.propertyConversionService = propertyConversionService;
         propertyConverters.forEach(converter ->
                 propertyConverterMap.put(converter.supports(), converter));
@@ -89,19 +75,17 @@ public class PropertyService {
     @Transactional
     public PropertyResponseDTO createProperty(PropertyCreateRequestDTO dto){
         log.info("property 생성 로직 진입");
-        Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다"));
+        Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         Property property = dtoToEntity(dto, findMember);
 
         // TODO: 썸네일을 제대로 처리할 필요가있음
         property.setThumbnailUrl(dto.photoUrls() == null ? null : dto.photoUrls().get(0));
 
-        // TODO: nearestStation, property 생성 모두 단일책임하도록 분리하고, 별도의 orchestrator 사용이 필요할듯
-        NearestMetroStop nearestMetroStop = createNearestMetroStop(property);
-        nearestMetroStopRepository.save(nearestMetroStop);
 
-        // create PropertyOptionItem
         addPropertyOptionItem(dto.optionItemIds(), property);
+
+        nearestMetroStopService.create(property);
 
         propertyRepository.save(property);//RentProperty 테이블에도 JPA가 insert
         log.info("RentPrperty 생성 저장 성공");
@@ -118,15 +102,6 @@ public class PropertyService {
 
         Property property = propertyFactory.create(dto, findMember);
         return property;
-    }
-
-    private NearestMetroStop createNearestMetroStop(Property property) {
-        NearestMetroStopProjectionDTO nearestMetroAndDistance = metroStopRepository.findNearestMetroAndDistance(property.getRegion().getLatitude(), property.getRegion().getLongitude());
-
-        MetroStop findMetroStop = metroStopRepository.findById(nearestMetroAndDistance.getId()).orElseThrow(() -> new CustomException(ServiceCode.METRO_STOP_NOT_EXISTS));
-        Double distance = nearestMetroAndDistance.getDistance();
-
-        return NearestMetroStop.create(findMetroStop, property, distance);
     }
 
 
@@ -203,15 +178,23 @@ public class PropertyService {
                 .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
         List<ViewingAvailableDateTime> dateTimes = findProperty.getViewingAvailableDateTimes();
 
-        Map<LocalDate, List<TimeWithReserved>> response = dateTimes.stream()
-                .collect(Collectors.groupingBy(dateTime -> dateTime.getDate(),
-                        TreeMap::new,
-                        Collectors.mapping(dateTime -> {
-                    return new TimeWithReserved(dateTime.getTime(), dateTime.isReserved());
-                }, Collectors.toList())));
+        Map<LocalDate, List<TimeWithReserved>> response = groupByDate(dateTimes);
+        sortingByTime(response);
+        return response;
+    }
+
+    private static void sortingByTime(Map<LocalDate, List<TimeWithReserved>> response) {
         response.forEach((date, times) ->
                 times.sort(Comparator.comparing(timeWithReserved -> timeWithReserved.time())));
-        return response;
+    }
+
+    private static TreeMap<LocalDate, List<TimeWithReserved>> groupByDate(List<ViewingAvailableDateTime> dateTimes) {
+        return dateTimes.stream()
+                .collect(Collectors.groupingBy(dateTime -> dateTime.getDate(),
+                        TreeMap::new,
+                        Collectors.mapping(dateTime ->
+                                        new TimeWithReserved(dateTime.getTime(), dateTime.isReserved())
+                                , Collectors.toList())));
     }
 
 
