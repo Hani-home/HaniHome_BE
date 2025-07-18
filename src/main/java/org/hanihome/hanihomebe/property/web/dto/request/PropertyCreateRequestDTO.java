@@ -2,12 +2,15 @@ package org.hanihome.hanihomebe.property.web.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -53,4 +56,16 @@ public sealed interface PropertyCreateRequestDTO permits
 
     String description();
 
+    default void validateLatitudeAndLongitude(BigDecimal latitude, BigDecimal longitude) {
+        if (!isValidLatitudeAndLongitude(latitude, longitude)) {
+            throw new CustomException(ServiceCode.INVALID_LATITUDE_LONGITUDE);
+        }
+    }
+
+    default boolean isValidLatitudeAndLongitude(BigDecimal latitude, BigDecimal longitude) {
+        return latitude.compareTo(BigDecimal.valueOf(-90)) >= 0 &&
+                latitude.compareTo(BigDecimal.valueOf(90)) <= 0 &&
+                longitude.compareTo(BigDecimal.valueOf(-180)) >= 0 &&
+                longitude.compareTo(BigDecimal.valueOf(180)) <= 0;
+    }
 }

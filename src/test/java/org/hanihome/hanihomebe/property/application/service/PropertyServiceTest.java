@@ -7,6 +7,8 @@ import org.hanihome.hanihomebe.member.domain.Gender;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.domain.Role;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.hanihome.hanihomebe.metro.domain.MetroStop;
+import org.hanihome.hanihomebe.metro.repository.MetroStopRepository;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.OptionCategory;
@@ -41,6 +43,9 @@ class PropertyServiceTest {
     private OptionItemRepository optionItemRepository;
     @Autowired
     private OptionCategoryRepository optionCategoryRepository;
+    @Autowired
+    private MetroStopRepository metroStopRepository;
+
     Long memberId;
 
     @BeforeAll
@@ -56,6 +61,18 @@ class PropertyServiceTest {
 
     @BeforeEach
     void init() {
+        MetroStop parentStop = MetroStop.createParent(
+                "200030",                            // businessStopId
+                "Martin Place Station",              // stopName
+                new BigDecimal("37.5665"),           // stopLatitude
+                new BigDecimal("126.9780"),          // stopLongitude
+                "1",                                 // locationType (e.g., 1 = parent)
+                true,                                // wheelchairBoarding
+                null                                 // platformCode (null for parent)
+        );
+
+        metroStopRepository.save(parentStop);
+
         OptionCategory category = OptionCategory.create(CategoryCode.PROPERTY_CAT4);
         optionCategoryRepository.save(category);
         optionItemRepository.save(OptionItem.createDefault(category, "item1"));

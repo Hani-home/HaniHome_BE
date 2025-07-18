@@ -1,6 +1,6 @@
 package org.hanihome.hanihomebe.viewing.web.converter;
 
-import org.hanihome.hanihomebe.viewing.domain.Viewing;
+import org.hanihome.hanihomebe.viewing.web.converter.context.ViewingConvertContext;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingResponseDTO;
 import org.hanihome.hanihomebe.viewing.web.enums.ViewingViewType;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ public class ViewingDefaultConverter implements ViewingConverter<ViewingResponse
     }
 
     @Override
-    public ViewingResponseDTO convert(Viewing viewing) {
-        return ViewingResponseDTO.from(viewing);
+    public ViewingResponseDTO convert(ViewingConvertContext viewingConvertContext) {
+        return ViewingResponseDTO.from(viewingConvertContext.getViewing());
     }
 }

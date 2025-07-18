@@ -29,10 +29,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET,
-                                "/api/v1/metro/stops",
                                 "api/v1/properties/categories/**",
-                                "api/v1/properties/search",
-                                "/api/v1/viewings/categories/**"
+                                "/api/v1/viewings/categories/**",
+                                "/api/v1/properties"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/v1/auth/social/login",
@@ -42,7 +41,6 @@ public class SecurityConfig {
                                 "/swagger-ui/**",       // Swagger UI
                                 "/swagger-ui.html",
                                 "/health",
-                                "/api/v1/properties",
                                 "/api/v1/auth/refresh",
                                 "/api/v1/members/check-nickname",
                                 "/actuator/**",

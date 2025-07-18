@@ -2,7 +2,7 @@ package org.hanihome.hanihomebe.wishlist.application.service;
 
 import org.hanihome.hanihomebe.item.application.OptionItemConverterForProperty;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
-import org.hanihome.hanihomebe.property.application.PropertyMapper;
+import org.hanihome.hanihomebe.property.application.converter.PropertyMapper;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
