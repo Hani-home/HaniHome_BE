@@ -35,7 +35,8 @@ public class ViewingConversionService {
         List<OptionItemResponseDTO> optionItemResponseDTOs = optionItemConverter.toOptionItemResponseDTO(List.copyOf(viewing.getViewingOptionItems()));
 
         ViewingConverter<T> converter = getConverter(view);
-        return converter.convert(ViewingConvertContext.create(viewing, requesterId, optionItemResponseDTOs));
+        ViewingConvertContext viewingConvertContext = ViewingConvertContext.create(viewing, requesterId, optionItemResponseDTOs);
+        return converter.convert(viewingConvertContext);
     }
 
     public <T> List<T> convert(List<Viewing> viewings, ViewingViewType view) {
