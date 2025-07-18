@@ -75,14 +75,13 @@ public class PropertyService {
     @Transactional
     public PropertyResponseDTO createProperty(PropertyCreateRequestDTO dto){
         log.info("property 생성 로직 진입");
+
         Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         Property property = dtoToEntity(dto, findMember);
 
         // TODO: 썸네일을 제대로 처리할 필요가있음
         property.setThumbnailUrl(dto.photoUrls() == null ? null : dto.photoUrls().get(0));
-
-
         addPropertyOptionItem(dto.optionItemIds(), property);
 
         nearestMetroStopService.create(property);
@@ -99,7 +98,6 @@ public class PropertyService {
                 .filter(factory -> factory.supports(dto))
                 .findFirst()
                 .orElseThrow(() -> new CustomException(ServiceCode.INVALID_PROPERTY_TYPE));
-
         Property property = propertyFactory.create(dto, findMember);
         return property;
     }
@@ -196,7 +194,6 @@ public class PropertyService {
                                         new TimeWithReserved(dateTime.getTime(), dateTime.isReserved())
                                 , Collectors.toList())));
     }
-
 
     /// update
 
