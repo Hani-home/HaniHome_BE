@@ -79,7 +79,7 @@ public enum ServiceCode {
 
 
     //wishItem
-    ALEADY_WISH_EXISTS(HttpStatus.BAD_REQUEST, "이미 찜한 매물입니다."),
+    ALREADY_WISH_EXISTS(HttpStatus.BAD_REQUEST, "이미 찜한 매물입니다."),
     INVALID_TARGET_TYPE(HttpStatus.BAD_REQUEST, "지원하지 않는 타입입니다."),
     INVALID_SORT_OPTION(HttpStatus.BAD_REQUEST, "지원하지 않는 정렬타입입니다."),
     NOT_A_WISH(HttpStatus.BAD_REQUEST, "찜한 매물만 취소할 수 있습니다."),
@@ -88,6 +88,9 @@ public enum ServiceCode {
     METRO_STOP_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 지하철 정거장은 존재하지 않습니다"),
     METRO_STOP_SYNCHRONIZE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "시드니 지하철역 동기화 중 오류가 발생했습니다"),
     METRO_STOPS_FILE_IS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "저장된 stops.txt 파일이 비어있습니다."),
+    // TODO: 아래의 예외코드는 사용자의 요청에 의해서 발생하는 것이 아님. 스케줄링에 의한 것인데 HttpStatus가 있는게 이상함.
+    //  더 나은 오류 처리 방법이 있어야할듯
+    PARENT_METRO_STOP_NOT_EXISTS(HttpStatus.INTERNAL_SERVER_ERROR, "지하철역 업데이트 중 오류 발생, 부모 지하철역이 존재하지 않음"),
 
     // NearestMetroStop
     NEAREST_METRO_STOP_NOT_EXISTS(HttpStatus.INTERNAL_SERVER_ERROR, "가장 가까운 지하철역이 존재하지 않습니다"),

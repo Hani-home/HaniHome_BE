@@ -9,18 +9,13 @@ import lombok.NoArgsConstructor;
 import org.hanihome.hanihomebe.global.BaseEntity;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
-import org.hanihome.hanihomebe.member.web.dto.ConsentAgreementDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
-import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.verification.domain.Verification;
 import org.hanihome.hanihomebe.wishlist.domain.WishItem;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,7 +153,7 @@ public class Member extends BaseEntity {
                 );
 
         if(alreadyWished){
-            throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
+            throw new CustomException(ServiceCode.ALREADY_WISH_EXISTS);
         }
 
         this.wishItems.add(wishItem);
