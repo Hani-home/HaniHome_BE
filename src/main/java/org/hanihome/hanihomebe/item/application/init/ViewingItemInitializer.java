@@ -24,7 +24,37 @@ public class ViewingItemInitializer extends OptionItemInitializer {
     }
     /// 취소 이유
     private void initializeCancelReasonItems() {
-        if(super.isAlreadyInitialized(CategoryCode.VIEWING_CAT1)) return;
+        initializeCancelReasonForGuest();
+        initializeCancelReasonForHost();
+
+    }
+
+    private void initializeCancelReasonForHost() {
+        if (super.isAlreadyInitialized(CategoryCode.VIEWING_CAT3)) {
+            return;
+        }
+
+        OptionCategory optionCategory = super.saveCategory(CategoryCode.VIEWING_CAT3);
+
+        List<String> cancelReasons = Arrays.asList(
+                "계약 이미 논의 중이에요",
+                "이미 계약이 완료됐어요",
+                "매물 상태 점검 / 정비 중이에요",
+                "뷰잉 일정 변경을 원해요",
+                "기타"
+        );
+
+        cancelReasons.forEach(reason -> {
+            super.saveItemIfNotExists(optionCategory, reason);
+        });
+
+    }
+
+    private void initializeCancelReasonForGuest() {
+        if (super.isAlreadyInitialized(CategoryCode.VIEWING_CAT1)) {
+
+            return;
+        }
 
         // save category
         OptionCategory optionCategory = super.saveCategory(CategoryCode.VIEWING_CAT1);
