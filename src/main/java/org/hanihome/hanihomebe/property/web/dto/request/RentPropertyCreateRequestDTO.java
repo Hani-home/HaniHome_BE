@@ -5,7 +5,6 @@ import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -43,10 +42,8 @@ public record RentPropertyCreateRequestDTO(
         boolean viewingAlwaysAvailable,
         String description,                         // 매물 소개
         RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
-        RealEstateType isRealEstateIntervention,    // (RentProperty 고유) 부동산 중개 여부
         RentInternalDetails internalDetails,
-        CapacityRent capacityRent,                  // (RentProperty 고유) 수용인원-렌트
-        Exposure exposure                           // (RentProperty 고유) 남향북향
+        CapacityRent capacityRent                  // (RentProperty 고유) 수용인원-렌트
 )  implements PropertyCreateRequestDTO {
     public RentPropertyCreateRequestDTO {
         if (photoUrls == null) {
@@ -63,7 +60,7 @@ public record RentPropertyCreateRequestDTO(
             validateLatitudeAndLongitude(region.getLatitude(), region.getLongitude());
         }
         // 뷰잉 가능 시간 검증
-        boolean isValidTimeSlots = TimeSlotValidator.validAllConditions(timeSlots);
+        boolean isValidTimeSlots = TimeSlotValidator.validateAllConditions(timeSlots);
         if(!isValidTimeSlots) {
             throw new CustomException(ServiceCode.INVALID_PROPERTY_TIME_SLOT);
         }

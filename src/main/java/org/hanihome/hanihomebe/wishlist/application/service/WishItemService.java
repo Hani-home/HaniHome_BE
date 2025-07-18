@@ -77,7 +77,7 @@ public class WishItemService {
                 member, targetType, targetId
         );
         if (alreadyExists) {
-            throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
+            throw new CustomException(ServiceCode.ALREADY_WISH_EXISTS);
         }
 
         WishItem wishItem = WishItem.createFrom(member, targetType, targetId);
@@ -88,7 +88,7 @@ public class WishItemService {
         try {
             wishItemRepository.save(wishItem);
         } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ServiceCode.ALEADY_WISH_EXISTS);
+            throw new CustomException(ServiceCode.ALREADY_WISH_EXISTS);
         }
 
         //찜 수 증가가 처리 => 추후 스케쥴러로 찜 수를 정기적으로 맞춰줄 필요가 있을 것 같음.

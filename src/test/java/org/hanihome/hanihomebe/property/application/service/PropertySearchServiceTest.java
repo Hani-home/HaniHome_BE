@@ -188,14 +188,12 @@ class PropertySearchServiceTest {
                         true,
                         "역세권 깔끔한 하우스입니다.",
                         RentPropertySubType.HOUSE,
-                        RealEstateType.INDIVIDUAL,
                         new RentInternalDetails(
                                 45.0, 60.0,
                                 3, 1,
                                 10, 3
                         ),
-                        CapacityRent.FOUR,
-                        Exposure.SOUTHERN
+                        CapacityRent.FOUR
                 );
 
         // Rent Unit 매물 생성
@@ -219,14 +217,12 @@ class PropertySearchServiceTest {
                         true,
                         "깔끔한 유닛 매물입니다.",
                         RentPropertySubType.UNIT,
-                        RealEstateType.INDIVIDUAL,
                         new RentInternalDetails(
                                 30.0, 50.0,
                                 2, 1,
                                 5, 2
                         ),
-                        CapacityRent.FOUR,
-                        Exposure.EASTERN
+                        CapacityRent.FOUR
                 );
 
         propertyService.createProperty(share_masterRoom);

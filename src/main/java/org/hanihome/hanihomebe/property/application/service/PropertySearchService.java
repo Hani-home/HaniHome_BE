@@ -27,14 +27,9 @@ public class PropertySearchService {
     }
 
     public <T> List<T> search(PropertySearchConditionDTO conditionDTO,
-                                                      PropertyViewType view) {
-        EnumMap<PropertySuperType, List<PropertyResponseDTO>> dtoMap = new EnumMap<>(PropertySuperType.class);
-        for (PropertySuperType kind : PropertySuperType.values()) {
-            dtoMap.put(kind, new ArrayList<>());
-        }
-
+                              PropertyViewType view
+    ) {
         List<Property> findProperties = propertyRepository.search(conditionDTO);
-
 
         return propertyConversionService.convertProperties(findProperties, view);
     }

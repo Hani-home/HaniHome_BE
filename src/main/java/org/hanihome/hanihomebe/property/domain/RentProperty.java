@@ -64,10 +64,8 @@ public class RentProperty extends Property {
                 .viewingAlwaysAvailable(dto.viewingAlwaysAvailable())
                 .description(dto.description())
                 .rentPropertySubType(dto.rentPropertySubType())             // 고유필드
-                .isRealEstateIntervention(dto.isRealEstateIntervention())   // 고유필드
                 .rentInternalDetails(dto.internalDetails())                 // 고유필드
                 .capacityRent(dto.capacityRent())                           // 고유필드
-                .exposure(dto.exposure())                                   // 고유필드
                 .build();
     }
 
@@ -80,13 +78,9 @@ public class RentProperty extends Property {
         // 자식 필드 업데이트
         if (rentCmd.getRentPropertySubType() != null) this.rentPropertySubType = rentCmd.getRentPropertySubType();
 
-        if(rentCmd.getRealEstateIntervention()!=null) this.isRealEstateIntervention = rentCmd.getRealEstateIntervention();
-
         if(rentCmd.getInternalDetails()!=null) this.rentInternalDetails = rentCmd.getInternalDetails();
 
         if(rentCmd.getCapacityRent()!=null) this.capacityRent = rentCmd.getCapacityRent();
-
-        if(rentCmd.getExposure()!=null) this.exposure = rentCmd.getExposure();
 
         // 부모 필드 업데이트
         super.updateBase(cmd);

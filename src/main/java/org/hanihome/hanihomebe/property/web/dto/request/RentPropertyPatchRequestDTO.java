@@ -27,7 +27,7 @@ public class RentPropertyPatchRequestDTO extends PropertyPatchRequestDTO {
         if (timeSlotIsNull()) {
             return true;    // patch라서 통과
         } else {
-            return TimeSlotValidator.validAllConditions(super.getTimeSlots());
+            return TimeSlotValidator.validateAllConditions(super.getTimeSlots());
         }
     }
 
@@ -58,10 +58,8 @@ public class RentPropertyPatchRequestDTO extends PropertyPatchRequestDTO {
 
                 // RentProperty 전용 필드
                 .rentPropertySubType(this.rentPropertySubType)
-                .realEstateIntervention(this.realEstateIntervention)
                 .internalDetails(this.internalDetails)
                 .capacityRent(this.capacityRent)
-                .exposure(this.exposure)
                 .build();
     }
 
