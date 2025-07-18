@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.viewing.application.service;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.item.application.converter.OptionItemConverterForViewing;
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.OptionCategory;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
@@ -50,7 +51,7 @@ public class ViewingService {
     private final PropertyRepository propertyRepository;
     private final OptionItemRepository optionItemRepository;
     private final OptionCategoryRepository optionCategoryRepository;
-    private final Map<ViewingViewType, ViewingConverter<?>> converterMap = new EnumMap<>(ViewingViewType.class);
+    private final ViewingConversionService viewingConversionService;
 
     @Autowired
     public ViewingService(ViewingRepository viewingRepository,
@@ -58,14 +59,13 @@ public class ViewingService {
                           PropertyRepository propertyRepository,
                           OptionItemRepository optionItemRepository,
                           OptionCategoryRepository optionCategoryRepository,
-                          List<ViewingConverter<?>> converters) {
+                          List<ViewingConverter<?>> converters, ViewingConversionService viewingConversionService) {
         this.viewingRepository = viewingRepository;
         this.memberRepository = memberRepository;
         this.propertyRepository = propertyRepository;
         this.optionItemRepository = optionItemRepository;
         this.optionCategoryRepository = optionCategoryRepository;
-        converters.forEach(c ->
-                converterMap.put(c.supports(), c));
+        this.viewingConversionService = viewingConversionService;
     }
 
     /**
@@ -119,39 +119,23 @@ public class ViewingService {
         Viewing viewing = Viewing.create(findMemberGuest, findProperty, confirmedTime);
         viewingRepository.save(viewing);
 
-        return ViewingResponseDTO.from(viewing);
+        return viewingConversionService.convert(viewing, ViewingViewType.DEFAULT);
     }
 
     /**
      * 사용자별 뷰잉 조회
      */
     public <T> List<T> getViewingByMemberId(Long memberId, ViewingViewType view) {
-        @SuppressWarnings("unchecked")
-        ViewingConverter<T> converter =
-                (ViewingConverter<T>) converterMap.getOrDefault(
-                        view,
-                        converterMap.get(ViewingViewType.DEFAULT)
-                );
+        List<Viewing> findViewings = viewingRepository.findByMember_idOrderByMeetingDay(memberId);
 
-        Map<String, Object> extra = prepareExtraData(memberId, view);
-
-        return viewingRepository.findByMember_idOrderByMeetingDay(memberId).stream()
-                .map(viewing -> converter.convert(ViewingConvertContext.create(viewing, extra)))
-                .toList();
-    }
-
-    private static Map<String, Object> prepareExtraData(Long memberId, ViewingViewType view) {
-        Map<String, Object> extra = new HashMap<>();
-        if (view == ViewingViewType.DATE_PROFILE) {
-            Long requesterId = memberId;
-            extra.put("requesterId", requesterId);
-        }
-        return extra;
+        return viewingConversionService.convert(findViewings, view);
     }
 
     public ViewingResponseDTO getViewingById(Long viewingId) {
-        return ViewingResponseDTO.from(viewingRepository.findById(viewingId)
-                .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS)));
+        Viewing findViewing = viewingRepository.findById(viewingId)
+                .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        return viewingConversionService.convert(findViewing, ViewingViewType.DEFAULT);
     }
 
     /**
