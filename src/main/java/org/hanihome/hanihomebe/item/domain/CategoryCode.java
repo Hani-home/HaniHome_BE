@@ -14,8 +14,9 @@ public enum CategoryCode {
     PROPERTY_CAT5("부동산 중개 여부를 알려주세요"),
 
     /// 뷰잉 카테고리
-    VIEWING_CAT1("취소 사유를 선택해주세요"),
-    VIEWING_CAT2("뷰잉 체크리스트")
+    VIEWING_CAT1("취소 사유를 선택해주세요_게스트"),
+    VIEWING_CAT2("뷰잉 체크리스트"),
+    VIEWING_CAT3("취소 사유를 선택해주세요_호스트"),
     ;
 
     private final String name;

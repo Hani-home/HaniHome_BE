@@ -18,6 +18,9 @@ import org.springframework.stereotype.Repository;
 import java.lang.*;
 import java.math.BigDecimal;
 import java.util.List;
+import static org.hanihome.hanihomebe.property.domain.QProperty.*;
+import static org.hanihome.hanihomebe.property.domain.QRentProperty.*;
+import static org.hanihome.hanihomebe.property.domain.QShareProperty.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -33,62 +36,60 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
     @Override
     public List<Property> search(PropertySearchConditionDTO cond) {
         // query dsl
-        QProperty p = QProperty.property;
-        QShareProperty sp = QShareProperty.shareProperty;
-        QRentProperty rp = QRentProperty.rentProperty;
+        BooleanBuilder baseBuilder = createBooleanFilter(cond);
 
+        JPAQuery<Property> query = createQuery(baseBuilder);
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//        List<Property> content = query.fetch();
+//        long total = quQery.fetchCount();
+//        return new PageImpl<>(content, pageable, total);
+
+        List<Property> findProperties = query.fetch();
+        return findProperties;
+    }
+
+    private static BooleanBuilder createBooleanFilter(PropertySearchConditionDTO cond) {
         BooleanBuilder baseBuilder = new BooleanBuilder();
 
         // 매물 종류
-        List<PropertySuperType> kinds = cond.getKinds();
-        if(kinds !=null && !cond.getKinds().isEmpty()){
-            baseBuilder.and((p.kind.in(cond.getKinds())));
+        addKindAndSubTypeIfExists(cond, baseBuilder);
 
-            BooleanBuilder subtypeBuilder = new BooleanBuilder();
-            // 매물 유형
-            if (cond.getSharePropertySubTypes() != null && !cond.getSharePropertySubTypes().isEmpty()) {
-                subtypeBuilder.or(sp.sharePropertySubType.in(cond.getSharePropertySubTypes()));
-            }else {
-                subtypeBuilder.or(sp.sharePropertySubType.in(SharePropertySubType.values()));
-            }
-            if (cond.getRentPropertySubTypes() != null && !cond.getRentPropertySubTypes().isEmpty()) {
-                subtypeBuilder.or(rp.rentPropertySubType.in(cond.getRentPropertySubTypes()));
-            } else {
-                subtypeBuilder.or(rp.rentPropertySubType.in(RentPropertySubType.values()));
-            }
-            baseBuilder.and(subtypeBuilder);
-        }
+        // suburb
+        addSuburbIfExists(cond, baseBuilder);
 
         // 1주 당 예산 범위
         // TODO: 논의 사항 존재. 매물 등록시에 적은 요금이 (빌포함 요금, 빌 미포함 요금) 이 두가지 요금을 가지고 있어야하는게 아닌가..
         //  지금은 조건에 빌포함을 누르면, 빌포함을 체크한 매물만 조회됨
-        if (cond.getMinWeeklyCost() != null && cond.getMaxWeeklyCost() != null) {
-            baseBuilder.and(p.costDetails.weeklyCost.between(cond.getMinWeeklyCost(), cond.getMaxWeeklyCost()));
-        }
+        addWeeklyCostIfExists(cond, baseBuilder);
 
         // 빌포함
-        if(cond.getBillIncluded() != null){
-            baseBuilder.and(p.costDetails.isBillIncluded.eq(cond.getBillIncluded()));
-        }
+        addBillIfExists(cond, baseBuilder);
 
         // 입주 가능일
-        BooleanBuilder availableBuilder = new BooleanBuilder();
-        if (cond.getAvailableFrom() != null && cond.getAvailableTo() != null) {
-            availableBuilder.and(p.moveInInfo.availableFrom.loe(cond.getAvailableTo()));
-            availableBuilder.and(p.moveInInfo.availableTo.goe(cond.getAvailableFrom()));
-        }
-        baseBuilder.and(availableBuilder);
+        addAvailableIfExists(cond, baseBuilder);
 
         // 즉시 입주가능, 협의 가능
-        if (cond.getImmediate() != null) {
-            baseBuilder.and(p.moveInInfo.isImmediate.eq(cond.getImmediate()));
-        }
-        if (cond.getNegotiable() != null) {
-            baseBuilder.and(p.moveInInfo.isNegotiable.eq(cond.getNegotiable()));
-        }
+        addImmediateIfExists(cond, baseBuilder);
+        addNegotiableIfExists(cond, baseBuilder);
 
         // 지하철역 기준 Nkm 필터
         // TODO: 품질보증: 오차 범위가 어떻게되는지 확인이 필요
+        addDistanceFromMetro(cond, baseBuilder);
+        return baseBuilder;
+    }
+
+    private JPAQuery<Property> createQuery(BooleanBuilder baseBuilder) {
+        return queryFactory
+                .selectFrom(property)
+                .leftJoin(shareProperty).on(property.id.eq(shareProperty.id))
+                .leftJoin(rentProperty).on(property.id.eq(rentProperty.id))
+                .where(baseBuilder);
+    }
+
+    private static void addDistanceFromMetro(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
+        QProperty p = property;
+
         if (
                 cond.getMetroStopLatitude() != null
                 && cond.getMetroStopLongitude() != null
@@ -110,19 +111,83 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
 
             baseBuilder.and(metroFilter);
         }
+    }
 
-        JPAQuery<Property> query = queryFactory
-                .selectFrom(p)
-                .leftJoin(sp).on(p.id.eq(sp.id))
-                .leftJoin(rp).on(p.id.eq(rp.id))
-                .where(baseBuilder);
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//        List<Property> content = query.fetch();
-//        long total = quQery.fetchCount();
-//        return new PageImpl<>(content, pageable, total);
-        List<Property> findProperties = query.fetch();
-        return findProperties;
+    private static void addImmediateIfExists(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
+        QProperty p = property;
+
+        if (cond.getImmediate() != null) {
+            baseBuilder.and(p.moveInInfo.isImmediate.eq(cond.getImmediate()));
+        }
+    }
+
+    private static void addNegotiableIfExists(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
+        QProperty p = property;
+
+        if (cond.getNegotiable() != null) {
+            baseBuilder.and(p.moveInInfo.isNegotiable.eq(cond.getNegotiable()));
+        }
+    }
+
+    private static void addAvailableIfExists(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
+        QProperty p = property;
+
+        BooleanBuilder availableBuilder = new BooleanBuilder();
+        if (cond.getAvailableFrom() != null && cond.getAvailableTo() != null) {
+            availableBuilder.and(p.moveInInfo.availableFrom.loe(cond.getAvailableTo()));
+            availableBuilder.and(p.moveInInfo.availableTo.goe(cond.getAvailableFrom()));
+        }
+        baseBuilder.and(availableBuilder);
+    }
+
+    private static void addBillIfExists(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
+        QProperty p = property;
+
+        if(cond.getBillIncluded() != null){
+            baseBuilder.and(p.costDetails.isBillIncluded.eq(cond.getBillIncluded()));
+        }
+    }
+
+    private static void addWeeklyCostIfExists(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
+        QProperty p = property;
+
+        if (cond.getMinWeeklyCost() != null && cond.getMaxWeeklyCost() != null) {
+            baseBuilder.and(p.costDetails.weeklyCost.between(cond.getMinWeeklyCost(), cond.getMaxWeeklyCost()));
+        }
+    }
+
+    private static void addSuburbIfExists(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
+        QProperty p = property;
+
+        String suburb = cond.getSuburb();
+        if(suburb != null && !suburb.isEmpty()){
+            baseBuilder.and(p.region.suburb.equalsIgnoreCase(suburb));
+        }
+    }
+
+    private static void addKindAndSubTypeIfExists(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
+        QProperty p = property;
+        QShareProperty sp = shareProperty;
+        QRentProperty rp = rentProperty;
+
+        List<PropertySuperType> kinds = cond.getKinds();
+        if(kinds !=null && !cond.getKinds().isEmpty()){
+            baseBuilder.and((p.kind.in(cond.getKinds())));
+
+            BooleanBuilder subtypeBuilder = new BooleanBuilder();
+            // 매물 유형
+            if (cond.getSharePropertySubTypes() != null && !cond.getSharePropertySubTypes().isEmpty()) {
+                subtypeBuilder.or(sp.sharePropertySubType.in(cond.getSharePropertySubTypes()));
+            }else {
+                subtypeBuilder.or(sp.sharePropertySubType.in(SharePropertySubType.values()));
+            }
+            if (cond.getRentPropertySubTypes() != null && !cond.getRentPropertySubTypes().isEmpty()) {
+                subtypeBuilder.or(rp.rentPropertySubType.in(cond.getRentPropertySubTypes()));
+            } else {
+                subtypeBuilder.or(rp.rentPropertySubType.in(RentPropertySubType.values()));
+            }
+            baseBuilder.and(subtypeBuilder);
+        }
     }
 
 }
