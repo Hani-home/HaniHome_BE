@@ -60,6 +60,7 @@ public class Viewing extends BaseEntity {
 
 
     /** 체크리스트 및 취소 사유*/
+    @Builder.Default
     @OneToMany(mappedBy = "viewing",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
@@ -105,12 +106,12 @@ public class Viewing extends BaseEntity {
         this.viewingOptionItems.add(viewingOptionItem);
     }*/
 
-    public void updateViewingOptionItem(List<ViewingOptionItem> viewingOptionItems) {
-        this.viewingOptionItems.clear();
-        this.viewingOptionItems.addAll(viewingOptionItems);
-
-        viewingOptionItems.forEach(item -> item.setViewing(this));
+    public void updateViewingOptionItem(List<ViewingOptionItem> allViewingOptionItems) {
+        viewingOptionItems.removeIf(oldItem ->
+                !allViewingOptionItems.contains(oldItem));
+        this.viewingOptionItems.addAll(allViewingOptionItems);
     }
+
     public void updateNote(List<String> fileUrls, String memo) {
 //        this.photoUrls = List.copyOf(fileUrls);   JPA에서는 불변리스트를 사용하면 문제생김?
         this.photoUrls.clear();

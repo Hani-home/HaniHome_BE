@@ -157,14 +157,21 @@ public class ViewingService {
         propertyRepository.save(findViewing.getProperty());
 
         // 뷰잉 취소 옵션 아이템 추가
-        List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(dto.getAllOptionItemIds())
-                .stream()
-                .map(ViewingOptionItem::create)
-                .toList();
+        List<ViewingOptionItem> viewingOptionItems = createViewingOptionItems(dto.getAllOptionItemIds(), findViewing);
 
         findViewing.cancel(dto.getReason(), viewingOptionItems);
 
         viewingRepository.save(findViewing);
+    }
+
+    private List<ViewingOptionItem> createViewingOptionItems(List<Long> allOptionItemIds, Viewing findViewing) {
+        List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(allOptionItemIds)
+                .stream()
+                .map(ViewingOptionItem::create)
+                .toList();
+
+        viewingOptionItems.forEach(viewingOptionItem -> viewingOptionItem.setViewing(findViewing));
+        return viewingOptionItems;
     }
 
     public ViewingCancelResponseDTO getCancelInfo(Long viewingId) {
@@ -242,9 +249,8 @@ public class ViewingService {
         List<OptionItem> optionItems = optionItemRepository.findAllById(dto.allOptionItemIds());
 
         // ViewingOptionItem 생성(체크리스트 아이템)
-        List<ViewingOptionItem> allViewingOptionItems = optionItems.stream()
-                .map(optionItem -> ViewingOptionItem.create(optionItem))
-                .toList();
+
+        List<ViewingOptionItem> allViewingOptionItems = createViewingOptionItems(dto.allOptionItemIds(), findViewing);
 
         findViewing.updateChecklist(allViewingOptionItems);
         viewingRepository.save(findViewing);
