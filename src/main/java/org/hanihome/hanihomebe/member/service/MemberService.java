@@ -11,6 +11,7 @@ import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.member.web.dto.ConsentAgreementDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberNicknameCheckResponseDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberDetailResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 @Service
 @Transactional
@@ -73,13 +75,20 @@ public class MemberService {
 
     }
 
-    //특정 멤버 조회
+
+    /*
+    <T> 제네릭을 사용하겠다고 명시
+    Function<Member, T> converter : member Type을 받고 T를 반환하는 함수(함수형 인터페이스) => apply는 인터페이스에 정의된 메서드
+     */
     @Transactional(readOnly = true)
-    public MemberResponseDTO getMemberById(Long memberId) {
+    public <T extends MemberResponseDTO> T getMemberDTOById(
+            Long memberId, Function<Member, T> converter
+    ) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
-        return MemberResponseDTO.CreateFrom(member);
+        return converter.apply(member);
     }
+
 
 
     public void updateMember(Long memberId, MemberUpdateRequestDTO memberUpdateRequestDTO) {
