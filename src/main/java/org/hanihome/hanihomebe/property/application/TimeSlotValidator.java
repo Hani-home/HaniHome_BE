@@ -12,36 +12,30 @@ public class TimeSlotValidator {
      * @param timeSlots 검증할 TimeSlot 리스트
      * @return 검증 결과
      */
-    public static boolean validAllConditions(List<TimeSlot> timeSlots) {
-        if (!(timeSlots.size() >= 1 && timeSlots.size() <= 3)) {
+    public static boolean validateAllConditions(List<TimeSlot> timeSlots) {
+        if (isValidSize(timeSlots) && isDividedBy30(timeSlots)) {
+            return true;
+        } else {
             return false;
         }
-
-        boolean isUnitTimes = timeSlots.stream()
-                .anyMatch(slot -> {
-                    int fromMin = slot.getTimeFrom().getMinute();
-                    int toMin = slot.getTimeTo().getMinute();
-
-                    return (fromMin % 30 != 0 || toMin % 30 != 0) ? false : true;
-                });
-
-        return isUnitTimes;
     }
+
+    private static boolean isValidSize(List<TimeSlot> timeSlots) {
+        return timeSlots.size() >= 1 && timeSlots.size() <= 3;
+    }
+
     /**
      * TimeSlot 검증: 시간이 30분 단위
      * @param timeSlots 검증할 TimeSlot 리스트
      * @return 검증 결과
      */
-    public static boolean isDividedBy30(List<TimeSlot> timeSlots) {
+    private static boolean isDividedBy30(List<TimeSlot> timeSlots) {
         return timeSlots.stream()
-                .anyMatch(slot -> {
+                .allMatch(slot -> {
                     int fromMin = slot.getTimeFrom().getMinute();
                     int toMin = slot.getTimeTo().getMinute();
 
                     return (fromMin % 30 != 0 || toMin % 30 != 0) ? false : true;
                 });
     }
-
-
-
 }

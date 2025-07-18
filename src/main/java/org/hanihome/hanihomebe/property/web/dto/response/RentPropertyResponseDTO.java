@@ -13,14 +13,15 @@ import java.util.*;
 
 public record RentPropertyResponseDTO(
         Long id,
+        PropertySuperType kind,
+        RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
+        DisplayStatus displayStatus,
+        TradeStatus tradeStatus,
         int wishCount,
         LocalDateTime createdAt,
         LocalDateTime lastModifiedAt,
         Long memberId,
         List<OptionItemResponseDTO> optionItems,
-        DisplayStatus displayStatus,
-        TradeStatus tradeStatus,
-        PropertySuperType kind,
         GenderPreference genderPreference,
         boolean lgbtAvailable,
         Region region,
@@ -31,16 +32,13 @@ public record RentPropertyResponseDTO(
         MoveInInfo moveInInfo,
         ParkingOption parkingOption,
         String description,
-        RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
-        RealEstateType isRealEstateIntervention,    // (RentProperty 고유) 부동산 중개 여부
         RentInternalDetails internalDetails,
-        CapacityRent capacityRent,                  // (RentProperty 고유) 수용인원-렌트
-        Exposure exposure                           // (RentProperty 고유) 남향북향
+        CapacityRent capacityRent                  // (RentProperty 고유) 수용인원-렌트
         //        LocalDate meetingDateFrom,
 //        LocalDate meetingDateTo,
 //        List<TimeSlot> timeSlots,
         // viewingAvailableDateTime는 응답에서 제외
-)implements PropertyResponseDTO, PropertyDTOByView {
+)implements PropertyResponseDTO {
     public static RentPropertyResponseDTO from(RentProperty rentProperty, List<OptionItemResponseDTO> optionItems) {
 
     // memberId 추출 (rentProperty.getMember()가 Member 객체를 반환하고, Member 객체에 getId()가 있다고 가정)
@@ -56,41 +54,33 @@ public record RentPropertyResponseDTO(
 
 
         return new RentPropertyResponseDTO(
-                // BaseEntity 필드
+                // BaseEntity 공통 필드
                 rentProperty.getId(),
+                rentProperty.getKind(),
+                rentProperty.getRentPropertySubType(),
+                rentProperty.getDisplayStatus(),
+                rentProperty.getTradeStatus(),
                 rentProperty.getWishCount(),
                 rentProperty.getCreatedAt(),
                 rentProperty.getLastModifiedAt(),
-
-                // 공통 필드
+                // Member 및 옵션
                 memberId,
                 optionItems,
-                rentProperty.getDisplayStatus(),
-                rentProperty.getTradeStatus(),
-                rentProperty.getKind(),
                 rentProperty.getGenderPreference(),
                 rentProperty.isLgbtAvailable(),
                 rentProperty.getRegion(),
-
                 // 미디어 및 옵션
                 photoUrls,
                 rentProperty.getThumbnailUrl(),
+                // 상세 정보
                 rentProperty.getCostDetails(),
                 rentProperty.getLivingConditions(),
-
-                // 예약 가능 기간
                 rentProperty.getMoveInInfo(),
-
-                // 추가 속성
                 rentProperty.getParkingOption(),
                 rentProperty.getDescription(),
-
-                // RentProperty 고유 필드
-                rentProperty.getRentPropertySubType(),
-                rentProperty.getIsRealEstateIntervention(),
+                // rent 고유 정보
                 rentProperty.getRentInternalDetails(),
-                rentProperty.getCapacityRent(),
-                rentProperty.getExposure()
+                rentProperty.getCapacityRent()
         );
 }
 }

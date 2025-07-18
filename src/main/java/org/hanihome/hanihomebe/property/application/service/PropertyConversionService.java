@@ -25,7 +25,10 @@ public class PropertyConversionService {
     private final NearestMetroStopRepository nearestMetroStopRepository;
     private final OptionItemConverterForProperty optionItemConverter;
 
-    public PropertyConversionService(List<PropertyConverter<?>> converterList, NearestMetroStopRepository nearestMetroStopRepository, OptionItemConverterForProperty optionItemConverter) {
+    public PropertyConversionService(List<PropertyConverter<?>> converterList,
+                                     NearestMetroStopRepository nearestMetroStopRepository,
+                                     OptionItemConverterForProperty optionItemConverter
+    ) {
         this.propertyConverterMap = converterList.stream()
                 .collect(Collectors.toMap(PropertyConverter::supports, Function.identity()));
         this.nearestMetroStopRepository = nearestMetroStopRepository;
@@ -34,26 +37,31 @@ public class PropertyConversionService {
 
 
     public <T> List<T> convertProperties(List<Property> properties, PropertyViewType viewType) {
-        PropertyConverter<T> converter = (PropertyConverter<T>) getConverterByView(viewType);
-
-        return convertPropertyListToDTO(properties, converter);
-
+        return convertPropertyListToDTO(properties, viewType);
     }
 
-    private PropertyConverter<?> getConverterByView(PropertyViewType view) {
-        return propertyConverterMap.getOrDefault(view, propertyConverterMap.get(PropertyViewType.DEFAULT));
+    public <T> T convertProperty(Property property, PropertyViewType viewType) {
+        PropertyConverter<T> converter = getConverterByView(viewType);
+
+        NearestMetroStop nearestMetroStop = getNearestMetroStop(property);
+
+        return converter.convert(preparePropertyConvertContext(property, nearestMetroStop));
     }
 
-    private <T> List<T> convertPropertyListToDTO(List<Property> properties, PropertyConverter<T> converter) {
+    private <T> PropertyConverter<T> getConverterByView(PropertyViewType view) {
+        PropertyConverter<?> converter = propertyConverterMap.getOrDefault(view, propertyConverterMap.get(PropertyViewType.DEFAULT));
+        return (PropertyConverter<T>) converter;
+    }
+
+    private NearestMetroStop getNearestMetroStop(Property property) {
+        return nearestMetroStopRepository.findByProperty(property)
+                .orElseThrow(() -> new CustomException(ServiceCode.NEAREST_METRO_STOP_NOT_EXISTS));
+    }
+
+    private <T> List<T> convertPropertyListToDTO(List<Property> properties, PropertyViewType viewType) {
         return properties
                 .stream()
-                .map(property ->
-                {
-                    NearestMetroStop nearestMetroStop = nearestMetroStopRepository.findByProperty(property)
-                            .orElseThrow(() -> new CustomException(ServiceCode.NEAREST_METRO_STOP_NOT_EXISTS));
-
-                    return converter.convert(preparePropertyConvertContext(property, nearestMetroStop));
-                })
+                .map(property -> this.<T>convertProperty(property, viewType))
                 .collect(Collectors.toList());
     }
 

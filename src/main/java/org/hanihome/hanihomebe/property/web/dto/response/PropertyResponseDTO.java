@@ -20,6 +20,7 @@ import java.util.List;
         @JsonSubTypes.Type(value = RentPropertyResponseDTO.class, name = "RENT")
 })
 public sealed interface PropertyResponseDTO
+    extends PropertyDTOByView
         permits SharePropertyResponseDTO, RentPropertyResponseDTO {
 
     Long id();
