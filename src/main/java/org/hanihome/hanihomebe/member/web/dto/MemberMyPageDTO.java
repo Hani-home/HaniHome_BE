@@ -34,7 +34,8 @@ public class MemberMyPageDTO implements MemberResponseDTO {
     private String interestRegions;
 
     //static은 오버라이딩 불가임.
-    public static MemberMyPageDTO CreateFrom(Member member) {
+    public static MemberMyPageDTO CreateFrom(MemberResponseContext context) {
+        /*
         List<Verification> verifications = member.getVerifications();
 
         List<VerificationSummaryDTO> verificationSummaries = new ArrayList<>();
@@ -56,6 +57,10 @@ public class MemberMyPageDTO implements MemberResponseDTO {
         }
 
         boolean isVerifiedUser = verificationSummaries.stream().anyMatch(VerificationSummaryDTO::isVerified);
+         */
+        Member member = context.member();
+        List<VerificationSummaryDTO> verificationSummaries = context.verificationSummaries();
+        boolean isVerifiedUser = context.isVerifiedUser();
 
         return new MemberMyPageDTO(
                 member.getId(),

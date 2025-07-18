@@ -33,7 +33,8 @@ public class MemberDetailResponseDTO implements MemberResponseDTO {
     private List<VerificationSummaryDTO> verifications;
 
     //static은 override 불가
-    public static MemberDetailResponseDTO CreateFrom(Member member) {
+    public static MemberDetailResponseDTO CreateFrom(MemberResponseContext context ) {
+        /*
         List<Verification> verifications = member.getVerifications();
 
         List<VerificationSummaryDTO> verificationSummaries = new ArrayList<>();
@@ -55,6 +56,10 @@ public class MemberDetailResponseDTO implements MemberResponseDTO {
         }
 
         boolean isVerifiedUser = verificationSummaries.stream().anyMatch(VerificationSummaryDTO::isVerified);
+         */
+        Member member = context.member();
+        List<VerificationSummaryDTO> verificationSummaries = context.verificationSummaries();
+        boolean isVerifiedUser = context.isVerifiedUser();
 
         return new MemberDetailResponseDTO(
                 member.getId(),
