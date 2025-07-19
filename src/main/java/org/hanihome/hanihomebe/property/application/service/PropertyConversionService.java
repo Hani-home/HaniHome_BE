@@ -2,7 +2,7 @@ package org.hanihome.hanihomebe.property.application.service;// PropertyConversi
 
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
-import org.hanihome.hanihomebe.item.application.OptionItemConverterForProperty;
+import org.hanihome.hanihomebe.item.application.converter.OptionItemConverterForProperty;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.metro.domain.NearestMetroStop;
 import org.hanihome.hanihomebe.metro.repository.NearestMetroStopRepository;
@@ -70,7 +70,7 @@ public class PropertyConversionService {
     }
 
     private List<OptionItemResponseDTO> getOptionItemResponseDTOS(Property property) {
-        List<OptionItemResponseDTO> optionItemsDTOs = optionItemConverter.toResponseDTO(property.getOptionItems());
+        List<OptionItemResponseDTO> optionItemsDTOs = optionItemConverter.toOptionItemResponseDTO(property.getOptionItems());
         return optionItemsDTOs;
     }
 }

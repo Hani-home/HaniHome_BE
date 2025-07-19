@@ -12,10 +12,17 @@ import static jakarta.persistence.GenerationType.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
+@Table(
+        name = "viewing_option_item",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"viewing_id", "option_item_id"}),
+        }
+)
 @Entity
 public class ViewingOptionItem {
     @Column(name = "viewing_option_item_id")
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
