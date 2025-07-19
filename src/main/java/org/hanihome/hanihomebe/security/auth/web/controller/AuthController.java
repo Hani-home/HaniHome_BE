@@ -85,7 +85,21 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         LoginResponseDTO response = authService.login(loginRequestDTO);
-        return ResponseEntity.ok(response);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", response.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .domain("hanihome.app")
+                .maxAge(Duration.ofDays(7))
+                .build();
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getAccessToken())
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(response);
     }
 
     @PostMapping("/refresh")

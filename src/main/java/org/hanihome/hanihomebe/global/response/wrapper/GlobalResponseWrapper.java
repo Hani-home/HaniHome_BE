@@ -26,7 +26,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice {
         return true; // 모두
     }
 
-    @Override
+    @Override   
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         // body가 이미 CommonResponse
         if (body instanceof CommonResponse) {

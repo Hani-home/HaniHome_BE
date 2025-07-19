@@ -2,7 +2,9 @@ package org.hanihome.hanihomebe.member.web;
 
 import org.hanihome.hanihomebe.member.service.MemberService;
 import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberMyPageDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberNicknameCheckResponseDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberDetailResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
@@ -44,15 +46,15 @@ public class MemberController {
     @GetMapping("/me")
     public ResponseEntity<MemberResponseDTO> getMyMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Long memberId = userDetails.getUserId();
-        MemberResponseDTO memberResponseDTO = memberService.getMemberById(memberId); //요정도는 재사용해도 되겠죠..? id로 조회하는 거랑 service가 같아서..
-        return ResponseEntity.ok(memberResponseDTO);
+        MemberResponseDTO dto = memberService.getMemberDTOById(memberId, MemberMyPageDTO::CreateFrom); //요정도는 재사용해도 되겠죠..? id로 조회하는 거랑 service가 같아서..
+        return ResponseEntity.ok(dto);
     }
 
     //유저 정보 조회
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberResponseDTO> getMemberById(@PathVariable Long memberId) {
-        MemberResponseDTO memberResponseDTO = memberService.getMemberById(memberId);
-        return ResponseEntity.ok(memberResponseDTO);
+        MemberResponseDTO dto = memberService.getMemberDTOById(memberId, MemberDetailResponseDTO::CreateFrom);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/complete-profile")

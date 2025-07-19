@@ -76,7 +76,7 @@ public class VerificationServiceTest {
                 .build();
 
         adminId = memberRepository.save(admin).getId();
-
+        /*
         //테스트용 신원인증 요청 생성
         Verification verification = Verification.createRequestFrom(
                 member,
@@ -84,6 +84,7 @@ public class VerificationServiceTest {
                 List.of("https://img1.com", "https://img2.com")
         );
         verificationId = verificationRepository.save(verification).getId();
+         */
     }
 
     @Test
@@ -127,6 +128,16 @@ public class VerificationServiceTest {
     @Test
     @DisplayName("정상 요청일 때 자신 모든 신원인증 리스트 불어오기")
     void getMyAllVerificationsTest() {
+
+        Member member = memberRepository.findById(memberId).get();
+
+        Verification verification = Verification.createRequestFrom(
+                member,
+                VerificationType.ID_CARD,
+                List.of("https://img1.com", "https://img2.com")
+        );
+        verificationId = verificationRepository.save(verification).getId();
+
         List<VerificationResponseDTO> result = verificationService.getMyAllVerifications(memberId);
 
         assertEquals(1, result.size());
@@ -141,6 +152,16 @@ public class VerificationServiceTest {
     @Test
     @DisplayName("정상 요청일 때 자신의 개별 신원인증 불러오기")
     void getMyVerificationTest() {
+        Member member = memberRepository.findById(memberId).get();
+
+        Verification verification = Verification.createRequestFrom(
+                member,
+                VerificationType.ID_CARD,
+                List.of("https://img1.com", "https://img2.com")
+        );
+
+        verificationId = verificationRepository.save(verification).getId();
+
         VerificationResponseDTO result = verificationService.getMyVerification(memberId, verificationId);
 
         assertEquals(VerificationType.ID_CARD, result.getType());

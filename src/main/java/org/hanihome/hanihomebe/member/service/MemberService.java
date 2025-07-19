@@ -11,15 +11,25 @@ import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.member.web.dto.ConsentAgreementDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberCompleteProfileRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberNicknameCheckResponseDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberDetailResponseDTO;
+import org.hanihome.hanihomebe.member.web.dto.MemberResponseContext;
 import org.hanihome.hanihomebe.member.web.dto.MemberResponseDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberSignupRequestDTO;
 import org.hanihome.hanihomebe.member.web.dto.MemberUpdateRequestDTO;
+import org.hanihome.hanihomebe.verification.domain.Verification;
+import org.hanihome.hanihomebe.verification.domain.VerificationStatus;
+import org.hanihome.hanihomebe.verification.domain.VerificationType;
+import org.hanihome.hanihomebe.verification.web.dto.VerificationSummaryDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -48,7 +58,6 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-
     public void completeProfile(Long memberId, MemberCompleteProfileRequestDTO dto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
@@ -73,14 +82,44 @@ public class MemberService {
 
     }
 
-    //특정 멤버 조회
+    /*
+    <T> 제네릭을 사용하겠다고 명시
+    Function<Member, T> converter : member Type을 받고 T를 반환하는 함수(함수형 인터페이스) => apply는 인터페이스에 정의된 메서드
+     */
     @Transactional(readOnly = true)
-    public MemberResponseDTO getMemberById(Long memberId) {
+    public <T extends MemberResponseDTO> T getMemberDTOById(
+            Long memberId, Function<MemberResponseContext, T> converter
+    ) {
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
-        return MemberResponseDTO.CreateFrom(member);
-    }
 
+        List<Verification> verifications = member.getVerifications();
+
+        List<VerificationSummaryDTO> verificationSummaries = new ArrayList<>();
+
+        for (VerificationType type : VerificationType.values()) {
+            //각 타입에 해당하는 인증 목록
+            List<Verification> filtered = verifications.stream()
+                    .filter(v -> v.getType()==type)
+                    .collect(Collectors.toList());
+
+            //가장 최근 요청
+            Verification latest = filtered.stream()
+                    .max(Comparator.comparing(Verification::getApprovedAt))
+                    .orElse(null);
+
+            boolean isVerified = latest !=null && latest.getStatus() == VerificationStatus.APPROVED;
+
+            verificationSummaries.add(new VerificationSummaryDTO(type, isVerified));
+        }
+
+        boolean isVerifiedUser = verificationSummaries.stream().anyMatch(VerificationSummaryDTO::isVerified);
+
+        MemberResponseContext context = new MemberResponseContext(member, verificationSummaries, isVerifiedUser);
+
+        return converter.apply(context);
+    }
 
     public void updateMember(Long memberId, MemberUpdateRequestDTO memberUpdateRequestDTO) {
         Member member = memberRepository.findById(memberId)
@@ -89,7 +128,6 @@ public class MemberService {
         //멤버도메인에 위임
         member.updateMember(memberUpdateRequestDTO);
     }
-
 
     public void deleteMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -121,7 +159,5 @@ public class MemberService {
                 throw new CustomException(ServiceCode.REQUIRED_CONSENT_MISSING);
             }
         }
-
-
     }
 }
