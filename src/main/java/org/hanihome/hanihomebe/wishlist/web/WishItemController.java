@@ -1,7 +1,6 @@
 package org.hanihome.hanihomebe.wishlist.web;
 
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.wishlist.application.service.WishItemService;
