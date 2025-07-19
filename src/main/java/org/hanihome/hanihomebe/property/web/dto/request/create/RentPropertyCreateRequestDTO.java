@@ -33,7 +33,6 @@ public record RentPropertyCreateRequestDTO(
         List<Long> optionItemIds,       // 포함된 비용 항목 리스트
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
-//        Set<LocalDateTime> possibleMeetingDates,            // 뷰잉 가능 날짜 집합
         LocalDate meetingDateFrom,
         LocalDate meetingDateTo,
         List<TimeSlot> timeSlots,
