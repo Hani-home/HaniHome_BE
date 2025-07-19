@@ -25,7 +25,6 @@ public abstract class PropertyPatchCommand {
     private List<PropertyOptionItem> optionItems;
     private LivingConditions livingConditions;
     private MoveInInfo moveInInfo;
-    private ParkingOption parkingOption;
     private LocalDate meetingDateFrom;
     private LocalDate meetingDateTo;
     private List<TimeSlot> timeSlots;
