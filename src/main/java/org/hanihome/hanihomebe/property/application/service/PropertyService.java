@@ -3,7 +3,7 @@ package org.hanihome.hanihomebe.property.application.service;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
-import org.hanihome.hanihomebe.item.application.OptionItemConverterForProperty;
+import org.hanihome.hanihomebe.item.application.converter.OptionItemConverterForProperty;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.metro.application.service.NearestMetroStopService;
@@ -45,7 +45,6 @@ public class PropertyService {
     private final WishItemRepository wishItemRepository; //Property 삭제 시 WishItem도 삭제하기 위해 추가
     private final NearestMetroStopService nearestMetroStopService;
     private final PropertyConversionService propertyConversionService;
-    private final Map<PropertyViewType, PropertyConverter<?>> propertyConverterMap = new EnumMap<>(PropertyViewType.class);
     private final List<PropertyFactory> propertyFactories;
 
     public PropertyService(PropertyRepository propertyRepository,
@@ -66,8 +65,6 @@ public class PropertyService {
         this.wishItemRepository = wishItemRepository;
         this.nearestMetroStopService = nearestMetroStopService;
         this.propertyConversionService = propertyConversionService;
-        propertyConverters.forEach(converter ->
-                propertyConverterMap.put(converter.supports(), converter));
         this.propertyFactories = propertyFactories;
     }
 
@@ -200,7 +197,7 @@ public class PropertyService {
     @Transactional
     public PropertyResponseDTO patch(Long propertyId, PropertyPatchRequestDTO dto) {
         Property findProperty = propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found: " + propertyId));
-        List<PropertyOptionItem> propertyOptionItems = dto.getOptionItemsIds() == null ? null
+        List<PropertyOptionItem> propertyOptionItems = dto.getOptionItemIds() == null ? null
                 : createPropertyOptionItems(dto, findProperty);
 
         Property updated = findProperty.update(dto.toCommand(propertyOptionItems));
@@ -208,7 +205,7 @@ public class PropertyService {
     }
 
     private List<PropertyOptionItem> createPropertyOptionItems(PropertyPatchRequestDTO dto, Property findProperty) {
-        return dto.getOptionItemsIds().stream()
+        return dto.getOptionItemIds().stream()
                 .map(optionItemId ->
                         {
                             OptionItem optionItem = optionItemRepository.findById(optionItemId).orElseThrow(() -> new RuntimeException("해당하는 선택목록 식별자가 없습니다."));

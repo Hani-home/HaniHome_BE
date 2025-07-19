@@ -16,7 +16,7 @@ public class ViewingDateWithProfileImageConverter implements ViewingConverter<Vi
 
     @Override
     public ViewingDateWithProfileImageDTO convert(ViewingConvertContext viewingConvertContext) {
-        Long requesterId = viewingConvertContext.getExtra("requesterId");
+        Long requesterId = viewingConvertContext.getRequesterId();
 
         String counterpartImageUrl = getCounterPartImageUrl(requesterId, viewingConvertContext.getViewing());
 

@@ -52,7 +52,7 @@ public class ViewingController {
 
     //read
 
-    // 사용자별 뷰잉 조회
+    // 내 뷰잉 조회
     @GetMapping("/my-viewings")
     public ResponseEntity<List<? extends ViewingDTOByView>> getUserViewings(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                             @RequestParam(required = false) ViewingViewType view) {

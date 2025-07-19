@@ -14,6 +14,6 @@ public class ViewingDefaultConverter implements ViewingConverter<ViewingResponse
 
     @Override
     public ViewingResponseDTO convert(ViewingConvertContext viewingConvertContext) {
-        return ViewingResponseDTO.from(viewingConvertContext.getViewing());
+        return ViewingResponseDTO.from(viewingConvertContext.getViewing(), viewingConvertContext.getOptionItems());
     }
 }
