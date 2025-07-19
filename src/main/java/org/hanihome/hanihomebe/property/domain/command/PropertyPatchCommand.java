@@ -31,7 +31,6 @@ public abstract class PropertyPatchCommand {
     private Boolean viewingAlwaysAvailable;
     private String description;
     private DisplayStatus displayStatus;
-    private TradeStatus tradeStatus;
 
 }
 
