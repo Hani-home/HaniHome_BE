@@ -5,6 +5,8 @@ import lombok.*;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
 import org.hanihome.hanihomebe.property.domain.Property;
 
+import java.util.Objects;
+
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -28,5 +30,24 @@ public class PropertyOptionItem {
 
     public void setProperty(Property property) {
         this.property = property;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o == null || !(o instanceof PropertyOptionItem that)) {
+            return false;
+        }
+        return this.property == that.property && this.optionItem == that.optionItem;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                System.identityHashCode(property),
+                System.identityHashCode(optionItem)
+        );
     }
 }

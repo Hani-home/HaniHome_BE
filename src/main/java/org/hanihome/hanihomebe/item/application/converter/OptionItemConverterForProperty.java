@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.item.application;
+package org.hanihome.hanihomebe.item.application.converter;
 
 import org.hanihome.hanihomebe.item.domain.OptionItem;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
@@ -11,7 +11,7 @@ import java.util.List;
 public class OptionItemConverterForProperty implements OptionItemConverter<PropertyOptionItem>{
 
     @Override
-    public List<OptionItemResponseDTO> toResponseDTO(List<PropertyOptionItem> propertyOptionItems) {
+    public List<OptionItemResponseDTO> toOptionItemResponseDTO(List<PropertyOptionItem> propertyOptionItems) {
 
         return propertyOptionItems.stream()
                 .map(propertyOptionItem ->

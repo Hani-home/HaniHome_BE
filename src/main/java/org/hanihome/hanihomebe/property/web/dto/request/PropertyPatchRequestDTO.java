@@ -31,7 +31,7 @@ public abstract class PropertyPatchRequestDTO {
     private Region region;
     private List<String> photoUrls;
     private CostDetails costDetails;
-    private List<Long> optionItemsIds;     // 포함된 비용 항목 리스트, TODO: OptionItemId를 받아야할듯
+    private List<Long> optionItemIds;     // 포함된 비용 항목 리스트
     private LivingConditions livingConditions;
     private MoveInInfo moveInInfo;
     private ParkingOption parkingOption;

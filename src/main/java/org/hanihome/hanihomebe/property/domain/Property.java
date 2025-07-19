@@ -214,6 +214,7 @@ public abstract class Property {
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
     }
+
     protected void updateBase(PropertyPatchCommand cmd) {
         if (cmd.getGenderPreference() != null) {
             this.genderPreference = cmd.getGenderPreference();
@@ -231,8 +232,12 @@ public abstract class Property {
             this.costDetails = cmd.getCostDetails();
         }
         if (cmd.getOptionItems() != null) {
-            this.optionItems.clear();
-            this.optionItems.addAll(cmd.getOptionItems());
+            List<PropertyOptionItem> newItems = cmd.getOptionItems();
+            this.optionItems.retainAll(newItems);
+
+            newItems.stream()
+                    .filter(item -> !this.optionItems.contains(item))
+                    .forEach(this::addPropertyOptionItem);
         }
         if (cmd.getLivingConditions() != null) {
             this.livingConditions = cmd.getLivingConditions();
@@ -268,7 +273,6 @@ public abstract class Property {
             this.viewingAlwaysAvailable = cmd.getViewingAlwaysAvailable();
         }
     }
-
 
     public abstract Property update(PropertyPatchCommand cmd);
 }
