@@ -124,11 +124,6 @@ public abstract class Property {
     @Embedded
     private MoveInInfo moveInInfo;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ParkingOption parkingOption;
-
-
     /**
      * 15-1 뷰잉 가능 날짜
      */
@@ -154,6 +149,7 @@ public abstract class Property {
     })
     private List<TimeSlot> timeSlots = new ArrayList<>();
 
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "property_viewing_available_date_time",
         joinColumns = @JoinColumn(name = "property_id"))
@@ -245,9 +241,6 @@ public abstract class Property {
         if (cmd.getMoveInInfo() != null) {
             this.moveInInfo = cmd.getMoveInInfo();
         }
-        if (cmd.getParkingOption() != null) {
-            this.parkingOption = cmd.getParkingOption();
-        }
         if (cmd.getMeetingDateFrom() != null) {
             this.meetingDateFrom = cmd.getMeetingDateFrom();
         }
@@ -266,13 +259,14 @@ public abstract class Property {
         if (cmd.getDisplayStatus() != null) {
             this.displayStatus = cmd.getDisplayStatus();
         }
-        if (cmd.getTradeStatus() != null) {
-            this.tradeStatus = cmd.getTradeStatus();
-        }
         if (cmd.getViewingAlwaysAvailable() != null) {
             this.viewingAlwaysAvailable = cmd.getViewingAlwaysAvailable();
         }
     }
 
     public abstract Property update(PropertyPatchCommand cmd);
+
+    public void completeTrade() {
+        this.tradeStatus = TradeStatus.COMPLETED;
+    }
 }

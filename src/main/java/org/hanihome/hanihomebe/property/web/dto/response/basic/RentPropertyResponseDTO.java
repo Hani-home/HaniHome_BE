@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.property.web.dto.response;
+package org.hanihome.hanihomebe.property.web.dto.response.basic;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.property.domain.*;
@@ -30,7 +30,6 @@ public record RentPropertyResponseDTO(
         CostDetails costDetails,
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
-        ParkingOption parkingOption,
         String description,
         RentInternalDetails internalDetails,
         CapacityRent capacityRent                  // (RentProperty 고유) 수용인원-렌트
@@ -76,7 +75,6 @@ public record RentPropertyResponseDTO(
                 rentProperty.getCostDetails(),
                 rentProperty.getLivingConditions(),
                 rentProperty.getMoveInInfo(),
-                rentProperty.getParkingOption(),
                 rentProperty.getDescription(),
                 // rent 고유 정보
                 rentProperty.getRentInternalDetails(),

@@ -59,8 +59,16 @@ public class NotificationService {
     }
 
     @Transactional
-    public void deleteNotification(Long notificationId) {
+    public void deleteNotificationById(Long requesterId, Long notificationId) {
+        Long ownerId = notificationRepository.findById(notificationId).orElseThrow().getReceiver().getId();
+        if (!isOwner(requesterId, ownerId)) {
+            throw new CustomException(ServiceCode.NO_OWNER_AUTHORITY);
+        }
         notificationRepository.deleteById(notificationId);
+    }
+
+    private static boolean isOwner(Long requesterId, Long ownerId) {
+        return requesterId.equals(ownerId);
     }
 
 }

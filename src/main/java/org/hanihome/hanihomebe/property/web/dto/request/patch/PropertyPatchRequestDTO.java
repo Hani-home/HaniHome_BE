@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.property.web.dto.request;
+package org.hanihome.hanihomebe.property.web.dto.request.patch;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -34,14 +34,12 @@ public abstract class PropertyPatchRequestDTO {
     private List<Long> optionItemIds;     // 포함된 비용 항목 리스트
     private LivingConditions livingConditions;
     private MoveInInfo moveInInfo;
-    private ParkingOption parkingOption;
     private LocalDate meetingDateFrom;
     private LocalDate meetingDateTo;
     private List<TimeSlot> timeSlots;
     private Boolean viewingAlwaysAvailable;
     private String description;
     private DisplayStatus displayStatus;
-    private TradeStatus tradeStatus;
 
     public abstract PropertyPatchCommand toCommand(List<PropertyOptionItem> propertyOptionItems);
 }

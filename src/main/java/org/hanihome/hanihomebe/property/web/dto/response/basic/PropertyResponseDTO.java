@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.property.web.dto.response;
+package org.hanihome.hanihomebe.property.web.dto.response.basic;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -8,6 +8,7 @@ import org.hanihome.hanihomebe.property.domain.vo.CostDetails;
 import org.hanihome.hanihomebe.property.domain.vo.LivingConditions;
 import org.hanihome.hanihomebe.property.domain.vo.MoveInInfo;
 import org.hanihome.hanihomebe.property.domain.enums.*;
+import org.hanihome.hanihomebe.property.web.dto.response.PropertyDTOByView;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +41,5 @@ public sealed interface PropertyResponseDTO
     CostDetails costDetails();
     LivingConditions livingConditions();
     MoveInInfo moveInInfo();
-    ParkingOption parkingOption();
     String description();
 }

@@ -87,15 +87,15 @@ public class Viewing extends BaseEntity {
         updateViewingOptionItem(cancelReasonItems);
     }
 
+    public void complete() {
+        this.status = ViewingStatus.COMPLETED;
+    }
+
     /**
      * 체크리스트 업로드/업데이트
      */
     public void updateChecklist(List<ViewingOptionItem> allOptionItems) {
         updateViewingOptionItem(allOptionItems);
-    }
-
-    public void complete() {
-        this.status = ViewingStatus.COMPLETED;
     }
 
     // 연관관계 편의 메서드

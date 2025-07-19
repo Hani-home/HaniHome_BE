@@ -2,7 +2,7 @@ package org.hanihome.hanihomebe.property.web.dto.enums;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyDTOByView;
-import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 
 @RequiredArgsConstructor
