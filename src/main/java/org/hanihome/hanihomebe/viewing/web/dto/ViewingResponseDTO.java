@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 public class ViewingResponseDTO implements ViewingDTOByView {
     private final Long id;
 
-    private final Long memberId;
+    private final Long guestId;
+
+    private final Long hostId;
 
     private final Long propertyId;
 
@@ -46,7 +48,8 @@ public class ViewingResponseDTO implements ViewingDTOByView {
 
         return ViewingResponseDTO.builder()
                 .id(viewing.getId())
-                .memberId(viewing.getMember().getId())
+                .guestId(viewing.getMember().getId())
+                .hostId(viewing.getProperty().getMember().getId())
                 .propertyId(viewing.getProperty().getId())
                 .meetingDay(viewing.getMeetingDay())
                 .status(viewing.getStatus())

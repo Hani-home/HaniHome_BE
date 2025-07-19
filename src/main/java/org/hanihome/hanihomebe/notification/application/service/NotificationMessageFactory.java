@@ -22,7 +22,7 @@ public class NotificationMessageFactory {
 
     public NotificationCreateDTO createViewingCanceledMessage(Long actorId, Long viewingId) {
         ViewingResponseDTO findViewing = viewingService.getViewingById(viewingId);
-        Long guestId = findViewing.getMemberId();
+        Long guestId = findViewing.getGuestId();
         Long hostId = propertyService.getPropertyById(findViewing.getPropertyId()).memberId();
 
         boolean isGuest = actorId.equals(guestId);
@@ -48,7 +48,7 @@ public class NotificationMessageFactory {
 
     public List<NotificationCreateDTO> createViewingReminderMessage(Long viewingId) {
         ViewingResponseDTO viewing = viewingService.getViewingById(viewingId);
-        Long guestId = viewing.getMemberId();
+        Long guestId = viewing.getGuestId();
         Long hostId = propertyService.getPropertyById(viewing.getPropertyId()).memberId();
         Instant triggerTime = viewing.getMeetingDay().minusHours(24)
                 .toInstant(ZoneOffset.UTC);

@@ -19,6 +19,8 @@ public class PropertySearchConditionDTO {
     private List<SharePropertySubType> sharePropertySubTypes;        // 아파트, 유닛 등
     private List<RentPropertySubType> rentPropertySubTypes;
 
+    private String suburb;
+
     private BigDecimal minWeeklyCost;
     private BigDecimal maxWeeklyCost;
 //    @JsonSetter(nulls = Nulls.SKIP) => for Jackson

@@ -125,9 +125,10 @@ public class ScopeInitializer {
     }
 
     private CategoryCode[] getViewingCategories() {
-        return new CategoryCode[] {
-            CategoryCode.VIEWING_CAT1,
-            CategoryCode.VIEWING_CAT2
+        return new CategoryCode[]{
+                CategoryCode.VIEWING_CAT1,
+                CategoryCode.VIEWING_CAT2,
+                CategoryCode.VIEWING_CAT3,
         };
     }
 

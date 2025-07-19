@@ -474,6 +474,7 @@ class PropertySearchServiceTest {
         assertEquals(4, results.size());
     }
 
+    /// bill included
     @Test
     void shouldReturnZeroProperty_whenFilterByBillIncluded_false() {
         List<PropertySummaryDTO> results = propertySearchService.search(
@@ -496,6 +497,7 @@ class PropertySearchServiceTest {
         assertEquals(4, results.size());
     }
 
+    /// negotiable
     @Test
     void shouldReturnZeroProperty_whenFilterByNegotiable_false() {
         List<PropertySummaryDTO> results = propertySearchService.search(
@@ -507,6 +509,7 @@ class PropertySearchServiceTest {
         assertTrue(results.isEmpty());
     }
 
+    /// immediate
     @Test
     void shouldReturnZeroProperty_whenFilterByImmediate_false() {
         List<PropertySummaryDTO> results = propertySearchService.search(
@@ -518,6 +521,7 @@ class PropertySearchServiceTest {
         assertTrue(results.isEmpty());
     }
 
+    /// 지하철역 Nkm
     @Test
     void shouldReturnZeroProperty_whenFilterByDistantMetroStop() {
         BigDecimal metroStopLongitude = BigDecimal.valueOf(90.0000);
@@ -583,6 +587,60 @@ class PropertySearchServiceTest {
         List<PropertySummaryDTO> results = propertySearchService.search(
                 PropertySearchConditionDTO.builder()
                         .kinds(List.of(PropertySuperType.SHARE))
+                        .metroStopLongitude(metroStopLongitude)
+                        .metroStopLatitude(metroStopLatitude)
+                        .radiusKm(radiusKm)
+                        .build()
+                , PropertyViewType.SUMMARY);
+
+        logging(results);
+        assertEquals(2, results.size());
+    }
+
+    @Test
+    void shouldReturnFourProperty_whenFilterBySuburb() {
+        List<PropertySummaryDTO> results = propertySearchService.search(
+                PropertySearchConditionDTO.builder()
+                        .suburb("Chatswood")
+                        .build()
+                , PropertyViewType.SUMMARY);
+
+        assertEquals(4, results.size());
+    }
+
+    @Test
+    void shouldReturnFourProperty_whenFilterBySuburb_andLowerCase() {
+        List<PropertySummaryDTO> results = propertySearchService.search(
+                PropertySearchConditionDTO.builder()
+                        .suburb("chatswood")
+                        .build()
+                , PropertyViewType.SUMMARY);
+
+        assertEquals(4, results.size());
+    }
+
+    @Test
+    void shouldReturnZeroProperty_whenFilterBySuburb() {
+        List<PropertySummaryDTO> results = propertySearchService.search(
+                PropertySearchConditionDTO.builder()
+                        .suburb("doowchats")
+                        .build()
+                , PropertyViewType.SUMMARY);
+
+        assertEquals(0, results.size());
+    }
+
+    @Test
+    void shouldReturnTwoProperty_whenFilterByMetroStop_andKinds_andSuburb() {
+        // 경도 1도 : 111.32km
+        BigDecimal metroStopLongitude = BigDecimal.valueOf(1.0000);
+        BigDecimal metroStopLatitude = BigDecimal.valueOf(0.0000);
+        BigDecimal radiusKm = BigDecimal.valueOf(115);
+
+        List<PropertySummaryDTO> results = propertySearchService.search(
+                PropertySearchConditionDTO.builder()
+                        .kinds(List.of(PropertySuperType.SHARE))
+                        .suburb("Chatswood")
                         .metroStopLongitude(metroStopLongitude)
                         .metroStopLatitude(metroStopLatitude)
                         .radiusKm(radiusKm)
