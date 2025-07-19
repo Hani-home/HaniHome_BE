@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.property.web.dto.request;
+package org.hanihome.hanihomebe.property.web.dto.request.create;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
@@ -33,7 +33,6 @@ public record RentPropertyCreateRequestDTO(
         List<Long> optionItemIds,       // 포함된 비용 항목 리스트
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
-        ParkingOption parkingOption,                // 주차 옵션
 //        Set<LocalDateTime> possibleMeetingDates,            // 뷰잉 가능 날짜 집합
         LocalDate meetingDateFrom,
         LocalDate meetingDateTo,

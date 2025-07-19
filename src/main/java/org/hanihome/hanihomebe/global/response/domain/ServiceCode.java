@@ -50,6 +50,9 @@ public enum ServiceCode {
     VIEWING_TIME_MISMATCH(HttpStatus.BAD_REQUEST, "선택한 시간대는 예약이 완료되었거나 뷰잉 가능 시간대에 속하지 않습니다."),
     PROPERTY_IN_VIEWING_CONVERT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "뷰잉에 포함된 매물을 DTO로 변환하는 중에 오류가 발생"),
 
+    // Deal
+    DEAL_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 거래 내역은 존재하지 않습니다."),
+
     // OptionCategory
     OPTION_CATEGORY_NOT_INITIALIZED(HttpStatus.BAD_REQUEST, "해당 카테고리는 아직 초기화 되지 않았습니다"),
     OPTION_CATEGORY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 카테고리는 존재하지 않습니다."),
@@ -97,6 +100,9 @@ public enum ServiceCode {
 
     // Report
     PROPERTY_REPORT(HttpStatus.BAD_REQUEST,"매물 신고만 가능합니다"),
+
+    // 권한 불일치
+    NO_OWNER_AUTHORITY(HttpStatus.BAD_REQUEST, "요청한 리소스에 대한 주인이 아닙니다."),
 
     // not defined
     NOT_DEFINED_ERROR_FROM_WRAPPER(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다 from Wrapper"),

@@ -12,8 +12,8 @@ import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
 import org.hanihome.hanihomebe.property.web.dto.request.PropertySearchConditionDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.RentPropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.RentPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -124,7 +124,6 @@ class PropertySearchServiceTest {
                         List.of(1L,2L,3L),        // optionItemIds
                         livingConditions,
                         moveInInfo,
-                        ParkingOption.STREET_PARKING,
                         meetingDateFrom,
                         meetingDateTo,
                         timeSlots,
@@ -152,7 +151,6 @@ class PropertySearchServiceTest {
                         List.of(1L,2L,3L),
                         livingConditions,
                         moveInInfo,
-                        ParkingOption.STREET_PARKING,
                         meetingDateFrom,
                         meetingDateTo,
                         timeSlots,
@@ -180,7 +178,6 @@ class PropertySearchServiceTest {
                         List.of(1L,2L,3L),
                         livingConditions,
                         moveInInfo,
-                        ParkingOption.STREET_PARKING,
                         meetingDateFrom,
                         meetingDateTo,
                         timeSlots,
@@ -209,7 +206,6 @@ class PropertySearchServiceTest {
                         List.of(1L,2L,3L),
                         livingConditions,
                         moveInInfo,
-                        ParkingOption.STREET_PARKING,
                         meetingDateFrom,
                         meetingDateTo,
                         timeSlots,
@@ -435,7 +431,6 @@ class PropertySearchServiceTest {
                         List.of(1L,2L,3L),        // optionItemIds
                         livingConditions,
                         moveInInfo,
-                        ParkingOption.STREET_PARKING,
                         meetingDateFrom,
                         meetingDateTo,
                         timeSlots,

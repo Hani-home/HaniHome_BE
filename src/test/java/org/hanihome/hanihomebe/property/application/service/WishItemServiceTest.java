@@ -10,14 +10,12 @@ import org.hanihome.hanihomebe.metro.repository.MetroStopRepository;
 import org.hanihome.hanihomebe.property.domain.*;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
-import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
-import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.wishlist.application.service.WishItemService;
-import org.hanihome.hanihomebe.wishlist.domain.WishItem;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
 import org.hanihome.hanihomebe.wishlist.web.dto.WishItemDTO;
@@ -136,7 +134,6 @@ public class WishItemServiceTest {
                         List.of(1L,2L,3L),        // optionItemIds
                         livingConditions,
                         moveInInfo,
-                        ParkingOption.STREET_PARKING,
                         meetingDateFrom,
                         meetingDateTo,
                         timeSlots,

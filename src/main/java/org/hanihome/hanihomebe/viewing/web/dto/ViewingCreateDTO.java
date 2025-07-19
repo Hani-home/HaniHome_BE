@@ -1,5 +1,6 @@
 package org.hanihome.hanihomebe.viewing.web.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
-
+@AllArgsConstructor
 @Getter
 @NoArgsConstructor
 public class ViewingCreateDTO {

@@ -13,7 +13,7 @@ import org.hanihome.hanihomebe.property.domain.command.SharePropertyPatchCommand
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.domain.vo.ShareInternalDetails;
-import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
 
 @Entity
 @DiscriminatorValue("SHARE")
@@ -52,7 +52,6 @@ public class ShareProperty extends Property {
                 .costDetails(dto.costDetails())
                 .livingConditions(dto.livingConditions())
                 .moveInInfo(dto.moveInInfo())
-                .parkingOption(dto.parkingOption())
                 .meetingDateFrom(dto.meetingDateFrom())
                 .meetingDateTo(dto.meetingDateTo())
                 .timeSlots(dto.timeSlots())

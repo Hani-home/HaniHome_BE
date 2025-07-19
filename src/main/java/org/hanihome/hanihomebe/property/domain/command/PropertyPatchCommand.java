@@ -25,14 +25,12 @@ public abstract class PropertyPatchCommand {
     private List<PropertyOptionItem> optionItems;
     private LivingConditions livingConditions;
     private MoveInInfo moveInInfo;
-    private ParkingOption parkingOption;
     private LocalDate meetingDateFrom;
     private LocalDate meetingDateTo;
     private List<TimeSlot> timeSlots;
     private Boolean viewingAlwaysAvailable;
     private String description;
     private DisplayStatus displayStatus;
-    private TradeStatus tradeStatus;
 
 }
 

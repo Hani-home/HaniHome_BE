@@ -1,5 +1,6 @@
 package org.hanihome.hanihomebe.viewing.application.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
@@ -17,8 +18,7 @@ import org.hanihome.hanihomebe.viewing.domain.Viewing;
 import org.hanihome.hanihomebe.viewing.domain.ViewingOptionItem;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
-import org.hanihome.hanihomebe.viewing.web.converter.ViewingConverter;
-import org.hanihome.hanihomebe.viewing.web.converter.context.ViewingConvertContext;
+import org.hanihome.hanihomebe.viewing.web.dto.ViewingBelongsToPropertyDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.cancel.ViewingCancelRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.checklist.ViewingChecklistRequestDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingCreateDTO;
@@ -28,7 +28,6 @@ import org.hanihome.hanihomebe.viewing.web.dto.checklist.ViewingChecklistRespons
 import org.hanihome.hanihomebe.viewing.web.dto.note.ViewingNotesResponseDTO;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingResponseDTO;
 import org.hanihome.hanihomebe.viewing.web.enums.ViewingViewType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +40,7 @@ import java.util.stream.Collectors;
 import static org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval.MINUTE30;
 
 @Slf4j
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class ViewingService {
@@ -50,23 +50,7 @@ public class ViewingService {
     private final PropertyRepository propertyRepository;
     private final OptionItemRepository optionItemRepository;
     private final OptionCategoryRepository optionCategoryRepository;
-    private final Map<ViewingViewType, ViewingConverter<?>> converterMap = new EnumMap<>(ViewingViewType.class);
-
-    @Autowired
-    public ViewingService(ViewingRepository viewingRepository,
-                          MemberRepository memberRepository,
-                          PropertyRepository propertyRepository,
-                          OptionItemRepository optionItemRepository,
-                          OptionCategoryRepository optionCategoryRepository,
-                          List<ViewingConverter<?>> converters) {
-        this.viewingRepository = viewingRepository;
-        this.memberRepository = memberRepository;
-        this.propertyRepository = propertyRepository;
-        this.optionItemRepository = optionItemRepository;
-        this.optionCategoryRepository = optionCategoryRepository;
-        converters.forEach(c ->
-                converterMap.put(c.supports(), c));
-    }
+    private final ViewingConversionService viewingConversionService;
 
     /**
      * 뷰잉 생성
@@ -119,46 +103,48 @@ public class ViewingService {
         Viewing viewing = Viewing.create(findMemberGuest, findProperty, confirmedTime);
         viewingRepository.save(viewing);
 
-        return ViewingResponseDTO.from(viewing);
+        return viewingConversionService.convert(viewing, ViewingViewType.DEFAULT);
     }
 
     /**
      * 사용자별 뷰잉 조회
      */
     public <T> List<T> getViewingByMemberId(Long memberId, ViewingViewType view) {
-        @SuppressWarnings("unchecked")
-        ViewingConverter<T> converter =
-                (ViewingConverter<T>) converterMap.getOrDefault(
-                        view,
-                        converterMap.get(ViewingViewType.DEFAULT)
-                );
+        List<Viewing> findViewings = viewingRepository.findByMember_idOrderByMeetingDay(memberId);
 
-        Map<String, Object> extra = prepareExtraData(memberId, view);
-
-        return viewingRepository.findByMember_idOrderByMeetingDay(memberId).stream()
-                .map(viewing -> converter.convert(ViewingConvertContext.create(viewing, extra)))
-                .toList();
-    }
-
-    private static Map<String, Object> prepareExtraData(Long memberId, ViewingViewType view) {
-        Map<String, Object> extra = new HashMap<>();
-        if (view == ViewingViewType.DATE_PROFILE) {
-            Long requesterId = memberId;
-            extra.put("requesterId", requesterId);
-        }
-        return extra;
+        return viewingConversionService.convert(findViewings, view);
     }
 
     public ViewingResponseDTO getViewingById(Long viewingId) {
-        return ViewingResponseDTO.from(viewingRepository.findById(viewingId)
-                .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS)));
+        Viewing findViewing = viewingRepository.findById(viewingId)
+                .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
+
+        return viewingConversionService.convert(findViewing, ViewingViewType.DEFAULT);
+    }
+
+    /// 매물에 속한 뷰잉 조회
+    public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(Long memberId, Long propertyId) {
+        validateRequesterIsPropertyOwner(memberId, propertyId);
+
+        List<Viewing> belongsTo = viewingRepository.findByProperty_Id(propertyId);
+        return viewingConversionService.convert(belongsTo, ViewingViewType.BELONGS_TO_PROPERTY);
+    }
+
+    private void validateRequesterIsPropertyOwner(Long memberId, Long propertyId) {
+        if (!memberId.equals(getOwnerIdFromProperty(propertyId))) {
+            throw new CustomException(ServiceCode.NO_OWNER_AUTHORITY);
+        }
+    }
+
+    private Long getOwnerIdFromProperty(Long propertyId) {
+        return propertyRepository.findById(propertyId).orElseThrow().getMember().getId();
     }
 
     /**
      * 뷰잉 취소
      */
     @Transactional
-    public void cancelViewing(ViewingCancelRequestDTO dto) {
+    public void cancelViewingAndReleaseReservedTimes(ViewingCancelRequestDTO dto) {
         Viewing findViewing = viewingRepository.findById(dto.getViewingId())
             .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
@@ -173,16 +159,44 @@ public class ViewingService {
         propertyRepository.save(findViewing.getProperty());
 
         // 뷰잉 취소 옵션 아이템 추가
-        List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(dto.getAllOptionItemIds())
-                .stream()
-                .map(ViewingOptionItem::create)
-                .toList();
+        List<ViewingOptionItem> viewingOptionItems = createViewingOptionItems(dto.getAllOptionItemIds(), findViewing);
 
         findViewing.cancel(dto.getReason(), viewingOptionItems);
 
         viewingRepository.save(findViewing);
     }
 
+    // 매물에 연결되었고, status = REQUESTED인 뷰잉 취소
+    @Transactional
+    public void cancelViewingForCompletedProperty(Long propertyId) {
+        List<Viewing> toCancelList = viewingRepository.findByProperty_IdAndStatus(propertyId, ViewingStatus.REQUESTED);
+
+        OptionItem cancelReasonItem = optionItemRepository.findByItemName("이미 계약이 완료됐어요")
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ServiceCode.OPTION_ITEM_NOT_EXISTS));
+
+        // 뷰잉 취소
+        toCancelList.forEach(viewing -> {
+                    List<ViewingOptionItem> cancelReason = createViewingOptionItems(List.of(cancelReasonItem.getId()), viewing);
+                    viewing.cancel("뷰잉 예약된 매물의 거래가 종료되어 뷰잉이 취소되었습니다.", cancelReason);
+                }
+        );
+
+        viewingRepository.saveAll(toCancelList);
+    }
+
+    private List<ViewingOptionItem> createViewingOptionItems(List<Long> allOptionItemIds, Viewing findViewing) {
+        List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(allOptionItemIds)
+                .stream()
+                .map(ViewingOptionItem::create)
+                .toList();
+
+        viewingOptionItems.forEach(viewingOptionItem -> viewingOptionItem.setViewing(findViewing));
+        return viewingOptionItems;
+    }
+
+    // 취소 이유 조회
     public ViewingCancelResponseDTO getCancelInfo(Long viewingId) {
         Viewing findViewing = viewingRepository.findById(viewingId)
                 .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
@@ -258,9 +272,8 @@ public class ViewingService {
         List<OptionItem> optionItems = optionItemRepository.findAllById(dto.allOptionItemIds());
 
         // ViewingOptionItem 생성(체크리스트 아이템)
-        List<ViewingOptionItem> allViewingOptionItems = optionItems.stream()
-                .map(optionItem -> ViewingOptionItem.create(optionItem))
-                .toList();
+
+        List<ViewingOptionItem> allViewingOptionItems = createViewingOptionItems(dto.allOptionItemIds(), findViewing);
 
         findViewing.updateChecklist(allViewingOptionItems);
         viewingRepository.save(findViewing);
@@ -303,4 +316,5 @@ public class ViewingService {
         response.forEach((date, times) -> times.sort(Comparator.naturalOrder()));
         return response;
     }
+
 }

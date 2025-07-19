@@ -1,14 +1,13 @@
 package org.hanihome.hanihomebe.property.application.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hanihome.hanihomebe.deal.application.service.DealService;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
-import org.hanihome.hanihomebe.item.application.OptionItemConverterForProperty;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.metro.application.service.NearestMetroStopService;
-import org.hanihome.hanihomebe.property.application.converter.PropertyConverter;
-import org.hanihome.hanihomebe.property.application.converter.PropertyMapper;
 import org.hanihome.hanihomebe.property.application.factory.PropertyFactory;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
@@ -19,14 +18,15 @@ import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
-import org.hanihome.hanihomebe.property.web.dto.request.PropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.PropertyPatchRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.PropertyCompleteTradeDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.patch.PropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
+import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class PropertyService {
@@ -45,31 +46,10 @@ public class PropertyService {
     private final WishItemRepository wishItemRepository; //Property 삭제 시 WishItem도 삭제하기 위해 추가
     private final NearestMetroStopService nearestMetroStopService;
     private final PropertyConversionService propertyConversionService;
-    private final Map<PropertyViewType, PropertyConverter<?>> propertyConverterMap = new EnumMap<>(PropertyViewType.class);
     private final List<PropertyFactory> propertyFactories;
+    private final DealService dealService;
+    private final ViewingService viewingService;
 
-    public PropertyService(PropertyRepository propertyRepository,
-                           MemberRepository memberRepository,
-                           PropertyMapper propertyMapper,
-                           OptionItemRepository optionItemRepository,
-                           WishItemRepository wishItemRepository,
-                           NearestMetroStopService nearestMetroStopService,
-                           OptionItemConverterForProperty optionItemConverter,
-                           PropertyConversionService propertyConversionService,
-                           ConversionService conversionService,
-                           List<PropertyConverter<?>> propertyConverters,
-                           List<PropertyFactory> propertyFactories
-    ) {
-        this.propertyRepository = propertyRepository;
-        this.memberRepository = memberRepository;
-        this.optionItemRepository = optionItemRepository;
-        this.wishItemRepository = wishItemRepository;
-        this.nearestMetroStopService = nearestMetroStopService;
-        this.propertyConversionService = propertyConversionService;
-        propertyConverters.forEach(converter ->
-                propertyConverterMap.put(converter.supports(), converter));
-        this.propertyFactories = propertyFactories;
-    }
 
     /// create
     @Transactional
@@ -200,7 +180,7 @@ public class PropertyService {
     @Transactional
     public PropertyResponseDTO patch(Long propertyId, PropertyPatchRequestDTO dto) {
         Property findProperty = propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found: " + propertyId));
-        List<PropertyOptionItem> propertyOptionItems = dto.getOptionItemsIds() == null ? null
+        List<PropertyOptionItem> propertyOptionItems = dto.getOptionItemIds() == null ? null
                 : createPropertyOptionItems(dto, findProperty);
 
         Property updated = findProperty.update(dto.toCommand(propertyOptionItems));
@@ -208,7 +188,7 @@ public class PropertyService {
     }
 
     private List<PropertyOptionItem> createPropertyOptionItems(PropertyPatchRequestDTO dto, Property findProperty) {
-        return dto.getOptionItemsIds().stream()
+        return dto.getOptionItemIds().stream()
                 .map(optionItemId ->
                         {
                             OptionItem optionItem = optionItemRepository.findById(optionItemId).orElseThrow(() -> new RuntimeException("해당하는 선택목록 식별자가 없습니다."));
@@ -247,4 +227,21 @@ public class PropertyService {
         });
     }
 
+    // 매물 거래 완료
+    @Transactional
+    public void completeTrade(PropertyCompleteTradeDTO dto) {
+        Property findProperty = propertyRepository.findById(dto.propertyId())
+                .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
+
+        if (!dto.requesterId().equals(findProperty.getMember().getId())) {
+            throw new CustomException(ServiceCode.NO_OWNER_AUTHORITY);
+        }
+        // 매물 거래 완료
+        findProperty.completeTrade();
+        // 매물에 연결된 나머지 REQUESTED 뷰잉은 모두 취소로 상태 변경
+        viewingService.cancelViewingForCompletedProperty(findProperty.getId());
+
+        // dto에서 전달받은 게스트에게만 구한매물로 취급
+        dealService.createDeal(dto.viewingId());
+    }
 }

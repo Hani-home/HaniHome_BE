@@ -1,11 +1,11 @@
 package org.hanihome.hanihomebe.wishlist.application.service;
 
-import org.hanihome.hanihomebe.item.application.OptionItemConverterForProperty;
+import org.hanihome.hanihomebe.item.application.converter.OptionItemConverterForProperty;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.property.application.converter.PropertyMapper;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
-import org.hanihome.hanihomebe.property.web.dto.response.PropertyResponseDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,7 @@ public class PropertyWishTargetService implements WishTargetService{
     }
 
     private List<OptionItemResponseDTO> getOptionItemResponseDTOS(Property property) {
-        List<OptionItemResponseDTO> optionItemsDTOs = optionItemConverter.toResponseDTO(property.getOptionItems());
+        List<OptionItemResponseDTO> optionItemsDTOs = optionItemConverter.toOptionItemResponseDTO(property.getOptionItems());
         return optionItemsDTOs;
     }
 
