@@ -250,6 +250,8 @@ public abstract class Property {
         if (cmd.getTimeSlots() != null) {
             this.timeSlots = cmd.getTimeSlots();
         }
+        // TODO: ViewingAvailableDateTimes를 업데이트하는 것도 해야함. but 기존 DateTimes와 호환여부를 체크해야함.
+        //  + 호환여부 체크는 별도 계층에서 처리하는게 나아보임
         if (cmd.getViewingAlwaysAvailable() != null) {
             this.viewingAlwaysAvailable = cmd.getViewingAlwaysAvailable();
         }
@@ -258,9 +260,6 @@ public abstract class Property {
         }
         if (cmd.getDisplayStatus() != null) {
             this.displayStatus = cmd.getDisplayStatus();
-        }
-        if (cmd.getViewingAlwaysAvailable() != null) {
-            this.viewingAlwaysAvailable = cmd.getViewingAlwaysAvailable();
         }
     }
 
