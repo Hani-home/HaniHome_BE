@@ -52,11 +52,11 @@ public class ViewingController {
 
     // 내 뷰잉 조회
     @GetMapping("/viewings/my-viewings")
-    public ResponseEntity<List<? extends ViewingDTOByView>> getViewingsByMember(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                                @RequestParam(required = false) ViewingStatus status,
-                                                                                @RequestParam(required = false) ViewingViewType view
+    public ResponseEntity<List<? extends ViewingDTOByView>> getMyViewings(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                          @RequestParam(required = false) ViewingStatus status,
+                                                                          @RequestParam(required = false) ViewingViewType view
                                                                                 ) {
-        List<? extends ViewingDTOByView> viewings = viewingService.getViewingByMemberId(userDetails.getUserId(), status, view);
+        List<? extends ViewingDTOByView> viewings = viewingService.getViewingsByMemberId(userDetails.getUserId(), status, view);
         return ResponseEntity.ok(viewings);
     }
 
