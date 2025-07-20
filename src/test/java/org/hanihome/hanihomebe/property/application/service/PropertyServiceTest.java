@@ -19,6 +19,7 @@ import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.web.dto.request.PropertyCompleteTradeDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.RentPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
@@ -128,7 +129,7 @@ class PropertyServiceTest {
     void bookingAndDealFlow() {
         // Given: 호스트가 매물 등록
         SharePropertyCreateRequestDTO dto = buildSharePropertyDTO(memberId);
-        PropertyResponseDTO created = propertyService.createProperty(dto);
+        PropertyWithMemberResponseDTO created = propertyService.createProperty(dto);
         Long propertyId = created.id();
 
         // Given: Member2, Member3 생성
@@ -191,7 +192,7 @@ class PropertyServiceTest {
     void bookingAndDealFlow_RentProperty() {
         // Given: 호스트가 매물 등록
         RentPropertyCreateRequestDTO dto = buildRentPropertyDTO(memberId);
-        PropertyResponseDTO created = propertyService.createProperty(dto);
+        PropertyWithMemberResponseDTO created = propertyService.createProperty(dto);
         Long propertyId = created.id();
 
         // Given: Member2, Member3 생성
