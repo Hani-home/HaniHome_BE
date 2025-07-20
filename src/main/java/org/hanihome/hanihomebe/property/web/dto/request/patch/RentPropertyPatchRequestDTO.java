@@ -2,7 +2,7 @@ package org.hanihome.hanihomebe.property.web.dto.request.patch;
 
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
-import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
+import org.hanihome.hanihomebe.property.application.time.validator.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.vo.RentInternalDetails;
 import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.command.RentPropertyPatchCommand;

@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
+import org.hanihome.hanihomebe.property.application.time.MeetingDatePeriod;
+import org.hanihome.hanihomebe.property.application.time.PropertyCreateTimeManager;
 import org.hanihome.hanihomebe.property.application.time.generator.ViewingAvailableDateTimeGenerator;
 import org.hanihome.hanihomebe.property.application.time.validator.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.enums.*;
@@ -51,13 +53,12 @@ public record SharePropertyCreateRequestDTO(
             validateLatitudeAndLongitude(region.getLatitude(), region.getLongitude());
         }
 
-        // 뷰잉 가능 시간 검증
-        boolean isValidTimeSlots = TimeSlotValidator.validateAllConditions(timeSlots);
-        if(!isValidTimeSlots) {
-            throw new CustomException(ServiceCode.INVALID_PROPERTY_TIME_SLOT);
+        // 타임슬롯 검증, 뷰잉 가능 시간 생성
+        if (viewingAlwaysAvailable) {
+            viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateTowMonthsOfViewingAvailableDateTimes(timeSlots);
+        } else {
+            MeetingDatePeriod meetingDatePeriod = MeetingDatePeriod.create(meetingDateFrom, meetingDateTo);
+            viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateViewingAvailableDateTimes(timeSlots, meetingDatePeriod);
         }
-
-        // ViewingAvailableDateTime 변환
-        viewingAvailableDateTimes = ViewingAvailableDateTimeGenerator.generate(meetingDateFrom, meetingDateTo, timeSlots);
     }
 }

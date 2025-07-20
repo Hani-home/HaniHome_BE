@@ -3,7 +3,7 @@ package org.hanihome.hanihomebe.property.domain.command;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
+import org.hanihome.hanihomebe.property.application.time.validator.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.vo.ShareInternalDetails;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
