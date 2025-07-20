@@ -109,10 +109,15 @@ public class ViewingService {
     /**
      * 사용자별 뷰잉 조회
      */
-    public <T> List<T> getViewingByMemberId(Long memberId, ViewingViewType view) {
-        List<Viewing> findViewings = viewingRepository.findByMember_idOrderByMeetingDay(memberId);
+    public <T> List<T> getViewingsByMemberId(Long memberId, ViewingStatus status, ViewingViewType view) {
+        List<Viewing> viewingsAsGuest = viewingRepository.findViewingsAsGuestAndStatus(memberId, status);
+        List<Viewing> viewingsAsHost = viewingRepository.findViewingsAsHostAndStatus(memberId, status);
 
-        return viewingConversionService.convert(findViewings, view);
+        List<Viewing> all = new ArrayList<>(viewingsAsGuest);
+        all.addAll(viewingsAsHost);
+
+        Collections.sort(all, Comparator.comparing(Viewing::getMeetingDay));
+        return viewingConversionService.convert(all, view);
     }
 
     public ViewingResponseDTO getViewingById(Long viewingId) {
@@ -307,9 +312,13 @@ public class ViewingService {
      * @return 조회된 뷰잉들의 시간
      */
     public Map<LocalDate, List<LocalTime>> getMyViewingDatesByStatus(Long memberId, ViewingStatus status) {
-        List<Viewing> myViewingsByStatus = viewingRepository.findByMemberIdAndStatus(memberId, status);
+        List<Viewing> viewingsAsGuestAndStatus = viewingRepository.findViewingsAsGuestAndStatus(memberId, status);
+        List<Viewing> viewingsAsHostAndStatus = viewingRepository.findViewingsAsHostAndStatus(memberId, status);
 
-        Map<LocalDate, List<LocalTime>> response = myViewingsByStatus.stream()
+        List<Viewing> all = new ArrayList<>(viewingsAsGuestAndStatus);
+        all.addAll(viewingsAsHostAndStatus);
+
+        Map<LocalDate, List<LocalTime>> response = all.stream()
                 .collect(Collectors.groupingBy(viewing -> viewing.getMeetingDay().toLocalDate(),
                         TreeMap::new,
                         Collectors.mapping(viewing -> viewing.getMeetingDay().toLocalTime(), Collectors.toList())));

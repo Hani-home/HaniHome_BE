@@ -1,7 +1,6 @@
 package org.hanihome.hanihomebe.viewing.web.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.notification.application.service.*;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingBelongsToPropertyDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingNotificationService;
@@ -53,9 +52,11 @@ public class ViewingController {
 
     // 내 뷰잉 조회
     @GetMapping("/viewings/my-viewings")
-    public ResponseEntity<List<? extends ViewingDTOByView>> getUserViewings(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                            @RequestParam(required = false) ViewingViewType view) {
-        List<? extends ViewingDTOByView> viewings = viewingService.getViewingByMemberId(userDetails.getUserId(), view);
+    public ResponseEntity<List<? extends ViewingDTOByView>> getMyViewings(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                          @RequestParam(required = false) ViewingStatus status,
+                                                                          @RequestParam(required = false) ViewingViewType view
+                                                                                ) {
+        List<? extends ViewingDTOByView> viewings = viewingService.getViewingsByMemberId(userDetails.getUserId(), status, view);
         return ResponseEntity.ok(viewings);
     }
 
@@ -75,7 +76,7 @@ public class ViewingController {
 
     //매물에 속한 뷰잉 정보 조회
     @GetMapping("/properties/{propertyId}/viewings")
-    public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(@RequestParam Long propertyId,
+    public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(@PathVariable Long propertyId,
                                                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
         return viewingService.getViewingsBelongsToProperty(userDetails.getUserId(), propertyId);
     }

@@ -1,6 +1,5 @@
 package org.hanihome.hanihomebe.deal.application.service;
 
-import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.deal.application.strategy.DealQueryStrategy;
 import org.hanihome.hanihomebe.deal.domain.Deal;
 import org.hanihome.hanihomebe.deal.domain.DealerType;

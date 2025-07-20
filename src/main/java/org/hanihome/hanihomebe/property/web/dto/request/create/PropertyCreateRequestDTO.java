@@ -42,7 +42,6 @@ public sealed interface PropertyCreateRequestDTO permits
 
     LivingConditions livingConditions();
 
-//    Set<LocalDateTime> availableFrom();
     MoveInInfo moveInInfo();
 
     LocalDate meetingDateFrom();
