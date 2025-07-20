@@ -6,9 +6,12 @@ import java.time.LocalDateTime;
 
 public record ViewingDateWithPropertyDTO(
         LocalDateTime meetingDay,
-        PropertySummaryDTO property
+        PropertySummaryDTO property,
+        String counterpartNickname
 ) implements ViewingDTOByView {
-    public static ViewingDateWithPropertyDTO from(LocalDateTime meetingDay, PropertySummaryDTO property) {
-        return new ViewingDateWithPropertyDTO(meetingDay, property);
+    public static ViewingDateWithPropertyDTO from(LocalDateTime meetingDay,
+                                                  PropertySummaryDTO property,
+                                                  String counterpartNickname) {
+        return new ViewingDateWithPropertyDTO(meetingDay, property, counterpartNickname);
     }
 }

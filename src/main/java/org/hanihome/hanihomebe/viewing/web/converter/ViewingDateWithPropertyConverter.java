@@ -31,7 +31,13 @@ public class ViewingDateWithPropertyConverter implements ViewingConverter<Viewin
 
         PropertySummaryDTO propertySummaryDTO = getPropertySummaryDTO(viewing);
 
-        return ViewingDateWithPropertyDTO.from(viewing.getMeetingDay(), propertySummaryDTO);
+        String counterPartNickname = getCounterPartNickname(viewingConvertContext.getRequesterId(), viewing);
+
+        return ViewingDateWithPropertyDTO.from(
+                viewing.getMeetingDay(),
+                propertySummaryDTO,
+                counterPartNickname
+        );
     }
 
     private PropertySummaryDTO getPropertySummaryDTO(Viewing viewing) {
@@ -42,5 +48,23 @@ public class ViewingDateWithPropertyConverter implements ViewingConverter<Viewin
                 .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_IN_VIEWING_CONVERT_EXCEPTION));
         return propertySummaryDTO;
     }
+    private String getCounterPartNickname(Long requesterId, Viewing viewing) {
+        if (requesterIsGuest(requesterId, viewing)) {
+            return getHostNickname(viewing);
+        } else {
+            return getGuestNickname(viewing);
+        }
+    }
 
+    private static String getGuestNickname(Viewing viewing) {
+        return viewing.getMember().getNickname();
+    }
+
+    private static String getHostNickname(Viewing viewing) {
+        return viewing.getProperty().getMember().getNickname();
+    }
+
+    private static boolean requesterIsGuest(Long requesterId, Viewing viewing) {
+        return requesterId.equals(viewing.getMember().getId());
+    }
 }
