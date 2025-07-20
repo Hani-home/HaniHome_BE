@@ -109,8 +109,8 @@ public class ViewingService {
     /**
      * 사용자별 뷰잉 조회
      */
-    public <T> List<T> getViewingByMemberId(Long memberId, ViewingViewType view) {
-        List<Viewing> findViewings = viewingRepository.findByMember_idOrderByMeetingDay(memberId);
+    public <T> List<T> getViewingByMemberId(Long memberId, ViewingStatus status, ViewingViewType view) {
+        List<Viewing> findViewings = viewingRepository.findByMemberAndStatus(memberId, status);
 
         return viewingConversionService.convert(findViewings, view);
     }

@@ -4,7 +4,6 @@ import lombok.*;
 import org.hanihome.hanihomebe.global.BaseEntity;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.Property;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
