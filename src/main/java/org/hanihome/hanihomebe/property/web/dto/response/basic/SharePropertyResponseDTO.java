@@ -34,10 +34,6 @@ public record SharePropertyResponseDTO(
         String description,
         ShareInternalDetails internalDetails,                       // 2-6. 해당 매물의 층수
         CapacityShare capacityShare                             // 3. 수용 인원
-//        LocalDate meetingDateFrom,
-//        LocalDate meetingDateTo,
-//        List<TimeSlot> timeSlots,
-        // viewingAvailableDateTime는 응답에서 제외
 ) implements PropertyResponseDTO {
     public static SharePropertyResponseDTO from(ShareProperty shareProperty, List<OptionItemResponseDTO> optionItems) {
         if (shareProperty == null) {

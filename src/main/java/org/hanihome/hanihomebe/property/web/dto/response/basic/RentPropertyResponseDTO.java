@@ -33,10 +33,6 @@ public record RentPropertyResponseDTO(
         String description,
         RentInternalDetails internalDetails,
         CapacityRent capacityRent                  // (RentProperty 고유) 수용인원-렌트
-        //        LocalDate meetingDateFrom,
-//        LocalDate meetingDateTo,
-//        List<TimeSlot> timeSlots,
-        // viewingAvailableDateTime는 응답에서 제외
 )implements PropertyResponseDTO {
     public static RentPropertyResponseDTO from(RentProperty rentProperty, List<OptionItemResponseDTO> optionItems) {
 
