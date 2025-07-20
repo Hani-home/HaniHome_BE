@@ -6,13 +6,12 @@ import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
-import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
+import org.hanihome.hanihomebe.property.application.time.generator.ViewingAvailableDateTimeGenerator;
+import org.hanihome.hanihomebe.property.application.time.validator.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.vo.*;
-import org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval;
 
 import java.util.ArrayList;
 
@@ -64,28 +63,7 @@ public record RentPropertyCreateRequestDTO(
         }
 
         // ViewingAvailableDateTime 변환
-        LocalDate tempDate = meetingDateFrom;
-        while (tempDate.isBefore(meetingDateTo) || tempDate.isEqual(meetingDateTo)) {
-            log.info("현재 DTO 생성중의 date:{}", tempDate.toString() );
-            LocalDate finalTempDate = tempDate;
-            List<ViewingAvailableDateTime> finalViewingAvailableDateTimes = viewingAvailableDateTimes;
-            timeSlots.forEach(timeSlot -> {
-                LocalTime timeFrom = timeSlot.getTimeFrom();
-                LocalTime timeTo = timeSlot.getTimeTo();
-                while(timeFrom.isBefore(timeTo)) {
-                    ViewingAvailableDateTime viewingAvailableDateTime = new ViewingAvailableDateTime(finalTempDate,
-                            timeFrom,
-                            false,
-                            ViewingTimeInterval.MINUTE30);
-                    finalViewingAvailableDateTimes.add(viewingAvailableDateTime);
-                    timeFrom = timeFrom.plusMinutes(30);
-                }
-            });
-            tempDate = tempDate.plusDays(1);
-        }
-        log.info("meetingDateFrom: {}, meetingDateTo: {}", meetingDateFrom, meetingDateTo);
-        log.info("viewingAvailableDateTimes: {}", viewingAvailableDateTimes.stream().map(viewingAvailableDateTime -> viewingAvailableDateTime.getTime()).toList());
+        viewingAvailableDateTimes = ViewingAvailableDateTimeGenerator.generate(meetingDateFrom, meetingDateTo, timeSlots);
+
     }
-
-
 }
