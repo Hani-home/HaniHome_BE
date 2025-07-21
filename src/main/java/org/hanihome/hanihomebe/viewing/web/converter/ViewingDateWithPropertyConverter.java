@@ -33,10 +33,13 @@ public class ViewingDateWithPropertyConverter implements ViewingConverter<Viewin
 
         String counterPartNickname = getCounterPartNickname(viewingConvertContext.getRequesterId(), viewing);
 
+        boolean isGuest = viewingConvertContext.getRequesterId().equals(viewing.getMember().getId());
+
         return ViewingDateWithPropertyDTO.from(
                 viewing.getMeetingDay(),
                 propertySummaryDTO,
-                counterPartNickname
+                counterPartNickname,
+                isGuest
         );
     }
 

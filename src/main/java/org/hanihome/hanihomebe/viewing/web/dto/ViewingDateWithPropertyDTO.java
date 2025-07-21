@@ -7,11 +7,14 @@ import java.time.LocalDateTime;
 public record ViewingDateWithPropertyDTO(
         LocalDateTime meetingDay,
         PropertySummaryDTO property,
-        String counterpartNickname
+        String counterpartNickname,
+        boolean canSeeViewingDetail
 ) implements ViewingDTOByView {
     public static ViewingDateWithPropertyDTO from(LocalDateTime meetingDay,
                                                   PropertySummaryDTO property,
-                                                  String counterpartNickname) {
-        return new ViewingDateWithPropertyDTO(meetingDay, property, counterpartNickname);
+                                                  String counterpartNickname,
+                                                  boolean canSeeViewingDetail
+                                                  ) {
+        return new ViewingDateWithPropertyDTO(meetingDay, property, counterpartNickname, canSeeViewingDetail);
     }
 }
