@@ -23,9 +23,12 @@ public record RentPropertySummaryDTO(
         String thumbnailUrl,
         LocalDateTime createdAt,
         int wishCount,
-        TradeStatus tradeStatus
+        TradeStatus tradeStatus,
+        MetaInfo metaInfo
 ) implements PropertySummaryDTO {
-    public static RentPropertySummaryDTO from(RentProperty entity, NearestMetroStopResponseDTO nearestMetroStopResponseDTO) {
+    public static RentPropertySummaryDTO from(RentProperty entity,
+                                              NearestMetroStopResponseDTO nearestMetroStopResponseDTO,
+                                              MetaInfo metaInfo) {
         return new RentPropertySummaryDTO(
                 entity.getId(),
                 entity.getKind(),
@@ -39,7 +42,8 @@ public record RentPropertySummaryDTO(
                 entity.getThumbnailUrl(),
                 entity.getCreatedAt(),
                 entity.getWishCount(),
-                entity.getTradeStatus()
+                entity.getTradeStatus(),
+                metaInfo
         );
     }
 

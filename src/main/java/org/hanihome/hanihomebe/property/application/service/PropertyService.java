@@ -21,6 +21,7 @@ import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
 import org.hanihome.hanihomebe.property.web.dto.request.PropertyCompleteTradeDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.patch.PropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
@@ -53,7 +54,7 @@ public class PropertyService {
 
     /// create
     @Transactional
-    public PropertyResponseDTO createProperty(PropertyCreateRequestDTO dto){
+    public PropertyWithMemberResponseDTO createProperty(PropertyCreateRequestDTO dto){
         log.info("property 생성 로직 진입");
 
         Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
@@ -98,7 +99,7 @@ public class PropertyService {
     /**
      * 단일 Property 조회 (부모 타입으로 조회)
      */
-    public PropertyResponseDTO getPropertyById(Long id) {
+    public PropertyWithMemberResponseDTO getPropertyById(Long id) {
         Property findProperty = propertyRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
 
@@ -178,7 +179,7 @@ public class PropertyService {
     /// update
 
     @Transactional
-    public PropertyResponseDTO patch(Long propertyId, PropertyPatchRequestDTO dto) {
+    public PropertyWithMemberResponseDTO patch(Long propertyId, PropertyPatchRequestDTO dto) {
         Property findProperty = propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found: " + propertyId));
         List<PropertyOptionItem> propertyOptionItems = dto.getOptionItemIds() == null ? null
                 : createPropertyOptionItems(dto, findProperty);

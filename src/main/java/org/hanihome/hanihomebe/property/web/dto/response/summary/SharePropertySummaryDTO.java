@@ -23,9 +23,13 @@ public record SharePropertySummaryDTO(
         String thumbnailUrl,
         LocalDateTime createdAt,
         int wishCount,
-        TradeStatus tradeStatus
+        TradeStatus tradeStatus,
+        MetaInfo metaInfo
 ) implements PropertySummaryDTO {
-    public static SharePropertySummaryDTO from(ShareProperty entity, NearestMetroStopResponseDTO nearestMetroStopResponseDTO) {
+    public static SharePropertySummaryDTO from(ShareProperty entity,
+                                               NearestMetroStopResponseDTO nearestMetroStopResponseDTO,
+                                               MetaInfo metaInfo
+                                               ) {
         return new SharePropertySummaryDTO(
                 entity.getId(),
                 entity.getKind(),
@@ -39,7 +43,8 @@ public record SharePropertySummaryDTO(
                 entity.getThumbnailUrl(),
                 entity.getCreatedAt(),
                 entity.getWishCount(),
-                entity.getTradeStatus()
+                entity.getTradeStatus(),
+                metaInfo
         );
     }
 

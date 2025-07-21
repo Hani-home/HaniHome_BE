@@ -108,6 +108,9 @@ public enum ServiceCode {
     NOT_DEFINED_ERROR_FROM_WRAPPER(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다 from Wrapper"),
     NOT_DEFINED_ERROR_FROM_FILTER(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다 from 필터"),
     NOT_DEFINED_ERROR(HttpStatus.BAD_REQUEST, "정의 되지 않은 에러입니다"),
+
+    // security 인증/인가
+    NEED_TO_AUTHENTICATED(HttpStatus.INTERNAL_SERVER_ERROR, "해당 요청은 인증이 필요합니다. 하지만 로그인되지 않은 사용자가 필터를 통과했습니다."),
     ;
 
     private final HttpStatus httpStatus;

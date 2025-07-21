@@ -10,6 +10,7 @@ import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
 import org.hanihome.hanihomebe.property.web.dto.request.PropertyCompleteTradeDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.patch.PropertyPatchRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
@@ -30,7 +31,7 @@ public class PropertyController {
 
     //create
     @PostMapping("/properties")
-    public PropertyResponseDTO createProperty(@RequestBody @Valid PropertyCreateRequestDTO dto) {
+    public PropertyWithMemberResponseDTO createProperty(@RequestBody @Valid PropertyCreateRequestDTO dto) {
         return propertyService.createProperty(dto);
     }
 
@@ -44,7 +45,7 @@ public class PropertyController {
     }
 
     @GetMapping("/properties/{propertyId}")
-    public PropertyResponseDTO getPropertyById(@PathVariable Long propertyId) {
+    public PropertyWithMemberResponseDTO getPropertyById(@PathVariable Long propertyId) {
         return propertyService.getPropertyById(propertyId);
     }
 
@@ -94,7 +95,7 @@ public class PropertyController {
     }
 */
     @PatchMapping("/properties/{propertyId}")
-    public PropertyResponseDTO patch(@PathVariable("propertyId") Long propertyId,
+    public PropertyWithMemberResponseDTO patch(@PathVariable("propertyId") Long propertyId,
                                      @RequestBody @Valid PropertyPatchRequestDTO dto) throws JsonPatchException, IOException {
         return propertyService.patch(propertyId, dto);
     }

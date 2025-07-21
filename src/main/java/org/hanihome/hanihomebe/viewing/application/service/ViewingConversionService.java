@@ -1,17 +1,15 @@
 package org.hanihome.hanihomebe.viewing.application.service;
 
-import org.hanihome.hanihomebe.HaniHomeBeApplication;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.global.utility.SecurityContextUtils;
 import org.hanihome.hanihomebe.item.application.converter.OptionItemConverterForViewing;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
-import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
 import org.hanihome.hanihomebe.viewing.web.converter.ViewingConverter;
 import org.hanihome.hanihomebe.viewing.web.converter.context.ViewingConvertContext;
 import org.hanihome.hanihomebe.viewing.web.enums.ViewingViewType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +28,8 @@ public class ViewingConversionService {
     }
 
     public <T> T convert(Viewing viewing, ViewingViewType view) {
-        Long requesterId = getHttpRequesterId();
+        Long requesterId = SecurityContextUtils.getHttpRequesterId()
+                .orElseThrow(()->new CustomException(ServiceCode.NEED_TO_AUTHENTICATED));
         List<OptionItemResponseDTO> optionItemResponseDTOs = optionItemConverter.toOptionItemResponseDTO(List.copyOf(viewing.getViewingOptionItems()));
 
         ViewingConverter<T> converter = getConverter(view);
@@ -43,7 +42,8 @@ public class ViewingConversionService {
     }
 
     private <T> List<T> convertViewingListToDTO(List<Viewing> viewings, ViewingViewType view) {
-        Long requesterId = getHttpRequesterId();
+        Long requesterId = SecurityContextUtils.getHttpRequesterId()
+                .orElseThrow(()->new CustomException(ServiceCode.NEED_TO_AUTHENTICATED));
         ViewingConverter<T> converter = getConverter(view);
 
         return viewings.stream()
@@ -52,18 +52,6 @@ public class ViewingConversionService {
                     return converter.convert(ViewingConvertContext.create(viewing, requesterId, optionItemResponseDTOs));
                 })
                 .toList();
-    }
-
-    private static Long getHttpRequesterId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = getCustomUserDetails(auth);
-        Long requesterId = userDetails.getUserId();
-        return requesterId;
-    }
-
-    private static CustomUserDetails getCustomUserDetails(Authentication auth) {
-        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
-        return userDetails;
     }
 
     private <T> ViewingConverter<T> getConverter(ViewingViewType type) {

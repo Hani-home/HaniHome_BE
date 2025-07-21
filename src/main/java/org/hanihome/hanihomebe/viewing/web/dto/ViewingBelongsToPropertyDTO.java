@@ -11,7 +11,7 @@ public record ViewingBelongsToPropertyDTO(
         String propertyThumbnailUrl,
         LocalDate meetingDate,
         LocalTime meetingTime
-) {
+) implements ViewingDTOByView{
     public static ViewingBelongsToPropertyDTO create(Long viewingId, Long guestId, String guestNickName, String guestThumbnailUrl, String propertyThumbnailUrl, LocalDate meetingDate, LocalTime meetingTime) {
         return new ViewingBelongsToPropertyDTO(
                 viewingId,
