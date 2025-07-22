@@ -21,4 +21,6 @@ public class ShareInternalDetails {
     private Integer totalFloors;     // 2-5. 건물 총 층수
 
     private Integer propertyFloor;   // 2-6. 해당 매물의 층수
+
+    //피그마 상에 집주인과 함께 거주 부분 존재하는데 이건 어디서 다루나용?
 }

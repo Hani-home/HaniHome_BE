@@ -3,5 +3,6 @@ package org.hanihome.hanihomebe.verification.domain;
 public enum VerificationType {
     ID_CARD,
     PASSPORT,
-    DRIVER_LICENSE
+    DRIVER_LICENSE,
+    RESIDENT_PERMIT
 }

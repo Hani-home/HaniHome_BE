@@ -129,6 +129,7 @@ public abstract class Property {
      */
     private LocalDate meetingDateFrom;
     private LocalDate meetingDateTo;
+    //기한 상관 없음은 그냥 null이면 기한 상관없는건가 or 다른 형식?
 
     /**
      * 15-2 뷰잉 가능 시간
