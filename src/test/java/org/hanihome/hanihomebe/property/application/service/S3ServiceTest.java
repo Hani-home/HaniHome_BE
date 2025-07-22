@@ -1,12 +1,11 @@
 package org.hanihome.hanihomebe.property.application.service;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import org.hanihome.hanihomebe.s3.service.S3Service;
+import org.hanihome.hanihomebe.s3.application.service.S3Service;
 import org.hanihome.hanihomebe.s3.web.dto.S3ResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;

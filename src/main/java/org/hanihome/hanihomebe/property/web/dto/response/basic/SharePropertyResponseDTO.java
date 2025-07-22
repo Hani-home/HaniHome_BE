@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.property.web.dto.response;
+package org.hanihome.hanihomebe.property.web.dto.response.basic;
 
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
@@ -31,14 +31,9 @@ public record SharePropertyResponseDTO(
         CostDetails costDetails,
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
-        ParkingOption parkingOption,
         String description,
         ShareInternalDetails internalDetails,                       // 2-6. 해당 매물의 층수
         CapacityShare capacityShare                             // 3. 수용 인원
-//        LocalDate meetingDateFrom,
-//        LocalDate meetingDateTo,
-//        List<TimeSlot> timeSlots,
-        // viewingAvailableDateTime는 응답에서 제외
 ) implements PropertyResponseDTO {
     public static SharePropertyResponseDTO from(ShareProperty shareProperty, List<OptionItemResponseDTO> optionItems) {
         if (shareProperty == null) {
@@ -81,7 +76,6 @@ public record SharePropertyResponseDTO(
                 shareProperty.getCostDetails(),
                 shareProperty.getLivingConditions(),
                 shareProperty.getMoveInInfo(),
-                shareProperty.getParkingOption(),
                 shareProperty.getDescription(),
                 // share 고유정보
                 shareProperty.getShareInternalDetails(),

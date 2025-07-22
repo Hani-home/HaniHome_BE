@@ -43,4 +43,6 @@ public sealed interface PropertySummaryDTO
     int wishCount();
 
     TradeStatus tradeStatus();
+
+    MetaInfo metaInfo();
 }

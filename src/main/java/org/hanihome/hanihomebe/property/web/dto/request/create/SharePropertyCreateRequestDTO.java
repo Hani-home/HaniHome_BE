@@ -1,16 +1,17 @@
-package org.hanihome.hanihomebe.property.web.dto.request;
+package org.hanihome.hanihomebe.property.web.dto.request.create;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
-import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
+import org.hanihome.hanihomebe.property.application.time.MeetingDatePeriod;
+import org.hanihome.hanihomebe.property.application.time.PropertyCreateTimeManager;
+import org.hanihome.hanihomebe.property.application.time.generator.ViewingAvailableDateTimeGenerator;
+import org.hanihome.hanihomebe.property.application.time.validator.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.vo.*;
-import org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +27,6 @@ public record SharePropertyCreateRequestDTO(
         List<Long> optionItemIds,                   // 포함된 비용 항목 리스트
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
-        ParkingOption parkingOption,                // 주차 옵션
-//        Set<LocalDateTime> possibleMeetingDates,    // 뷰잉 가능 날짜 집합
         LocalDate meetingDateFrom,
         LocalDate meetingDateTo,
         List<TimeSlot> timeSlots,
@@ -54,35 +53,12 @@ public record SharePropertyCreateRequestDTO(
             validateLatitudeAndLongitude(region.getLatitude(), region.getLongitude());
         }
 
-        // 뷰잉 가능 시간 검증
-        boolean isValidTimeSlots = TimeSlotValidator.validateAllConditions(timeSlots);
-        if(!isValidTimeSlots) {
-            throw new CustomException(ServiceCode.INVALID_PROPERTY_TIME_SLOT);
+        // 타임슬롯 검증, 뷰잉 가능 시간 생성
+        if (viewingAlwaysAvailable) {
+            viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateTowMonthsOfViewingAvailableDateTimes(timeSlots);
+        } else {
+            MeetingDatePeriod meetingDatePeriod = MeetingDatePeriod.create(meetingDateFrom, meetingDateTo);
+            viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateViewingAvailableDateTimes(timeSlots, meetingDatePeriod);
         }
-
-        // ViewingAvailableDateTime 변환
-        // TODO: 해당 변환을 별도의 클래스에 위임하고 서비스에서 호출하는 것이 나아보임
-        LocalDate tempDate = meetingDateFrom;
-        while (tempDate.isBefore(meetingDateTo) || tempDate.isEqual(meetingDateTo)) {
-            log.info("현재 DTO 생성중의 date:{}", tempDate.toString() );
-            LocalDate finalTempDate = tempDate;
-            List<ViewingAvailableDateTime> finalViewingAvailableDateTimes = viewingAvailableDateTimes;
-            timeSlots.forEach(timeSlot -> {
-                LocalTime timeFrom = timeSlot.getTimeFrom();
-                LocalTime timeTo = timeSlot.getTimeTo();
-                while(timeFrom.isBefore(timeTo)) {
-                    ViewingAvailableDateTime viewingAvailableDateTime = new ViewingAvailableDateTime(finalTempDate,
-                            timeFrom,
-                            false,
-                            ViewingTimeInterval.MINUTE30);
-                    finalViewingAvailableDateTimes.add(viewingAvailableDateTime);
-                    timeFrom = timeFrom.plusMinutes(30);
-                }
-            });
-            tempDate = tempDate.plusDays(1);
-        }
-        log.info("meetingDateFrom: {}, meetingDateTo: {}", meetingDateFrom, meetingDateTo);
-        log.info("viewingAvailableDateTimes: {}", viewingAvailableDateTimes.stream().map(viewingAvailableDateTime -> viewingAvailableDateTime.getTime()).toList());
-
     }
 }

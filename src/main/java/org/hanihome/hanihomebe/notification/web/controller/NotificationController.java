@@ -40,4 +40,10 @@ public class NotificationController {
         // 추가 검증 로직(작성자 검사) 필요 시 넣을 수 있음
         notificationService.markAsRead(notificationId);
     }
+
+    @DeleteMapping("/{notificationId}")
+    public void deleteViewing(@PathVariable Long notificationId,
+                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+        notificationService.deleteNotificationById(userDetails.getUserId(), notificationId);
+    }
 }

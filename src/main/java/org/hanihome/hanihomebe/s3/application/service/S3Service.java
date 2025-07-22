@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.s3.service;
+package org.hanihome.hanihomebe.s3.application.service;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 import java.net.URISyntaxException;
 import java.time.Duration;
+import java.util.List;
 
 @Service
 public class S3Service {
@@ -88,5 +89,11 @@ public class S3Service {
         } catch (URISyntaxException e) {
             throw new CustomException(ServiceCode.S3_URI_CONVERSION_ERROR, e);
         }
+    }
+
+    public List<S3ResponseDTO> generatePresignedUrls(List<String> fileNames, String folder) {
+        return fileNames.stream()
+                .map(fileName -> generatePresignedUrl(fileName, folder))
+                .toList();
     }
 }

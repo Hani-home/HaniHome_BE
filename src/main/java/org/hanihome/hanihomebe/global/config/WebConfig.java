@@ -23,7 +23,7 @@ public class WebConfig {
                                 "https://api.hanihome.app"
 
                         ) // 프론트 주소
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
                         .exposedHeaders("Authorization")
                         .allowCredentials(true); // ✅ 쿠키 전송 허용

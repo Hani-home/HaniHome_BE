@@ -8,6 +8,7 @@ import org.hanihome.hanihomebe.property.domain.RentProperty;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
+import org.hanihome.hanihomebe.property.web.dto.response.summary.MetaInfo;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.RentPropertySummaryDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.SharePropertySummaryDTO;
@@ -24,16 +25,25 @@ public class PropertySummaryConverter implements PropertyConverter<PropertySumma
 
     @Override
     public PropertySummaryDTO convert(PropertyConvertContext propertyConvertContext) {
-        return toSummaryDTO(propertyConvertContext.getProperty(), propertyConvertContext.getNearestMetroStopResponseDTO());
+        return toSummaryDTO(propertyConvertContext.getProperty(),
+                propertyConvertContext.getNearestMetroStopResponseDTO(),
+                propertyConvertContext.getMetaInfo()
+        );
     }
 
-    PropertySummaryDTO toSummaryDTO(Property entity, NearestMetroStopResponseDTO nearestMetroStopResponseDTO) {
+    PropertySummaryDTO toSummaryDTO(Property entity,
+                                    NearestMetroStopResponseDTO nearestMetroStopResponseDTO,
+                                    MetaInfo metaInfo) {
         PropertySuperType propertyType = entity.getKind();
         switch (propertyType) {
             case SHARE:
-                return SharePropertySummaryDTO.from(safeCast(entity, ShareProperty.class), nearestMetroStopResponseDTO);
+                return SharePropertySummaryDTO.from(safeCast(entity, ShareProperty.class),
+                        nearestMetroStopResponseDTO,
+                        metaInfo);
             case RENT:
-                return RentPropertySummaryDTO.from(safeCast(entity, RentProperty.class), nearestMetroStopResponseDTO);
+                return RentPropertySummaryDTO.from(safeCast(entity, RentProperty.class),
+                        nearestMetroStopResponseDTO,
+                        metaInfo);
             default:
                 throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
         }

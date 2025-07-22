@@ -66,6 +66,7 @@ public class Member extends BaseEntity {
     @Column(name = "profile_image", length = 1000)
     private String profileImage;
 
+    @Builder.Default // 테스트 코드 오류때문에 일단 추가합니다
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Verification> verifications = new ArrayList<>();
 

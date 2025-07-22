@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.property.application;
+package org.hanihome.hanihomebe.property.application.time.validator;
 
 import org.hanihome.hanihomebe.property.domain.vo.TimeSlot;
 import org.springframework.stereotype.Component;

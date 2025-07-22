@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 @RequiredArgsConstructor
 @Component
 public class ScopeInitializer {
@@ -21,7 +22,7 @@ public class ScopeInitializer {
     private final OptionCategoryRepository categoryRepository;
 
 
-    void initialize() {
+    public void initialize() {
         initializeScopeType();
         initializeOptionCategoryScope();
     }
@@ -115,12 +116,13 @@ public class ScopeInitializer {
     }
 
     private CategoryCode[] getPropertyCategories() {
-        return new CategoryCode[] {
-            CategoryCode.PROPERTY_CAT1,
-            CategoryCode.PROPERTY_CAT2,
-            CategoryCode.PROPERTY_CAT3,
-            CategoryCode.PROPERTY_CAT4,
-            CategoryCode.PROPERTY_CAT5
+        return new CategoryCode[]{
+                CategoryCode.PROPERTY_CAT1,
+                CategoryCode.PROPERTY_CAT2,
+                CategoryCode.PROPERTY_CAT3,
+                CategoryCode.PROPERTY_CAT4,
+                CategoryCode.PROPERTY_CAT5,
+                CategoryCode.PROPERTY_CAT6,
         };
     }
 

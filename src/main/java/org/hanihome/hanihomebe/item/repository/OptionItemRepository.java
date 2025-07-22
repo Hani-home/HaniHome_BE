@@ -20,5 +20,6 @@ public interface OptionItemRepository extends JpaRepository<OptionItem, Long> {
 
     List<OptionItem> findAllByOptionCategory_CategoryCode(CategoryCode optionCategoryCategoryCode);
 
+    List<OptionItem> findByItemName(String itemName);
 }
 

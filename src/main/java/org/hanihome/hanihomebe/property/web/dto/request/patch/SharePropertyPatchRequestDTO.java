@@ -1,8 +1,8 @@
-package org.hanihome.hanihomebe.property.web.dto.request;
+package org.hanihome.hanihomebe.property.web.dto.request.patch;
 
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
-import org.hanihome.hanihomebe.property.application.TimeSlotValidator;
+import org.hanihome.hanihomebe.property.application.time.validator.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.vo.ShareInternalDetails;
 import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.command.SharePropertyPatchCommand;
@@ -40,14 +40,12 @@ public class SharePropertyPatchRequestDTO extends PropertyPatchRequestDTO {
                 .costDetails(super.getCostDetails())
                 .livingConditions(super.getLivingConditions())
                 .moveInInfo(super.getMoveInInfo())
-                .parkingOption(super.getParkingOption())
                 .meetingDateFrom(super.getMeetingDateFrom())
                 .meetingDateTo(super.getMeetingDateTo())
                 .timeSlots(super.getTimeSlots())
                 .viewingAlwaysAvailable(super.getViewingAlwaysAvailable())
                 .description(super.getDescription())
                 .displayStatus(super.getDisplayStatus())
-                .tradeStatus(super.getTradeStatus())
 
                 // ShareProperty 전용 필드
                 .sharePropertySubType(this.sharePropertySubType)

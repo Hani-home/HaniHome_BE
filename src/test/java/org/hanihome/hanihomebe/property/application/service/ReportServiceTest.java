@@ -9,17 +9,15 @@ import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.ShareProperty;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
-import org.hanihome.hanihomebe.property.domain.enums.ParkingOption;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
-import org.hanihome.hanihomebe.property.web.dto.request.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.report.application.domain.ReportTargetType;
 import org.hanihome.hanihomebe.report.service.ReportService;
 import org.hanihome.hanihomebe.report.web.dto.ReportRequestDTO;
 import org.hanihome.hanihomebe.report.web.dto.ReportResponseDTO;
-import org.hanihome.hanihomebe.verification.web.dto.VerificationResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -118,7 +116,6 @@ public class ReportServiceTest {
                         List.of(1L,2L,3L),        // optionItemIds
                         livingConditions,
                         moveInInfo,
-                        ParkingOption.STREET_PARKING,
                         meetingDateFrom,
                         meetingDateTo,
                         timeSlots,

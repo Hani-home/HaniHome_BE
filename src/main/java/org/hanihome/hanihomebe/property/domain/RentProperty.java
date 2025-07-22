@@ -15,7 +15,7 @@ import org.hanihome.hanihomebe.property.domain.enums.Exposure;
 import org.hanihome.hanihomebe.property.domain.enums.RealEstateType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
 import org.hanihome.hanihomebe.property.domain.vo.RentInternalDetails;
-import org.hanihome.hanihomebe.property.web.dto.request.RentPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.RentPropertyCreateRequestDTO;
 
 @Entity
 @DiscriminatorValue("RENT")
@@ -56,7 +56,6 @@ public class RentProperty extends Property {
                 .costDetails(dto.costDetails())
                 .livingConditions(dto.livingConditions())
                 .moveInInfo(dto.moveInInfo())
-                .parkingOption(dto.parkingOption())
                 .meetingDateFrom(dto.meetingDateFrom())
                 .meetingDateTo(dto.meetingDateTo())
                 .timeSlots(dto.timeSlots())

@@ -2,22 +2,19 @@ package org.hanihome.hanihomebe.viewing.web.converter.context;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
-import org.hanihome.hanihomebe.viewing.web.converter.ViewingConverter;
 
-import java.util.Map;
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
 public class ViewingConvertContext {
     private final Viewing viewing;
-    private final Map<String, Object> extra;
+    private final Long requesterId;
+    private final List<OptionItemResponseDTO> optionItems;
 
-    public <V> V getExtra(String key) {
-        return (V) extra.get(key);
-    }
-
-    public static ViewingConvertContext create(Viewing viewing, Map<String, Object> extra) {
-        return new ViewingConvertContext(viewing, extra);
+    public static ViewingConvertContext create(Viewing viewing, Long requesterId, List<OptionItemResponseDTO> optionItems) {
+        return new ViewingConvertContext(viewing, requesterId, optionItems);
     }
 }

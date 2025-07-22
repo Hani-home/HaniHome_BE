@@ -2,13 +2,12 @@ package org.hanihome.hanihomebe.viewing.web.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
-import org.hanihome.hanihomebe.viewing.domain.ViewingOptionItem;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Getter
@@ -32,19 +31,13 @@ public class ViewingResponseDTO implements ViewingDTOByView {
 
     private final String memo;            // 매물 노트 - 메모
 
-    private final List<String> optionItemNames; // 체크리스트
+    private final List<OptionItemResponseDTO> optionItems; // 체크리스트, 취소이유
 
 
-    public static ViewingResponseDTO from(Viewing viewing) {
+    public static ViewingResponseDTO from(Viewing viewing, List<OptionItemResponseDTO> optionItems) {
         List<String> photoUrls = viewing.getPhotoUrls() == null
                 ? List.of()
                 : List.copyOf(viewing.getPhotoUrls());
-
-        List<String> optionItemNames = viewing.getViewingOptionItems() == null
-                ? List.of()
-                : viewing.getViewingOptionItems().stream()
-                .map(ViewingOptionItem::getOptionItemName)
-                .collect(Collectors.toList());
 
         return ViewingResponseDTO.builder()
                 .id(viewing.getId())
@@ -56,7 +49,7 @@ public class ViewingResponseDTO implements ViewingDTOByView {
                 .cancelReason(viewing.getCancelReason())
                 .photoUrls(photoUrls)
                 .memo(viewing.getMemo())
-                .optionItemNames(optionItemNames)
+                .optionItems(optionItems)
                 .build();
     }
 }
