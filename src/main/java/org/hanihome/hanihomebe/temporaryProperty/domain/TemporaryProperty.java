@@ -30,6 +30,7 @@ import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
+import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.property.domain.vo.CostDetails;
 import org.hanihome.hanihomebe.property.domain.vo.LivingConditions;
 import org.hanihome.hanihomebe.property.domain.vo.MoveInInfo;
@@ -154,6 +155,16 @@ public abstract class TemporaryProperty {
 
     //이건 어떤 단계에 넣어야 할까?
     private String description;
+
+
+    public void addTemporaryPropertyOptionItem(TemporaryPropertyOptionItem temporaryPropertyOptionItem) {
+        optionItems.add(temporaryPropertyOptionItem);
+        temporaryPropertyOptionItem.setTemporaryProperty(this);
+    }
+
+    public void clearTemporaryPropertyOptionItems() {
+        this.optionItems.clear();
+    }
 
 
 
