@@ -1,0 +1,72 @@
+package org.hanihome.hanihomebe.temporaryProperty.application;
+
+
+import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.global.exception.CustomException;
+import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
+import org.hanihome.hanihomebe.temporaryProperty.StepValidationManager;
+import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
+import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
+import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
+import org.hanihome.hanihomebe.temporaryProperty.domain.enums.TemporaryPropertyStepStatus;
+import org.hanihome.hanihomebe.temporaryProperty.domain.repository.TemporaryPropertyRepository;
+import org.hanihome.hanihomebe.temporaryProperty.domain.repository.TemporaryRentPropertyRepository;
+import org.hanihome.hanihomebe.temporaryProperty.domain.repository.TemporarySharePropertyRepository;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class TemporaryPropertyService {
+
+    private final MemberRepository memberRepository;
+    private final StepValidationManager stepValidationManager;
+
+    private final TemporaryPropertyRepository temporaryPropertyRepository;
+    private final TemporaryRentPropertyRepository temporaryRentPropertyRepository;
+    private final TemporarySharePropertyRepository temporarySharePropertyRepository;
+
+
+
+    public void temporaryPropertyCheckAndSave(Long hostId, TemporaryPropertyStepSaveRequestDTO dto, Long id) {
+        //해당 멤버 존재하는지 확인
+        Member host = memberRepository.findById(hostId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
+
+        //해당 멤버로 저장된 거 3개 있으면 오류 반환
+        int savedCount = temporaryPropertyRepository.countByMember(host);
+        if(savedCount >= 3) {
+            throw new CustomException(ServiceCode.TEMPORARY_LIMIT_EXCEEDED);
+        }
+
+
+        //검증
+
+        stepValidationManager.validateUpToStep(dto);
+
+        //생성 or update. 으악 근데 if-else가 너무 많아....
+        if(id==null) {
+            TemporaryProperty temporaryProperty;
+
+            if(dto.getKind() == PropertySuperType.RENT) {
+                temporaryProperty = TemporaryRentProperty.create(dto, host);
+                temporaryRentPropertyRepository.save((TemporaryRentProperty) temporaryProperty);
+                //옵션 아이템 해줘야행... 근데 각 단계 싹모아서 넣어야함
+            } else if (dto.getKind() == PropertySuperType.SHARE) {
+                //
+                temporaryProperty  = TemporaryShareProperty.create(dto, host);
+                temporarySharePropertyRepository.save((TemporaryShareProperty) temporaryProperty);
+                //여기도 옵션아이템
+
+            }
+
+        } else {
+            //타입에 따라 따로 검증을..
+        }
+
+    }
+}

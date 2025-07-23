@@ -43,6 +43,11 @@ public enum ServiceCode {
     PROPERTY_PATCH_COMMAND_MISMATCH(HttpStatus.BAD_REQUEST, "매물 수정 Command의 타입이 잘못되었습니다"),
     PROPERTY_CONVERTER_MISMATCH(HttpStatus.BAD_REQUEST, "잘못된 PropertyConverter가 사용되었습니다"),
 
+    // Temporary_property
+    INVALID_TEMPORARY_PROPERTY(HttpStatus.BAD_REQUEST, "이때까지 진행된 모든 단계에 정보를 입력해주세요"),
+    TEMPORARY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "저장 가능한 매물은 최대 3개입니다."),
+
+
     // Viewing
     VIEWING_NUMBER_NOT_SATISFIED(HttpStatus.BAD_REQUEST, "요청 가능한 뷰잉 시간대는 최소 1개 최대 3개입니다"),
     VIEWING_ALREADY_PRESCHEDULED(HttpStatus.BAD_REQUEST, "요청한 뷰잉 시간대는 모두 사용자의 뷰잉 예약 일정과 겹칩니다"),

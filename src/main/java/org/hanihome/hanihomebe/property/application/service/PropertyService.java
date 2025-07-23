@@ -63,7 +63,7 @@ public class PropertyService {
 
         // TODO: 썸네일을 제대로 처리할 필요가있음
         property.setThumbnailUrl(dto.photoUrls() == null ? null : dto.photoUrls().get(0));
-        addPropertyOptionItem(dto.optionItemIds(), property);
+        addPropertyOptionItem(dto.optionItemIds(), property);//흠 이걸 어떻게 저장에서 구현하징... OptionItem은 2단계 매물상세(이 매물의 장점, 기본 제공 가전), 3단계 입주조건(흡연자, 반려동물...), 4단계 계약 사항 (빌에 포함된 항목)
 
         nearestMetroStopService.create(property);
 

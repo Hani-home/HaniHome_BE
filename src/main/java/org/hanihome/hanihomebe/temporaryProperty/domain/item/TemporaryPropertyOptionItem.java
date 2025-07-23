@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.temporaryProperty;
+package org.hanihome.hanihomebe.temporaryProperty.domain.item;
 
 
 import jakarta.persistence.Entity;
@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
+import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 
 import java.util.Objects;
 

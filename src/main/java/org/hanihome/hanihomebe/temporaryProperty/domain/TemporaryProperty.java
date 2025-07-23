@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.temporaryProperty;
+package org.hanihome.hanihomebe.temporaryProperty.domain;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -30,11 +30,12 @@ import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
-import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.property.domain.vo.CostDetails;
 import org.hanihome.hanihomebe.property.domain.vo.LivingConditions;
 import org.hanihome.hanihomebe.property.domain.vo.MoveInInfo;
 import org.hanihome.hanihomebe.property.domain.vo.TimeSlot;
+import org.hanihome.hanihomebe.temporaryProperty.domain.enums.TemporaryPropertyStepStatus;
+import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOptionItem;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -58,6 +59,10 @@ public abstract class TemporaryProperty {
     @Column(name = "temporary_property_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TemporaryPropertyStepStatus status;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -65,7 +70,7 @@ public abstract class TemporaryProperty {
     @LastModifiedDate
     private LocalDateTime lastModifiedAt;
 
-    //3개만 가질 수 있도록
+    //3개만 가질 수 있도록 이건 Authprincipal로 가져오기
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
