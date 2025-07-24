@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET,
-                                "api/v1/properties/categories/**",
+                                "/api/v1/properties/categories/**",
                                 "/api/v1/viewings/categories/**",
                                 "/api/v1/properties"
                         ).permitAll()

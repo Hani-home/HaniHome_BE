@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 public class SecurityContextUtils {
-
+    /*
     public static Optional<Long> getHttpRequesterId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
@@ -15,5 +15,24 @@ public class SecurityContextUtils {
         }
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         return Optional.of(userDetails.getUserId());
+    }
+     */
+
+    public static Optional<Long> getHttpRequesterId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+
+        //인증안된 친구
+        if (auth == null || !auth.isAuthenticated()) {
+            return Optional.empty();
+        }
+
+        //인증된 친구
+        Object principal = auth.getPrincipal();
+        if (principal instanceof CustomUserDetails customUserDetails) {
+            return Optional.of(customUserDetails.getUserId());
+        }
+
+        return Optional.empty();
     }
 }
