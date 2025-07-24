@@ -29,9 +29,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET,
-                                "api/v1/properties/categories/**",
+                                "/api/v1/properties/categories/**",
                                 "/api/v1/viewings/categories/**",
-                                "/api/v1/properties"
+                                "/api/v1/properties",
+                                "api/v1/properties/search"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/v1/auth/social/login",
