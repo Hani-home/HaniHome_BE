@@ -103,6 +103,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             log.error("Unexpected error in JwtAuthenticationFilter", e);
             setErrorResponse(response, NOT_DEFINED_ERROR_FROM_FILTER);
+            //여기서도 일단 다음 필터로 넘ㅇ겨야할까? SecurityConfig에서 확인하면 되려나
         }
     }
 
