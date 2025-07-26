@@ -36,7 +36,7 @@ public class ViewingDateWithPropertyConverter implements ViewingConverter<Viewin
         boolean isGuest = viewingConvertContext.getRequesterId().equals(viewing.getMember().getId());
 
         return ViewingDateWithPropertyDTO.from(
-                viewing.getMeetingDay(),
+                viewing,
                 propertySummaryDTO,
                 counterPartNickname,
                 isGuest
