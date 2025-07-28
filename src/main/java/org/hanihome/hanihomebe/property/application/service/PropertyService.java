@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.deal.application.service.DealService;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.global.utility.SecurityContextUtils;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.metro.application.service.NearestMetroStopService;
@@ -30,6 +31,7 @@ import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Security;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,10 +112,9 @@ public class PropertyService {
      * TradeStatus와 PropertyViewType을 인자로 받아 해당 조건에 맞는 매물을 조회하고 변환
      */
     public <T> List<T> getPropertiesByMemberId(Long memberId,
-                                               CustomUserDetails userDetails,
                                                TradeStatus tradeStatus,
                                                PropertyViewType view) {
-        DisplayStatus displayStatus = chooseDisplayStatusByOwnership(memberId, userDetails);
+        DisplayStatus displayStatus = chooseDisplayStatusByOwnership(memberId);
 
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
@@ -123,13 +124,14 @@ public class PropertyService {
         return propertyConversionService.convertProperties(findProperties, view);
     }
 
-    private static DisplayStatus chooseDisplayStatusByOwnership(Long memberId, CustomUserDetails userDetails) {
+    private static DisplayStatus chooseDisplayStatusByOwnership(Long propertyOwnerId) {
         DisplayStatus displayStatus;
-        if (userDetails == null) {                        // 일반 사용자별 매물 조회
+        Optional<Long> optRequesterId = SecurityContextUtils.getHttpRequesterId();
+        if (optRequesterId.isEmpty()) { // 비로그인 사용자
             displayStatus = DisplayStatus.ACTIVE;
-        } else if (userDetails.getUserId() == memberId) { // 매물 소유자
+        } else if (optRequesterId.get().equals(propertyOwnerId)) { // 소유자
             displayStatus = null;
-        } else {
+        } else { // 로그인 & 비소유자
             displayStatus = DisplayStatus.ACTIVE;
         }
         return displayStatus;
