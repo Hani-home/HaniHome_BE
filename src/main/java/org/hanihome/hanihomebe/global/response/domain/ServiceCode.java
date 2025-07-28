@@ -42,6 +42,8 @@ public enum ServiceCode {
     INVALID_LATITUDE_LONGITUDE(HttpStatus.BAD_REQUEST, "위도와 경도는 각각 +-90, +-180 내에 있어야합니다"),
     PROPERTY_PATCH_COMMAND_MISMATCH(HttpStatus.BAD_REQUEST, "매물 수정 Command의 타입이 잘못되었습니다"),
     PROPERTY_CONVERTER_MISMATCH(HttpStatus.BAD_REQUEST, "잘못된 PropertyConverter가 사용되었습니다"),
+    PROPERTY_IS_HIDDEN(HttpStatus.NOT_FOUND, "요청한 매물은 숨김처리되었습니다."),
+    PROPERTY_HAS_REQUESTED_VIEWINGS(HttpStatus.BAD_REQUEST, "요청한 매물은 예약확정 상태의 뷰잉이 존재합니다"),
 
     // Viewing
     VIEWING_NUMBER_NOT_SATISFIED(HttpStatus.BAD_REQUEST, "요청 가능한 뷰잉 시간대는 최소 1개 최대 3개입니다"),

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.deal.application.service.DealService;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.global.utility.SecurityContextUtils;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.metro.application.service.NearestMetroStopService;
@@ -23,10 +24,12 @@ import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateReq
 import org.hanihome.hanihomebe.property.web.dto.request.patch.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
-import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
+import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
+import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
+import org.springdoc.webmvc.core.service.RequestService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +52,8 @@ public class PropertyService {
     private final List<PropertyFactory> propertyFactories;
     private final DealService dealService;
     private final ViewingService viewingService;
+    private final RequestService requestService;
+    private final ViewingRepository viewingRepository;
 
 
     /// create
@@ -101,8 +106,15 @@ public class PropertyService {
     public PropertyWithMemberResponseDTO getPropertyById(Long id) {
         Property findProperty = propertyRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
+        if (guestApproachToHiddenProperty(findProperty)) {
+            throw new CustomException(ServiceCode.PROPERTY_IS_HIDDEN);
+        } else {
+            return propertyConversionService.convertProperty(findProperty, PropertyViewType.DEFAULT);
+        } 
+    }
 
-        return propertyConversionService.convertProperty(findProperty, PropertyViewType.DEFAULT);
+    private static boolean guestApproachToHiddenProperty(Property findProperty) {
+        return findProperty.getDisplayStatus().equals(DisplayStatus.INACTIVE) && (!requesterIsPropertyOwner(findProperty));
     }
 
     /**
@@ -110,10 +122,9 @@ public class PropertyService {
      * TradeStatus와 PropertyViewType을 인자로 받아 해당 조건에 맞는 매물을 조회하고 변환
      */
     public <T> List<T> getPropertiesByMemberId(Long memberId,
-                                               CustomUserDetails userDetails,
                                                TradeStatus tradeStatus,
                                                PropertyViewType view) {
-        DisplayStatus displayStatus = chooseDisplayStatusByOwnership(memberId, userDetails);
+        DisplayStatus displayStatus = chooseDisplayStatusByOwnership(memberId);
 
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
@@ -123,13 +134,14 @@ public class PropertyService {
         return propertyConversionService.convertProperties(findProperties, view);
     }
 
-    private static DisplayStatus chooseDisplayStatusByOwnership(Long memberId, CustomUserDetails userDetails) {
+    private static DisplayStatus chooseDisplayStatusByOwnership(Long propertyOwnerId) {
         DisplayStatus displayStatus;
-        if (userDetails == null) {                        // 일반 사용자별 매물 조회
+        Optional<Long> optRequesterId = SecurityContextUtils.getHttpRequesterId();
+        if (optRequesterId.isEmpty()) { // 비로그인 사용자
             displayStatus = DisplayStatus.ACTIVE;
-        } else if (userDetails.getUserId() == memberId) { // 매물 소유자
+        } else if (optRequesterId.get().equals(propertyOwnerId)) { // 소유자
             displayStatus = null;
-        } else {
+        } else { // 로그인 & 비소유자
             displayStatus = DisplayStatus.ACTIVE;
         }
         return displayStatus;
@@ -207,11 +219,18 @@ public class PropertyService {
     @Transactional
     public void deletePropertyById(Long id) {
         if (!propertyRepository.existsById(id)) {
-            throw new RuntimeException("Property not found: " + id);
+            throw new CustomException(ServiceCode.PROPERTY_NOT_EXISTS);
+        }
+        if (propertyHasViewingsInREQUESTED(id)) {
+            throw new CustomException(ServiceCode.PROPERTY_HAS_REQUESTED_VIEWINGS);
         }
         wishItemRepository.deleteAllByTargetTypeAndTargetId(WishTargetType.PROPERTY, id); //해당 찜하기 삭제
 
         propertyRepository.deleteById(id);
+    }
+
+    private boolean propertyHasViewingsInREQUESTED(Long id) {
+        return viewingRepository.findByProperty_IdAndStatus(id, ViewingStatus.REQUESTED).size() > 0;
     }
 
 
@@ -233,7 +252,7 @@ public class PropertyService {
         Property findProperty = propertyRepository.findById(dto.propertyId())
                 .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
 
-        validateRequesterIsOwner(dto.requesterId(), findProperty);
+        validateRequesterIsOwner(findProperty);
 
         if (dto.dealWithOutsider()) {
             changeStatusAndCancelViewingsInREQUESTED(findProperty);
@@ -256,9 +275,14 @@ public class PropertyService {
         viewingService.cancelViewingForCompletedProperty(findProperty.getId());
     }
 
-    private static void validateRequesterIsOwner(Long requesterId, Property findProperty) {
-        if (!requesterId.equals(findProperty.getMember().getId())) {
+    private static void validateRequesterIsOwner(Property findProperty) {
+//        Optional<Long> optRequesterId = SecurityContextUtils.getHttpRequesterId();
+        if (!requesterIsPropertyOwner(findProperty)) {
             throw new CustomException(ServiceCode.NO_OWNER_AUTHORITY);
         }
+    }
+
+    private static boolean requesterIsPropertyOwner(Property findProperty) {
+        return !(SecurityContextUtils.getHttpRequesterId().isEmpty() || !SecurityContextUtils.getHttpRequesterId().get().equals(findProperty.getMember().getId()));
     }
 }
