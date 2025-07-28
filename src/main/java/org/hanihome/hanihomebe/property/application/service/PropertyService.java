@@ -22,7 +22,6 @@ import org.hanihome.hanihomebe.property.web.dto.request.PropertyCompleteTradeDTO
 import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.patch.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
@@ -234,15 +233,32 @@ public class PropertyService {
         Property findProperty = propertyRepository.findById(dto.propertyId())
                 .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
 
-        if (!dto.requesterId().equals(findProperty.getMember().getId())) {
-            throw new CustomException(ServiceCode.NO_OWNER_AUTHORITY);
+        validateRequesterIsOwner(dto.requesterId(), findProperty);
+
+        if (dto.dealWithOutsider()) {
+            changeStatusAndCancelViewingsInREQUESTED(findProperty);
+        } else {
+            changeStatusAndCancelViewingsInREQUESTED(findProperty);
+            createDealWithGuest(dto);
         }
+
+    }
+
+    private Long createDealWithGuest(PropertyCompleteTradeDTO dto) {
+        // dto에서 전달받은 게스트에게만 구한매물로 취급
+        return dealService.createDeal(dto.viewingId());
+    }
+
+    private void changeStatusAndCancelViewingsInREQUESTED(Property findProperty) {
         // 매물 거래 완료
         findProperty.completeTrade();
         // 매물에 연결된 나머지 REQUESTED 뷰잉은 모두 취소로 상태 변경
         viewingService.cancelViewingForCompletedProperty(findProperty.getId());
+    }
 
-        // dto에서 전달받은 게스트에게만 구한매물로 취급
-        dealService.createDeal(dto.viewingId());
+    private static void validateRequesterIsOwner(Long requesterId, Property findProperty) {
+        if (!requesterId.equals(findProperty.getMember().getId())) {
+            throw new CustomException(ServiceCode.NO_OWNER_AUTHORITY);
+        }
     }
 }

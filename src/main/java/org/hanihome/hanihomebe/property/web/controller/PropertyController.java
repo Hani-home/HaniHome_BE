@@ -104,8 +104,9 @@ public class PropertyController {
     @PostMapping("/properties/{propertyId}/complete")
     public void completeTrade(@AuthenticationPrincipal CustomUserDetails userDetails,
                               @PathVariable Long propertyId,
-                              @RequestParam Long viewingId) {
-        PropertyCompleteTradeDTO dto = PropertyCompleteTradeDTO.create(userDetails.getUserId(), viewingId, propertyId);
+                              @RequestParam(required = false) Long viewingId,
+                              @RequestParam Boolean dealWithOutsider) {
+        PropertyCompleteTradeDTO dto = PropertyCompleteTradeDTO.create(userDetails.getUserId(), viewingId, propertyId, dealWithOutsider);
         propertyService.completeTrade(dto);
     }
 
