@@ -154,6 +154,21 @@ public class ViewingService {
             .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
         // 매물 예약된 시간 릴리즈
+        releasePropertyReservedTime(findViewing);
+
+        // 뷰잉 취소 옵션 아이템 추가
+        cancelViewingAndAddReason(dto.getCancelOptionItemIds(), findViewing, dto.getReason());
+
+        viewingRepository.save(findViewing);
+    }
+
+    private void cancelViewingAndAddReason(List<Long> cancelOptionItemIds, Viewing findViewing, String reason) {
+        List<ViewingOptionItem> viewingOptionItems = createViewingOptionItems(cancelOptionItemIds, findViewing);
+
+        findViewing.cancel(reason, viewingOptionItems);
+    }
+
+    private void releasePropertyReservedTime(Viewing findViewing) {
         LocalDateTime meetingDay = findViewing.getMeetingDay();
         ViewingAvailableDateTime reservedAvailableDateTime = findViewing.getProperty().getViewingAvailableDateTimes()
                 .stream()
@@ -162,16 +177,9 @@ public class ViewingService {
                 .findFirst().orElseThrow(() -> new CustomException(ServiceCode.VIEWING_TIME_MISMATCH));
         reservedAvailableDateTime.updateReservation(false);
         propertyRepository.save(findViewing.getProperty());
-
-        // 뷰잉 취소 옵션 아이템 추가
-        List<ViewingOptionItem> viewingOptionItems = createViewingOptionItems(dto.getAllOptionItemIds(), findViewing);
-
-        findViewing.cancel(dto.getReason(), viewingOptionItems);
-
-        viewingRepository.save(findViewing);
     }
 
-    // 매물에 연결되었고, status = REQUESTED인 뷰잉 취소
+    // 매물이 거래 완료되어 뷰잉 취소 : 매물에 연결되었고, status = REQUESTED인 뷰잉 취소
     @Transactional
     public void cancelViewingForCompletedProperty(Long propertyId) {
         List<Viewing> toCancelList = viewingRepository.findByProperty_IdAndStatus(propertyId, ViewingStatus.REQUESTED);
@@ -183,8 +191,7 @@ public class ViewingService {
 
         // 뷰잉 취소
         toCancelList.forEach(viewing -> {
-                    List<ViewingOptionItem> cancelReason = createViewingOptionItems(List.of(cancelReasonItem.getId()), viewing);
-                    viewing.cancel("뷰잉 예약된 매물의 거래가 종료되어 뷰잉이 취소되었습니다.", cancelReason);
+                    cancelViewingAndAddReason(List.of(cancelReasonItem.getId()), viewing, "뷰잉 예약된 매물의 거래가 종료되어 뷰잉이 취소되었습니다.");
                 }
         );
 
@@ -206,9 +213,13 @@ public class ViewingService {
         Viewing findViewing = viewingRepository.findById(viewingId)
                 .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
-        List<Long> cancelReasonItemIds = getSelectedOptionItemIdsInCategory(findViewing, CategoryCode.VIEWING_CAT1);
+        List<Long> cancelReasonItemIds = getSelectedOptionItemIdsInCategory(findViewing, List.of(CategoryCode.VIEWING_CAT1, CategoryCode.VIEWING_CAT3));
         log.info("cancelReasonItemIds: {}", cancelReasonItemIds);
-        return ViewingCancelResponseDTO.from(viewingId, cancelReasonItemIds, findViewing.getCancelReason());
+        List<OptionItemResponseDTO> cancelReasonOptionItems = optionItemRepository.findAllById(cancelReasonItemIds)
+                .stream()
+                .map(OptionItemResponseDTO::from)
+                .toList();
+        return ViewingCancelResponseDTO.from(viewingId, cancelReasonOptionItems, findViewing.getCancelReason());
     }
 
     /**
