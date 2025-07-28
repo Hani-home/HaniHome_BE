@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.item.application.converter.OptionItemConverterForViewing;
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.OptionCategory;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
+import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.Property;
@@ -51,6 +53,7 @@ public class ViewingService {
     private final OptionItemRepository optionItemRepository;
     private final OptionCategoryRepository optionCategoryRepository;
     private final ViewingConversionService viewingConversionService;
+    private final OptionItemConverterForViewing optionItemConverterForViewing;
 
     /**
      * 뷰잉 생성
@@ -142,7 +145,7 @@ public class ViewingService {
     }
 
     private Long getOwnerIdFromProperty(Long propertyId) {
-        return propertyRepository.findById(propertyId).orElseThrow().getMember().getId();
+        return propertyRepository.findById(propertyId).orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS)).getMember().getId();
     }
 
     /**
@@ -324,12 +327,21 @@ public class ViewingService {
         OptionCategory category = optionCategoryRepository.findByCategoryCode(categoryCode)
                 .orElseThrow(() -> new CustomException(ServiceCode.OPTION_CATEGORY_NOT_INITIALIZED));
 
-        List<Long> checklistItemIds = viewing.getViewingOptionItems()
+        List<Long> optionItemIds = viewing.getViewingOptionItems()
                 .stream()
                 .filter(viewingOptionItem -> viewingOptionItem.getOptionItem().getOptionCategory().equals(category))
                 .map(viewingOptionItem -> viewingOptionItem.getOptionItem().getId())
                 .toList();
-        return checklistItemIds;
+        return optionItemIds;
+    }
+    private List<Long> getSelectedOptionItemIdsInCategory(Viewing viewing, List<CategoryCode> categoryCodes) {
+        List<Long> optionItemIds = new ArrayList<>();
+
+        categoryCodes.forEach(categoryCode -> {
+            optionItemIds.addAll(getSelectedOptionItemIdsInCategory(viewing, categoryCode));
+        });
+
+        return optionItemIds;
     }
 
     /**
