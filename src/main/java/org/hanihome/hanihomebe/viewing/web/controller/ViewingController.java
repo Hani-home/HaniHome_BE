@@ -77,8 +77,9 @@ public class ViewingController {
     //매물에 속한 뷰잉 정보 조회
     @GetMapping("/properties/{propertyId}/viewings")
     public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(@PathVariable Long propertyId,
+                                                                          @RequestParam(required = false) List<ViewingStatus> status,
                                                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return viewingService.getViewingsBelongsToProperty(userDetails.getUserId(), propertyId);
+        return viewingService.getViewingsBelongsToProperty(userDetails.getUserId(), propertyId, status);
     }
 
     // cancel

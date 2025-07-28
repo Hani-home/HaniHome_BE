@@ -12,7 +12,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 @Repository
-public interface ViewingRepository extends JpaRepository<Viewing, Long> {
+public interface ViewingRepository extends JpaRepository<Viewing, Long>, CustomViewingRepository{
     /**
      * 특정 사용자의 예정되어있는 뷰잉 조회
      * @param member :뷰잉 당사자

@@ -128,10 +128,10 @@ public class ViewingService {
     }
 
     /// 매물에 속한 뷰잉 조회
-    public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(Long memberId, Long propertyId) {
+    public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(Long memberId, Long propertyId, List<ViewingStatus> statusList) {
         validateRequesterIsPropertyOwner(memberId, propertyId);
 
-        List<Viewing> belongsTo = viewingRepository.findByProperty_Id(propertyId);
+        List<Viewing> belongsTo = viewingRepository.findByPropertyAndStatusList(propertyId, statusList);
         return viewingConversionService.convert(belongsTo, ViewingViewType.BELONGS_TO_PROPERTY);
     }
 
