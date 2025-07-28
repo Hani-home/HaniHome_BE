@@ -198,6 +198,22 @@ public class ViewingService {
         viewingRepository.saveAll(toCancelList);
     }
 
+    @Transactional
+    public void cancelViewingForInactiveProperty(Long userId, Long propertyId) {
+        validateRequesterIsPropertyOwner(userId, propertyId);
+
+        List<Long> viewingsToCancel = getViewingsBelongsToProperty(userId, propertyId, List.of(ViewingStatus.REQUESTED))
+                .stream()
+                .map(viewingDTO -> viewingDTO.viewingId())
+                .toList();
+
+        OptionItem cancelItem = optionItemRepository.findByItemNameAndParentIsNullAndOptionCategory_CategoryCode("기타", CategoryCode.VIEWING_CAT3)
+                .orElseThrow(() -> new CustomException(ServiceCode.OPTION_ITEM_NOT_EXISTS));
+
+        viewingsToCancel.forEach(viewing -> this.cancelViewingAndReleaseReservedTimes(ViewingCancelRequestDTO.create(viewing, List.of(cancelItem.getId()), "매물 숨김 처리로 인해 뷰잉이 취소되었습니다.")));
+    }
+
+
     private List<ViewingOptionItem> createViewingOptionItems(List<Long> allOptionItemIds, Viewing findViewing) {
         List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(allOptionItemIds)
                 .stream()

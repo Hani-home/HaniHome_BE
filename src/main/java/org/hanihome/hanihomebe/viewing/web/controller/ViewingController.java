@@ -91,6 +91,11 @@ public class ViewingController {
         viewingNotificationService.sendViewingCanceledNotification(userDetails.getUserId(), dto.getViewingId());
     }
 
+    @PatchMapping("/properties/{propertyId}/viewings/cancel-all")
+    public void cancelAllViewingsBelongsToProperty(@PathVariable Long propertyId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        viewingService.cancelViewingForInactiveProperty(userDetails.getUserId(), propertyId);
+    }
+
     // 취소 이유 데이터 조회
     @GetMapping("/viewings/{viewingId}/cancel")
     public ViewingCancelResponseDTO getCancelInfo(@PathVariable Long viewingId) {
