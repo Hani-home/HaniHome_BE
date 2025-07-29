@@ -7,6 +7,7 @@ import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.notification.domain.Notification;
+import org.hanihome.hanihomebe.notification.domain.NotificationSendStatus;
 import org.hanihome.hanihomebe.notification.repository.NotificationRepository;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationResponseDTO;
@@ -36,7 +37,7 @@ public class NotificationService {
      * @return 알림 리스트
      */
     public List<Notification> getMyNotifications(Long userId, Boolean isRead) {
-        return notificationRepository.findMyNotificationAndIsReadOptional(userId, isRead);
+        return notificationRepository.findMyNotificationByIsReadOptionalAndSendStatus(userId, isRead, List.of(NotificationSendStatus.SUCCESS, NotificationSendStatus.FAILED));
     }
 
     /**

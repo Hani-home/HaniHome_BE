@@ -44,6 +44,7 @@ public enum ServiceCode {
     PROPERTY_CONVERTER_MISMATCH(HttpStatus.BAD_REQUEST, "잘못된 PropertyConverter가 사용되었습니다"),
     PROPERTY_IS_HIDDEN(HttpStatus.NOT_FOUND, "요청한 매물은 숨김처리되었습니다."),
     PROPERTY_HAS_REQUESTED_VIEWINGS(HttpStatus.BAD_REQUEST, "요청한 매물은 예약확정 상태의 뷰잉이 존재합니다"),
+    PROPERTY_DELETE_FAILED_HAS_RELATIONS(HttpStatus.INTERNAL_SERVER_ERROR, "매물과 연관된 엔티티가 남아있으므로 삭제에 실패했습니다."),
 
     // Viewing
     VIEWING_NUMBER_NOT_SATISFIED(HttpStatus.BAD_REQUEST, "요청 가능한 뷰잉 시간대는 최소 1개 최대 3개입니다"),
@@ -113,6 +114,7 @@ public enum ServiceCode {
 
     // security 인증/인가
     NEED_TO_AUTHENTICATED(HttpStatus.INTERNAL_SERVER_ERROR, "해당 요청은 인증이 필요합니다. 하지만 로그인되지 않은 사용자가 필터를 통과했습니다."),
+    DELETE_FAILED_HAS_RELATION(HttpStatus.INTERNAL_SERVER_ERROR, "연관된 엔티티가 있어 삭제에 실패했습니다"),
     ;
 
     private final HttpStatus httpStatus;

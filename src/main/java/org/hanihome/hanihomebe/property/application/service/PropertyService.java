@@ -9,6 +9,7 @@ import org.hanihome.hanihomebe.global.utility.SecurityContextUtils;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.metro.application.service.NearestMetroStopService;
+import org.hanihome.hanihomebe.metro.repository.NearestMetroStopRepository;
 import org.hanihome.hanihomebe.property.application.factory.PropertyFactory;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
@@ -30,6 +31,7 @@ import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
 import org.springdoc.webmvc.core.service.RequestService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +54,6 @@ public class PropertyService {
     private final List<PropertyFactory> propertyFactories;
     private final DealService dealService;
     private final ViewingService viewingService;
-    private final RequestService requestService;
     private final ViewingRepository viewingRepository;
 
 
@@ -218,15 +219,20 @@ public class PropertyService {
     /// delete
     @Transactional
     public void deletePropertyById(Long id) {
-        if (!propertyRepository.existsById(id)) {
-            throw new CustomException(ServiceCode.PROPERTY_NOT_EXISTS);
+            if (!propertyRepository.existsById(id)) {
+                throw new CustomException(ServiceCode.PROPERTY_NOT_EXISTS);
+            }
+            if (propertyHasViewingsInREQUESTED(id)) {
+                throw new CustomException(ServiceCode.PROPERTY_HAS_REQUESTED_VIEWINGS);
+            }
+            wishItemRepository.deleteAllByTargetTypeAndTargetId(WishTargetType.PROPERTY, id); //해당 찜하기 삭제
+            viewingRepository.deleteByProperty_Id(id);
+            nearestMetroStopService.deleteByPropertyId(id);
+        try {
+            propertyRepository.deleteById(id);
+        }catch (DataIntegrityViolationException e){
+            throw new CustomException(ServiceCode.PROPERTY_DELETE_FAILED_HAS_RELATIONS, e);
         }
-        if (propertyHasViewingsInREQUESTED(id)) {
-            throw new CustomException(ServiceCode.PROPERTY_HAS_REQUESTED_VIEWINGS);
-        }
-        wishItemRepository.deleteAllByTargetTypeAndTargetId(WishTargetType.PROPERTY, id); //해당 찜하기 삭제
-
-        propertyRepository.deleteById(id);
     }
 
     private boolean propertyHasViewingsInREQUESTED(Long id) {

@@ -28,4 +28,9 @@ public class NearestMetroStopService {
 
         return nearestMetroStopRepository.save(NearestMetroStop.create(findMetroStop, property, distance));
     }
+
+    @Transactional
+    public void deleteByPropertyId(Long propertyId) {
+        nearestMetroStopRepository.deleteByProperty_Id(propertyId);
+    }
 }

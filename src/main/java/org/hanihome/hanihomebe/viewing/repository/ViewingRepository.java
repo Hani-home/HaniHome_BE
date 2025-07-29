@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.viewing.repository;
 
 import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,4 +38,5 @@ public interface ViewingRepository extends JpaRepository<Viewing, Long>, CustomV
             "and (:status is null or :status = v.status)")
     List<Viewing> findViewingsAsHostAndStatus(Long memberId, ViewingStatus status);
 
+    void deleteByProperty_Id(Long propertyId);
 }
