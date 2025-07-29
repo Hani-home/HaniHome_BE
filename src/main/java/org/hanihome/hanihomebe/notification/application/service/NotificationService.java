@@ -37,7 +37,7 @@ public class NotificationService {
      * @return 알림 리스트
      */
     public List<Notification> getMyNotifications(Long userId, Boolean isRead) {
-        return notificationRepository.findMyNotificationByIsReadOptionalAndSendStatus(userId, isRead, NotificationSendStatus.SUCCESS);
+        return notificationRepository.findMyNotificationByIsReadOptionalAndSendStatus(userId, isRead, List.of(NotificationSendStatus.SUCCESS, NotificationSendStatus.FAILED));
     }
 
     /**
