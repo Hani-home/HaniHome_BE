@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -40,13 +41,14 @@ public class JwtUtils {
 
     }
 
-    public String generateAccessToken(Long userId, String role) {
+    public String generateAccessToken(Long userId, String role, String nickname) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_MS);
         System.out.println(expiryDate);
+        Map<String, Object> claims = Map.of("role", role, "nickname", nickname);
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
-                .claim("role", role)
+                .addClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -158,8 +160,8 @@ public class JwtUtils {
     public Authentication getAuthentication(String accessToken) {
         Long userId = Long.valueOf(getClaims(accessToken).getSubject());
         String role = getClaims(accessToken).get("role", String.class);
-
-        CustomUserDetails userDetails = new CustomUserDetails(userId, role, null);
+        String nickname = getClaims(accessToken).get("nickname", String.class);
+        CustomUserDetails userDetails = new CustomUserDetails(userId, role, null, nickname);
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }

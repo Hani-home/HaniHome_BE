@@ -100,11 +100,12 @@ public class Member extends BaseEntity {
                 .build();
     }
 
-    public static Member createFrom(String email, String password, Role role) {
+    public static Member createFrom(String email, String password, Role role, String nickname) {
         return Member.builder()
                 .email(email)
                 .password(password)
                 .role(role)
+                .nickname(nickname)
                 .build();
     }
 

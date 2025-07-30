@@ -1,5 +1,6 @@
 package org.hanihome.hanihomebe.security.auth.user.detail;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,17 +9,13 @@ import java.util.Collection;
 import java.util.Collections;
 
 //사용자 정보 관리하는 구현체 => SecurityContext에 등록됨
-//지금은 간단히 userId, role을 담을 것임. 추후에 확정 예정
+// TODO: 지금은 간단히 userId, role을 담을 것임. 추후에 확정 예정
+@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private final Long userId;
     private final String role;
     private final String password;
-
-    public CustomUserDetails(Long userId, String role, String password) {
-        this.userId = userId;
-        this.role = role;
-        this.password = password;
-    }
+    private final String nickname;
 
     public Long getUserId() {
         return userId;
@@ -38,7 +35,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return String.valueOf(userId); // 나중에 email 등으로 확장 가능
+        return nickname;
     }
 
 

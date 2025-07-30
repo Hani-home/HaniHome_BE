@@ -103,7 +103,7 @@ public class AuthService {
         boolean isNewUser = !member.isRegistered();
 
         //유저 정보 바탕으로 액세스 토큰, 리프레시 토큰 발급
-        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
+        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name(), member.getNickname());
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());
 
         //리프레시 토큰은 redis에 저장
@@ -210,7 +210,7 @@ public class AuthService {
         }
 
         //JWT 발급
-        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
+        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name(), member.getNickname());
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());
 
         RefreshToken tokenEntity = RefreshToken.builder()
@@ -240,10 +240,11 @@ public class AuthService {
 
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
-
         String role = member.getRole().name();
+        String nickname = member.getNickname();
 
-        return jwtUtils.generateAccessToken(member.getId(), role);
+
+        return jwtUtils.generateAccessToken(member.getId(), role, nickname);
     }
     // 테스트용 로그인 DB에 있는 ID:1 인 사용자를 가지고 토큰발급
     @Transactional
@@ -251,7 +252,7 @@ public class AuthService {
 
         Member member = memberRepository.findById(1L).orElseThrow(() -> new RuntimeException("DB에 한명의 Member는 필요합니다"));
         //유저 정보 바탕으로 액세스 토큰, 리프레시 토큰 발급
-        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name());
+        String accessToken = jwtUtils.generateAccessToken(member.getId(), member.getRole().name(), member.getNickname());
         String refreshToken = jwtUtils.generateRefreshToken(member.getId());
 
         //리프레시 토큰은 redis에 저장
