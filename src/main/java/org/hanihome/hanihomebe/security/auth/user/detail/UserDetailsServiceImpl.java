@@ -25,7 +25,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new CustomUserDetails(
                 member.getId(),
                 member.getRole().name(),
-                member.getPassword() // password 추가
+                member.getPassword(),
+                member.getNickname()
         );
     }
 }

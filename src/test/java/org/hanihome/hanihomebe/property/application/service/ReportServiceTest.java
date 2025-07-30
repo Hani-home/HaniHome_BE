@@ -13,6 +13,9 @@ import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
+import org.hanihome.hanihomebe.property.web.dto.request.create.CostDetailsDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.LivingConditionsDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.report.application.domain.ReportTargetType;
 import org.hanihome.hanihomebe.report.service.ReportService;
@@ -80,17 +83,17 @@ public class ReportServiceTest {
                 "https://example.com/1.jpg",
                 "https://example.com/2.jpg"
         );
-        CostDetails costDetails = CostDetails.builder()
+        CostDetailsDTO costDetails = CostDetailsDTO.builder()
                 .weeklyCost(new BigDecimal("100.00"))
                 .deposit(new BigDecimal("800.00"))
                 .keyDeposit(new BigDecimal("100.00"))
-                .isBillIncluded(true)
+                .billIncluded(true)
                 .costDescription("전기세, 수도세 포함")
                 .build();
-        LivingConditions livingConditions = new LivingConditions(
+        LivingConditionsDTO livingConditions = new LivingConditionsDTO(
                 4, 12, "6개월 이상 계약 가능", true
         );
-        MoveInInfo moveInInfo = new MoveInInfo(
+        MoveInInfoDTO moveInInfo = new MoveInInfoDTO(
                 LocalDateTime.of(2025,5,5,5,5),
                 LocalDateTime.of(2025,5,10,5,5),
                 true,

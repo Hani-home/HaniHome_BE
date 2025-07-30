@@ -17,8 +17,7 @@ import org.hanihome.hanihomebe.metro.repository.MetroStopRepository;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.web.dto.request.PropertyCompleteTradeDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.create.RentPropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.*;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
@@ -100,7 +99,7 @@ class PropertyServiceTest {
     @BeforeEach
     void setUpSecurityContext() {
         // ① 테스트 전용 사용자 디테일 생성
-        CustomUserDetails user = new CustomUserDetails(memberId, "USER", "1234");
+        CustomUserDetails user = new CustomUserDetails(memberId, "USER", "1234", "olaf");
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
@@ -252,29 +251,15 @@ class PropertyServiceTest {
 
     // Helper to build DTO
     private SharePropertyCreateRequestDTO buildSharePropertyDTO(Long memberId) {
-        Region region = new Region(
-                "Australia", "2067", "NSW", "Chatswood",
-                "Smith St", "25", "1203",
-                "Chatswood Central Apartments",
-                BigDecimal.ZERO, BigDecimal.ZERO
-        );
+        Region region = buildRegion();
         List<String> photoUrls = new ArrayList<>(List.of(
                 "https://ex.com/1.jpg",
                 "https://ex.com/2.jpg"
         ));
-        CostDetails costDetails = CostDetails.builder()
-                .weeklyCost(new BigDecimal("100"))
-                .deposit(new BigDecimal("500"))
-                .keyDeposit(new BigDecimal("50"))
-                .isBillIncluded(true)
-                .costDescription("All-included")
-                .build();
+        CostDetailsDTO costDetails = buildCostDetailsDTO();
         List<Long> optionItemIds = new ArrayList<>(List.of(1L, 2L, 3L));
-        LivingConditions livingConditions = new LivingConditions(4, 12, "계약조건", true);
-        MoveInInfo moveInInfo = new MoveInInfo(
-                LocalDateTime.of(2025,8,1,9,0),
-                LocalDateTime.of(2025,8,5,9,0), true, false
-        );
+        LivingConditionsDTO livingConditions = buildLivingConditionsDTO();
+        MoveInInfoDTO moveInInfo = buildMoverInInfoDTO();
         List<TimeSlot> timeSlots = new ArrayList<>(List.of(
                 new TimeSlot(LocalTime.of(9,0), LocalTime.of(9,30)),
                 new TimeSlot(LocalTime.of(15,0), LocalTime.of(15,30))
@@ -301,30 +286,17 @@ class PropertyServiceTest {
                 CapacityShare.DOUBLE
         );
     }
+
     private RentPropertyCreateRequestDTO buildRentPropertyDTO(Long memberId) {
-        Region region = new Region(
-                "Australia", "2067", "NSW", "Chatswood",
-                "Smith St", "25", "1203",
-                "Chatswood Central Apartments",
-                BigDecimal.ZERO, BigDecimal.ZERO
-        );
+        Region region = buildRegion();
         List<String> photoUrls = new ArrayList<>(List.of(
                 "https://ex.com/1.jpg",
                 "https://ex.com/2.jpg"
         ));
-        CostDetails costDetails = CostDetails.builder()
-                .weeklyCost(new BigDecimal("100"))
-                .deposit(new BigDecimal("500"))
-                .keyDeposit(new BigDecimal("50"))
-                .isBillIncluded(true)
-                .costDescription("All-included")
-                .build();
+        CostDetailsDTO costDetails = buildCostDetailsDTO();
         List<Long> optionItemIds = new ArrayList<>(List.of(1L, 2L, 3L));
-        LivingConditions livingConditions = new LivingConditions(4, 12, "계약조건", true);
-        MoveInInfo moveInInfo = new MoveInInfo(
-                LocalDateTime.of(2025,8,1,9,0),
-                LocalDateTime.of(2025,8,5,9,0), true, false
-        );
+        LivingConditionsDTO livingConditions = buildLivingConditionsDTO();
+        MoveInInfoDTO moveInInfo = buildMoverInInfoDTO();
         List<TimeSlot> timeSlots = new ArrayList<>(List.of(
                 new TimeSlot(LocalTime.of(9,0), LocalTime.of(9,30)),
                 new TimeSlot(LocalTime.of(15,0), LocalTime.of(15,30))
@@ -350,6 +322,38 @@ class PropertyServiceTest {
                 new RentInternalDetails(5.0, 10.0, 1, 2, 3, 4),
                 CapacityRent.FOUR
         );
+    }
+
+    private static LivingConditionsDTO buildLivingConditionsDTO() {
+        return new LivingConditionsDTO(4, 12, "계약조건", true);
+    }
+
+    private static MoveInInfoDTO buildMoverInInfoDTO() {
+        MoveInInfoDTO moveInInfo = new MoveInInfoDTO(
+                LocalDateTime.of(2025,8,1,9,0),
+                LocalDateTime.of(2025,8,5,9,0), true, false
+        );
+        return moveInInfo;
+    }
+
+    private static Region buildRegion() {
+        Region region = new Region(
+                "Australia", "2067", "NSW", "Chatswood",
+                "Smith St", "25", "1203",
+                "Chatswood Central Apartments",
+                BigDecimal.ZERO, BigDecimal.ZERO
+        );
+        return region;
+    }
+    private static CostDetailsDTO buildCostDetailsDTO() {
+        CostDetailsDTO costDetails = CostDetailsDTO.builder()
+                .weeklyCost(new BigDecimal("100"))
+                .deposit(new BigDecimal("500"))
+                .keyDeposit(new BigDecimal("50"))
+                .billIncluded(true)
+                .costDescription("All-included")
+                .build();
+        return costDetails;
     }
 
 }

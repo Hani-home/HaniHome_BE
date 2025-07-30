@@ -53,7 +53,8 @@ public class MemberService {
         Member member = Member.createFrom(
                 memberSignupRequestDTO.getEmail(),
                 passwordEncoder.encode(memberSignupRequestDTO.getPassword()),
-                Role.GUEST
+                Role.GUEST,
+                memberSignupRequestDTO.getNickname()
         );
         memberRepository.save(member);
     }
