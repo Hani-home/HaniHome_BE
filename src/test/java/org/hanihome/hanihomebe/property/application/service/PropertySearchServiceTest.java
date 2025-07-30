@@ -62,7 +62,7 @@ class PropertySearchServiceTest {
     @BeforeEach
     void init() {
         Long memberId = memberRepository.save(
-                Member.createFrom("alpha", "gno123", Role.GUEST)
+                Member.createFrom("alpha", "gno123", Role.GUEST, "olaf")
         ).getId();
 
         MetroStop parentStop = MetroStop.createParent(

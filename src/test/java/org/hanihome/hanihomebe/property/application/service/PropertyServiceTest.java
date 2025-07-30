@@ -100,7 +100,7 @@ class PropertyServiceTest {
     @BeforeEach
     void setUpSecurityContext() {
         // ① 테스트 전용 사용자 디테일 생성
-        CustomUserDetails user = new CustomUserDetails(memberId, "USER", "1234");
+        CustomUserDetails user = new CustomUserDetails(memberId, "USER", "1234", "olaf");
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
