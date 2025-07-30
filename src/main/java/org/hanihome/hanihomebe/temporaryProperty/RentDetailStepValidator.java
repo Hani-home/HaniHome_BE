@@ -23,7 +23,6 @@ public class RentDetailStepValidator implements StepValidator<RentDetailDTO> {
                 "수용 인원", dto.capacityRent() != null,
                 "매물 정보", dto.rentInternalDetails() != null, //추가 검증필요
                 "부동산 중개 여부", dto.isRealEstateType() != null,
-                "채광 방향", dto.exposure() != null,
                 "기본 제공 옵션", dto.optionItemIds() != null && !dto.optionItemIds().isEmpty(),
                 "매물 장점", dto.highlightOptionItemIds() != null && !dto.highlightOptionItemIds().isEmpty()
         );

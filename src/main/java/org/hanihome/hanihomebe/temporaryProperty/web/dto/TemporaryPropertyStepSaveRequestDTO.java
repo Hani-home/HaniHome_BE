@@ -1,7 +1,6 @@
 package org.hanihome.hanihomebe.temporaryProperty.web.dto;
 
 import lombok.Getter;
-import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.temporaryProperty.domain.enums.TemporaryPropertyStepStatus;
 
@@ -21,5 +20,8 @@ public class TemporaryPropertyStepSaveRequestDTO {
 
     //4단계: 계약사항
     private ContractDTO contract;
+
+    //5단계: 매물에 대한 소개
+    private DescriptionDTO description;
 
 }

@@ -13,7 +13,6 @@ public record RentDetailDTO(
         CapacityRent capacityRent,
         RentInternalDetails rentInternalDetails,
         RealEstateType isRealEstateType,
-        Exposure exposure,
         List<Long> optionItemIds,
         List<Long> highlightOptionItemIds
 
