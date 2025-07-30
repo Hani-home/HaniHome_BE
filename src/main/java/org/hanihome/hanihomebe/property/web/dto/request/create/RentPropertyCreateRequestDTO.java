@@ -26,10 +26,10 @@ public record RentPropertyCreateRequestDTO(
         boolean lgbtAvailable,
         Region region,                              // 주소 정보 (Embedded 타입)
         List<String> photoUrls,                     // 매물 사진 URL 리스트
-        CostDetails costDetails,
+        CostDetailsDTO costDetails,
         List<Long> optionItemIds,       // 포함된 비용 항목 리스트
-        LivingConditions livingConditions,
-        MoveInInfo moveInInfo,
+        LivingConditionsDTO livingConditions,
+        MoveInInfoDTO moveInInfo,
         LocalDate meetingDateFrom,
         LocalDate meetingDateTo,
         List<TimeSlot> timeSlots,
