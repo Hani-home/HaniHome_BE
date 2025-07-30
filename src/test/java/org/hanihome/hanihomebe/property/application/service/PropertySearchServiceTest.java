@@ -12,8 +12,7 @@ import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
 import org.hanihome.hanihomebe.property.web.dto.request.PropertySearchConditionDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.create.RentPropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.*;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,17 +87,17 @@ class PropertySearchServiceTest {
                 "https://example.com/1.jpg",
                 "https://example.com/2.jpg"
         );
-        CostDetails costDetails = CostDetails.builder()
+        CostDetailsDTO costDetails = CostDetailsDTO.builder()
                 .weeklyCost(new BigDecimal("100.00"))
                 .deposit(new BigDecimal("800.00"))
                 .keyDeposit(new BigDecimal("100.00"))
-                .isBillIncluded(true)
+                .billIncluded(true)
                 .costDescription("전기세, 수도세 포함")
                 .build();
-        LivingConditions livingConditions = new LivingConditions(
+        LivingConditionsDTO livingConditions = new LivingConditionsDTO(
                 4, 12, "6개월 이상 계약 가능", true
         );
-        MoveInInfo moveInInfo = new MoveInInfo(
+        MoveInInfoDTO moveInInfo = new MoveInInfoDTO(
                 LocalDateTime.of(2025,5,5,5,5),
                 LocalDateTime.of(2025,5,10,5,5),
                 true,
@@ -395,17 +394,17 @@ class PropertySearchServiceTest {
                 "https://example.com/1.jpg",
                 "https://example.com/2.jpg"
         );
-        CostDetails costDetails = CostDetails.builder()
+        CostDetailsDTO costDetails = CostDetailsDTO.builder()
                 .weeklyCost(new BigDecimal("100.00"))
                 .deposit(new BigDecimal("800.00"))
                 .keyDeposit(new BigDecimal("100.00"))
-                .isBillIncluded(true)
+                .billIncluded(true)
                 .costDescription("전기세, 수도세 포함")
                 .build();
-        LivingConditions livingConditions = new LivingConditions(
+        LivingConditionsDTO livingConditions = new LivingConditionsDTO(
                 4, 12, "6개월 이상 계약 가능", true
         );
-        MoveInInfo moveInInfo = new MoveInInfo(
+        MoveInInfoDTO moveInInfo = new MoveInInfoDTO(
                 LocalDateTime.of(2025,5,15,5,5),
                 LocalDateTime.of(2025,5,25,5,5),
                 true,
