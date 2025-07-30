@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface NearestMetroStopRepository extends JpaRepository<NearestMetroStop, Long> {
     Optional<NearestMetroStop> findByProperty(Property property);
+
+    void deleteByProperty_Id(Long propertyId);
 }

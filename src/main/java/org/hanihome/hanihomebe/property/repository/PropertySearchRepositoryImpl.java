@@ -10,6 +10,7 @@ import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.QProperty;
 import org.hanihome.hanihomebe.property.domain.QRentProperty;
 import org.hanihome.hanihomebe.property.domain.QShareProperty;
+import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
@@ -51,7 +52,16 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
 
     private static BooleanBuilder createBooleanFilter(PropertySearchConditionDTO cond) {
         BooleanBuilder baseBuilder = new BooleanBuilder();
+        addCondition(cond, baseBuilder);
+        addDisplayCondition(baseBuilder);
+        return baseBuilder;
+    }
 
+    private static void addDisplayCondition(BooleanBuilder baseBuilder) {
+        baseBuilder.and(property.displayStatus.eq(DisplayStatus.ACTIVE));
+    }
+
+    private static void addCondition(PropertySearchConditionDTO cond, BooleanBuilder baseBuilder) {
         // 매물 종류
         addKindAndSubTypeIfExists(cond, baseBuilder);
 
@@ -76,7 +86,6 @@ public class PropertySearchRepositoryImpl implements PropertySearchRepository {
         // 지하철역 기준 Nkm 필터
         // TODO: 품질보증: 오차 범위가 어떻게되는지 확인이 필요
         addDistanceFromMetro(cond, baseBuilder);
-        return baseBuilder;
     }
 
     private JPAQuery<Property> createQuery(BooleanBuilder baseBuilder) {

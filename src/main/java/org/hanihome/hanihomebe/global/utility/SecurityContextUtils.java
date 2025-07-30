@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.global.utility;
 
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -23,7 +24,7 @@ public class SecurityContextUtils {
 
 
         //인증안된 친구
-        if (auth == null || !auth.isAuthenticated()) {
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {  //로그인을 하지 않아도 AnonymousAuthentication 객체를 만든다!
             return Optional.empty();
         }
 

@@ -164,7 +164,7 @@ class PropertyServiceTest {
 
         // When: Member2 거래 완료
         propertyService.completeTrade(
-                PropertyCompleteTradeDTO.create(memberId, viewingId2, propertyId)
+                PropertyCompleteTradeDTO.create(memberId, viewingId2, propertyId, false)
         );
 
         // Then: 거래가 생성되고, property 상태 변경
@@ -227,7 +227,7 @@ class PropertyServiceTest {
 
         // When: Member2 거래 완료
         propertyService.completeTrade(
-                PropertyCompleteTradeDTO.create(memberId, viewingId2, propertyId)
+                PropertyCompleteTradeDTO.create(memberId, viewingId2, propertyId, false)
         );
 
         // Then: 거래가 생성되고, property 상태 변경
@@ -351,55 +351,6 @@ class PropertyServiceTest {
                 CapacityRent.FOUR
         );
     }
-/*    private SharePropertyCreateRequestDTO buildSharePropertyDTO() {
-        Region region = new Region(
-                "Australia", "2067", "NSW", "Chatswood",
-                "Smith St", "25", "1203",
-                "Chatswood Central Apartments",
-                BigDecimal.ZERO, BigDecimal.ZERO
-        );
-        List<String> photoUrls = new ArrayList<>(List.of(
-                "https://example.com/1.jpg",
-                "https://example.com/2.jpg"
-        ));
-        CostDetails costDetails = CostDetails.builder()
-                .weeklyCost(new BigDecimal("100.00"))
-                .deposit(new BigDecimal("800.00"))
-                .keyDeposit(new BigDecimal("100.00"))
-                .isBillIncluded(true)
-                .costDescription("전기세, 수도세 포함")
-                .build();
-        LivingConditions living = new LivingConditions(4, 12, "6개월 이상 계약 가능", true);
-        MoveInInfo moveIn = new MoveInInfo(
-                LocalDateTime.of(2025,5,5,5,5),
-                LocalDateTime.of(2025,5,10,5,5), true, false
-        );
-        List<TimeSlot> slots = new ArrayList<>(List.of(
-                new TimeSlot(LocalTime.of(12,0), LocalTime.of(12,30)),
-                new TimeSlot(LocalTime.of(15,0), LocalTime.of(15,30))
-        ));
-        SharePropertyCreateRequestDTO dto = new SharePropertyCreateRequestDTO(
-                memberId,
-                PropertySuperType.SHARE,
-                GenderPreference.ANY,
-                true,
-                region,
-                photoUrls,
-                costDetails,
-                new ArrayList<>(List.of(1L, 2L, 3L)),
-                living,
-                moveIn,
-                LocalDate.of(2025,5,10),
-                LocalDate.of(2025,5,12),
-                slots,
-                null,
-                true,
-                "깨끗하고 조용한 마스터룸입니다.",
-                SharePropertySubType.MASTER_ROOM,
-                new ShareInternalDetails(10.0, 50.0, 3, 2, 5, 2),
-                CapacityShare.DOUBLE
-        );
-        return dto;
-    }*/
+
 }
 

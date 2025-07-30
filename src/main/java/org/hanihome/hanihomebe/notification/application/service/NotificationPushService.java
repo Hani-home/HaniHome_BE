@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.notification.domain.Notification;
+import org.hanihome.hanihomebe.notification.domain.NotificationSendStatus;
 import org.hanihome.hanihomebe.notification.repository.NotificationRepository;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationResponseDTO;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class NotificationPushService {
   * @param notificationId 전송할 알림 엔티티
   */
  // TODO: 성능개선: 비동기 알림 발송
+ @Transactional
  public void pushNotification(Long notificationId) {
      Notification findNotification = notificationRepository.findById(notificationId)
              .orElseThrow(() -> new CustomException(ServiceCode.NOTIFICATION_NOT_EXISTS));
@@ -37,6 +39,8 @@ public class NotificationPushService {
              "}, notificationId: {}", receiverId, notificationId);
      if (userEmitters == null || userEmitters.isEmpty()) {
          log.info("SSE emitter 없음: receiverId={}", receiverId);
+
+         updateNotificationAsSuccess(findNotification);
          return;
      }
 
@@ -46,18 +50,32 @@ public class NotificationPushService {
          try {
              emitter.send(SseEmitter.event()
                      .id(findNotification.getId().toString())
-                     .name(findNotification.getType().name())
+                     .name(findNotification.getType().name()) // 클라이언트의 이벤트 리스너는 해당 이름으로 수신해야함
                      .data(NotificationResponseDTO.from(findNotification)));
              log.info("SSE 전송 성공: receiverId={}, emitterId={}", receiverId, id);
+
+             updateNotificationAsSuccess(findNotification);
          } catch (IOException e) {
              log.warn("SSE 전송 실패: receiverId={}, notificationId={}, emitterId={}, error={}",
                      receiverId, notificationId, id, e.toString());
+
+             updateNotificationAsFailed(findNotification);
              emitterService.removeEmitter(receiverId, id);
          } catch (Exception e) {
              log.info("message:{}", e.toString());
+
+             updateNotificationAsFailed(findNotification);
              throw new CustomException(ServiceCode.NOTIFICATION_SEND_FAILED, e);
          }
      });
 
  }
+
+    private static void updateNotificationAsFailed(Notification findNotification) {
+        findNotification.updateSendStatus(NotificationSendStatus.FAILED);
+    }
+
+    private static void updateNotificationAsSuccess(Notification findNotification) {
+        findNotification.updateSendStatus(NotificationSendStatus.SUCCESS);
+    }
 }

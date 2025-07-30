@@ -66,10 +66,10 @@ public class PropertyController {
 
     // 회원의 매물 조회
     @GetMapping("/members/{memberId}/properties")
-    public List<?> getPropertiesByMember(@PathVariable Long memberId, @AuthenticationPrincipal CustomUserDetails userDetails,
-                                                           @RequestParam(required = false) TradeStatus tradeStatus,
-                                                           @RequestParam(required = false) PropertyViewType view) {
-        return propertyService.getPropertiesByMemberId(memberId, userDetails, tradeStatus, view);
+    public List<?> getPropertiesByMember(@PathVariable Long memberId,
+                                         @RequestParam(required = false) TradeStatus tradeStatus,
+                                         @RequestParam(required = false) PropertyViewType view) {
+        return propertyService.getPropertiesByMemberId(memberId, tradeStatus, view);
     }
 
     // 매물 별 뷰잉 가능 시각 조회(예약됨, 예약안됨 모두 포함)
@@ -104,8 +104,9 @@ public class PropertyController {
     @PostMapping("/properties/{propertyId}/complete")
     public void completeTrade(@AuthenticationPrincipal CustomUserDetails userDetails,
                               @PathVariable Long propertyId,
-                              @RequestParam Long viewingId) {
-        PropertyCompleteTradeDTO dto = PropertyCompleteTradeDTO.create(userDetails.getUserId(), viewingId, propertyId);
+                              @RequestParam(required = false) Long viewingId,
+                              @RequestParam Boolean dealWithOutsider) {
+        PropertyCompleteTradeDTO dto = PropertyCompleteTradeDTO.create(userDetails.getUserId(), viewingId, propertyId, dealWithOutsider);
         propertyService.completeTrade(dto);
     }
 

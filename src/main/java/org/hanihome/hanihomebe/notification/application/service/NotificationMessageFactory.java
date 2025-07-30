@@ -65,7 +65,8 @@ public class NotificationMessageFactory {
 
 
         NotificationCreateDTO hostDTO = NotificationCreateDTO.create(hostId, title, content, NotificationType.VIEWING_REMINDER);
-        return List.of(NotificationCreateDTO.create(guestId, title, content, NotificationType.VIEWING_REMINDER), hostDTO);
+        NotificationCreateDTO guestDTO = NotificationCreateDTO.create(guestId, title, content, NotificationType.VIEWING_REMINDER);
+        return List.of(guestDTO, hostDTO);
     }
 
     public NotificationCreateDTO createOneOnOneConsultRepliedMessage(Long receiverId) {

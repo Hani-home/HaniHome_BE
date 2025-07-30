@@ -77,8 +77,9 @@ public class ViewingController {
     //매물에 속한 뷰잉 정보 조회
     @GetMapping("/properties/{propertyId}/viewings")
     public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(@PathVariable Long propertyId,
+                                                                          @RequestParam(required = false) List<ViewingStatus> status,
                                                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return viewingService.getViewingsBelongsToProperty(userDetails.getUserId(), propertyId);
+        return viewingService.getViewingsBelongsToProperty(userDetails.getUserId(), propertyId, status);
     }
 
     // cancel
@@ -88,6 +89,11 @@ public class ViewingController {
         viewingService.cancelViewingAndReleaseReservedTimes(dto);
         // 알림 생성 및 전송
         viewingNotificationService.sendViewingCanceledNotification(userDetails.getUserId(), dto.getViewingId());
+    }
+
+    @PatchMapping("/properties/{propertyId}/viewings/cancel-all")
+    public void cancelAllViewingsBelongsToProperty(@PathVariable Long propertyId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        viewingService.cancelViewingForInactiveProperty(userDetails.getUserId(), propertyId);
     }
 
     // 취소 이유 데이터 조회

@@ -42,6 +42,9 @@ public enum ServiceCode {
     INVALID_LATITUDE_LONGITUDE(HttpStatus.BAD_REQUEST, "위도와 경도는 각각 +-90, +-180 내에 있어야합니다"),
     PROPERTY_PATCH_COMMAND_MISMATCH(HttpStatus.BAD_REQUEST, "매물 수정 Command의 타입이 잘못되었습니다"),
     PROPERTY_CONVERTER_MISMATCH(HttpStatus.BAD_REQUEST, "잘못된 PropertyConverter가 사용되었습니다"),
+    PROPERTY_IS_HIDDEN(HttpStatus.NOT_FOUND, "요청한 매물은 숨김처리되었습니다."),
+    PROPERTY_HAS_REQUESTED_VIEWINGS(HttpStatus.BAD_REQUEST, "요청한 매물은 예약확정 상태의 뷰잉이 존재합니다"),
+    PROPERTY_DELETE_FAILED_HAS_RELATIONS(HttpStatus.INTERNAL_SERVER_ERROR, "매물과 연관된 엔티티가 남아있으므로 삭제에 실패했습니다."),
 
     // Temporary_property
     INVALID_TEMPORARY_PROPERTY(HttpStatus.BAD_REQUEST, "이때까지 진행된 모든 단계에 정보를 입력해주세요"),
@@ -117,6 +120,7 @@ public enum ServiceCode {
 
     // security 인증/인가
     NEED_TO_AUTHENTICATED(HttpStatus.INTERNAL_SERVER_ERROR, "해당 요청은 인증이 필요합니다. 하지만 로그인되지 않은 사용자가 필터를 통과했습니다."),
+    DELETE_FAILED_HAS_RELATION(HttpStatus.INTERNAL_SERVER_ERROR, "연관된 엔티티가 있어 삭제에 실패했습니다"),
     ;
 
     private final HttpStatus httpStatus;

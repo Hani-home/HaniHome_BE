@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.item.application.converter.OptionItemConverterForViewing;
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.OptionCategory;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionCategoryRepository;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
+import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.Property;
@@ -51,6 +53,7 @@ public class ViewingService {
     private final OptionItemRepository optionItemRepository;
     private final OptionCategoryRepository optionCategoryRepository;
     private final ViewingConversionService viewingConversionService;
+    private final OptionItemConverterForViewing optionItemConverterForViewing;
 
     /**
      * 뷰잉 생성
@@ -128,10 +131,10 @@ public class ViewingService {
     }
 
     /// 매물에 속한 뷰잉 조회
-    public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(Long memberId, Long propertyId) {
+    public List<ViewingBelongsToPropertyDTO> getViewingsBelongsToProperty(Long memberId, Long propertyId, List<ViewingStatus> statusList) {
         validateRequesterIsPropertyOwner(memberId, propertyId);
 
-        List<Viewing> belongsTo = viewingRepository.findByProperty_Id(propertyId);
+        List<Viewing> belongsTo = viewingRepository.findByPropertyAndStatusList(propertyId, statusList);
         return viewingConversionService.convert(belongsTo, ViewingViewType.BELONGS_TO_PROPERTY);
     }
 
@@ -142,7 +145,7 @@ public class ViewingService {
     }
 
     private Long getOwnerIdFromProperty(Long propertyId) {
-        return propertyRepository.findById(propertyId).orElseThrow().getMember().getId();
+        return propertyRepository.findById(propertyId).orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS)).getMember().getId();
     }
 
     /**
@@ -154,6 +157,21 @@ public class ViewingService {
             .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
         // 매물 예약된 시간 릴리즈
+        releasePropertyReservedTime(findViewing);
+
+        // 뷰잉 취소 옵션 아이템 추가
+        cancelViewingAndAddReason(dto.getCancelOptionItemIds(), findViewing, dto.getReason());
+
+        viewingRepository.save(findViewing);
+    }
+
+    private void cancelViewingAndAddReason(List<Long> cancelOptionItemIds, Viewing findViewing, String reason) {
+        List<ViewingOptionItem> viewingOptionItems = createViewingOptionItems(cancelOptionItemIds, findViewing);
+
+        findViewing.cancel(reason, viewingOptionItems);
+    }
+
+    private void releasePropertyReservedTime(Viewing findViewing) {
         LocalDateTime meetingDay = findViewing.getMeetingDay();
         ViewingAvailableDateTime reservedAvailableDateTime = findViewing.getProperty().getViewingAvailableDateTimes()
                 .stream()
@@ -162,16 +180,9 @@ public class ViewingService {
                 .findFirst().orElseThrow(() -> new CustomException(ServiceCode.VIEWING_TIME_MISMATCH));
         reservedAvailableDateTime.updateReservation(false);
         propertyRepository.save(findViewing.getProperty());
-
-        // 뷰잉 취소 옵션 아이템 추가
-        List<ViewingOptionItem> viewingOptionItems = createViewingOptionItems(dto.getAllOptionItemIds(), findViewing);
-
-        findViewing.cancel(dto.getReason(), viewingOptionItems);
-
-        viewingRepository.save(findViewing);
     }
 
-    // 매물에 연결되었고, status = REQUESTED인 뷰잉 취소
+    // 매물이 거래 완료되어 뷰잉 취소 : 매물에 연결되었고, status = REQUESTED인 뷰잉 취소
     @Transactional
     public void cancelViewingForCompletedProperty(Long propertyId) {
         List<Viewing> toCancelList = viewingRepository.findByProperty_IdAndStatus(propertyId, ViewingStatus.REQUESTED);
@@ -183,13 +194,28 @@ public class ViewingService {
 
         // 뷰잉 취소
         toCancelList.forEach(viewing -> {
-                    List<ViewingOptionItem> cancelReason = createViewingOptionItems(List.of(cancelReasonItem.getId()), viewing);
-                    viewing.cancel("뷰잉 예약된 매물의 거래가 종료되어 뷰잉이 취소되었습니다.", cancelReason);
+                    cancelViewingAndAddReason(List.of(cancelReasonItem.getId()), viewing, "뷰잉 예약된 매물의 거래가 종료되어 뷰잉이 취소되었습니다.");
                 }
         );
 
         viewingRepository.saveAll(toCancelList);
     }
+
+    @Transactional
+    public void cancelViewingForInactiveProperty(Long userId, Long propertyId) {
+        validateRequesterIsPropertyOwner(userId, propertyId);
+
+        List<Long> viewingsToCancel = getViewingsBelongsToProperty(userId, propertyId, List.of(ViewingStatus.REQUESTED))
+                .stream()
+                .map(viewingDTO -> viewingDTO.viewingId())
+                .toList();
+
+        OptionItem cancelItem = optionItemRepository.findByItemNameAndParentIsNullAndOptionCategory_CategoryCode("기타", CategoryCode.VIEWING_CAT3)
+                .orElseThrow(() -> new CustomException(ServiceCode.OPTION_ITEM_NOT_EXISTS));
+
+        viewingsToCancel.forEach(viewing -> this.cancelViewingAndReleaseReservedTimes(ViewingCancelRequestDTO.create(viewing, List.of(cancelItem.getId()), "매물 숨김 처리로 인해 뷰잉이 취소되었습니다.")));
+    }
+
 
     private List<ViewingOptionItem> createViewingOptionItems(List<Long> allOptionItemIds, Viewing findViewing) {
         List<ViewingOptionItem> viewingOptionItems = optionItemRepository.findAllById(allOptionItemIds)
@@ -206,9 +232,13 @@ public class ViewingService {
         Viewing findViewing = viewingRepository.findById(viewingId)
                 .orElseThrow(()->new CustomException(ServiceCode.VIEWING_NOT_EXISTS));
 
-        List<Long> cancelReasonItemIds = getSelectedOptionItemIdsInCategory(findViewing, CategoryCode.VIEWING_CAT1);
+        List<Long> cancelReasonItemIds = getSelectedOptionItemIdsInCategory(findViewing, List.of(CategoryCode.VIEWING_CAT1, CategoryCode.VIEWING_CAT3));
         log.info("cancelReasonItemIds: {}", cancelReasonItemIds);
-        return ViewingCancelResponseDTO.from(viewingId, cancelReasonItemIds, findViewing.getCancelReason());
+        List<OptionItemResponseDTO> cancelReasonOptionItems = optionItemRepository.findAllById(cancelReasonItemIds)
+                .stream()
+                .map(OptionItemResponseDTO::from)
+                .toList();
+        return ViewingCancelResponseDTO.from(viewingId, cancelReasonOptionItems, findViewing.getCancelReason());
     }
 
     /**
@@ -297,12 +327,21 @@ public class ViewingService {
         OptionCategory category = optionCategoryRepository.findByCategoryCode(categoryCode)
                 .orElseThrow(() -> new CustomException(ServiceCode.OPTION_CATEGORY_NOT_INITIALIZED));
 
-        List<Long> checklistItemIds = viewing.getViewingOptionItems()
+        List<Long> optionItemIds = viewing.getViewingOptionItems()
                 .stream()
                 .filter(viewingOptionItem -> viewingOptionItem.getOptionItem().getOptionCategory().equals(category))
                 .map(viewingOptionItem -> viewingOptionItem.getOptionItem().getId())
                 .toList();
-        return checklistItemIds;
+        return optionItemIds;
+    }
+    private List<Long> getSelectedOptionItemIdsInCategory(Viewing viewing, List<CategoryCode> categoryCodes) {
+        List<Long> optionItemIds = new ArrayList<>();
+
+        categoryCodes.forEach(categoryCode -> {
+            optionItemIds.addAll(getSelectedOptionItemIdsInCategory(viewing, categoryCode));
+        });
+
+        return optionItemIds;
     }
 
     /**

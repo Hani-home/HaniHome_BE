@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Embeddable
 public class ShareInternalDetails {
-    private Double internalArea;     // 2-1. 실제 사용 면적
+    private Double internalArea;     // 2-1. 실제 사용 면적, 단위: m^2
 
     private Double totalArea;        // 2-2. 전체 면적
 

@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.viewing.repository;
 
 import org.hanihome.hanihomebe.member.domain.Member;
+import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 @Repository
-public interface ViewingRepository extends JpaRepository<Viewing, Long> {
+public interface ViewingRepository extends JpaRepository<Viewing, Long>, CustomViewingRepository{
     /**
      * 특정 사용자의 예정되어있는 뷰잉 조회
      * @param member :뷰잉 당사자
@@ -37,4 +38,5 @@ public interface ViewingRepository extends JpaRepository<Viewing, Long> {
             "and (:status is null or :status = v.status)")
     List<Viewing> findViewingsAsHostAndStatus(Long memberId, ViewingStatus status);
 
+    void deleteByProperty_Id(Long propertyId);
 }
