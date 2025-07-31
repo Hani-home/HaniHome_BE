@@ -36,13 +36,13 @@ public sealed interface PropertyCreateRequestDTO permits
 
     List<String> photoUrls();
 
-    CostDetails costDetails();
+    CostDetailsDTO costDetails();
 
     List<Long> optionItemIds();
 
-    LivingConditions livingConditions();
+    LivingConditionsDTO livingConditions();
 
-    MoveInInfo moveInInfo();
+    MoveInInfoDTO moveInInfo();
 
     LocalDate meetingDateFrom();
     LocalDate meetingDateTo();
