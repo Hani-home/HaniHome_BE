@@ -1,6 +1,11 @@
-package org.hanihome.hanihomebe.temporaryProperty;
+package org.hanihome.hanihomebe.temporaryProperty.application.validator;
 
-import org.hanihome.hanihomebe.temporaryProperty.domain.enums.TemporaryPropertyStepStatus;
+import org.hanihome.hanihomebe.temporaryProperty.application.validator.impl.AddressAndPhotosStepValidator;
+import org.hanihome.hanihomebe.temporaryProperty.application.validator.impl.ConditionStepValidator;
+import org.hanihome.hanihomebe.temporaryProperty.application.validator.impl.ContractStepValidator;
+import org.hanihome.hanihomebe.temporaryProperty.application.validator.impl.RentDetailStepValidator;
+import org.hanihome.hanihomebe.temporaryProperty.application.validator.impl.ShareDetailStepValidator;
+import org.hanihome.hanihomebe.temporaryProperty.application.validator.interfac.StepValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

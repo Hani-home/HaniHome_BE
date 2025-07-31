@@ -1,9 +1,9 @@
-package org.hanihome.hanihomebe.temporaryProperty;
+package org.hanihome.hanihomebe.temporaryProperty.application.validator.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
+import org.hanihome.hanihomebe.temporaryProperty.application.validator.interfac.StepValidator;
 import org.hanihome.hanihomebe.temporaryProperty.domain.enums.TemporaryPropertyStepStatus;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.AddressAndPhotosDTO;
 import org.springframework.stereotype.Component;

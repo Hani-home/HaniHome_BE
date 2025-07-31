@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.temporaryProperty;
+package org.hanihome.hanihomebe.temporaryProperty.application.validator;
 
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.temporaryProperty.domain.enums.TemporaryPropertyStepStatus;

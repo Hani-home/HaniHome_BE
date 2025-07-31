@@ -1,6 +1,7 @@
-package org.hanihome.hanihomebe.temporaryProperty;
+package org.hanihome.hanihomebe.temporaryProperty.application.validator;
 
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.temporaryProperty.application.validator.interfac.StepValidator;
 import org.hanihome.hanihomebe.temporaryProperty.domain.enums.TemporaryPropertyStepStatus;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.AddressAndPhotosDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.DescriptionDTO;

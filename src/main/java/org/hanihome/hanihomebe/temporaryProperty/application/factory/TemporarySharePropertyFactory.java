@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.temporaryProperty;
+package org.hanihome.hanihomebe.temporaryProperty.application.factory;
 
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;

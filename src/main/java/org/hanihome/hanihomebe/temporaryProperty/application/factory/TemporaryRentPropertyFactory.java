@@ -1,12 +1,9 @@
-package org.hanihome.hanihomebe.temporaryProperty;
+package org.hanihome.hanihomebe.temporaryProperty.application.factory;
 
 import org.hanihome.hanihomebe.member.domain.Member;
-import org.hanihome.hanihomebe.property.application.factory.RentPropertyFactory;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
-import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.RentDetailDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
 import org.springframework.stereotype.Component;
 
