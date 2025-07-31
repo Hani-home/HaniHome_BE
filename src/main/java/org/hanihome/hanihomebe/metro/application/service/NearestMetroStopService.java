@@ -20,15 +20,19 @@ public class NearestMetroStopService {
     private final MetroStopRepository metroStopRepository;
 
     @Transactional
-    public NearestMetroStop create(Property property) {
-        NearestMetroStopProjectionDTO nearestMetroAndDistance = metroStopRepository.findNearestMetroAndDistance(property.getRegion().getLatitude(), property.getRegion().getLongitude());
+    public void create(Property property) {
+        metroStopRepository.findNearestMetroAndDistance(
+                property.getRegion().getLatitude(),
+                property.getRegion().getLongitude()
+        ).ifPresent(nearest -> {
+            MetroStop findMetroStop = metroStopRepository.findById(nearest.getId())
+                    .orElseThrow(() -> new CustomException(ServiceCode.METRO_STOP_NOT_EXISTS));
 
-        MetroStop findMetroStop = metroStopRepository.findById(nearestMetroAndDistance.getId()).orElseThrow(() -> new CustomException(ServiceCode.METRO_STOP_NOT_EXISTS));
-        Double distance = nearestMetroAndDistance.getDistance();
-
-        return nearestMetroStopRepository.save(NearestMetroStop.create(findMetroStop, property, distance));
+            nearestMetroStopRepository.save(
+                    NearestMetroStop.create(findMetroStop, property, nearest.getDistance())
+            );
+        });
     }
-
     @Transactional
     public void deleteByPropertyId(Long propertyId) {
         nearestMetroStopRepository.deleteByProperty_Id(propertyId);

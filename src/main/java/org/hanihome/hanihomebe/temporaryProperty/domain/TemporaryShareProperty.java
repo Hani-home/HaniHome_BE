@@ -77,14 +77,14 @@ public class TemporaryShareProperty extends TemporaryProperty {
             builder
                     .genderPreference(conditionDTO.genderPreference())
                     .lgbtAvailable(conditionDTO.lgbtAvailable())
-                    .livingConditions(conditionDTO.livingConditions())
-                    .moveInInfo(conditionDTO.moveInInfo());
+                    .livingConditions(conditionDTO.livingConditions().toVO())
+                    .moveInInfo(conditionDTO.moveInInfo().toVO());
         }
 
         // 4단계
         if (contractDTO != null) {
             builder
-                    .costDetails(contractDTO.costDetails())
+                    .costDetails(contractDTO.costDetails().toVO())
                     .meetingDateFrom(contractDTO.meetingDateFrom())
                     .meetingDateTo(contractDTO.meetingDateTo())
                     .timeSlots(contractDTO.timeSlots())
