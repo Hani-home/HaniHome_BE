@@ -23,5 +23,5 @@ public interface MetroStopRepository extends JpaRepository<MetroStop, Long> {
             "order by distance " +
             "limit 1",
             nativeQuery = true)
-    Optional<NearestMetroStopProjectionDTO> findNearestMetroAndDistance(@Param("latitude") BigDecimal latitude, @Param("longitude") BigDecimal longitude);
+    NearestMetroStopProjectionDTO findNearestMetroAndDistance(@Param("latitude") BigDecimal latitude, @Param("longitude") BigDecimal longitude);
 }

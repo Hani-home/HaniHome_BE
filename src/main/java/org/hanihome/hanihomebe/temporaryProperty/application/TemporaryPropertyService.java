@@ -85,7 +85,7 @@ public class TemporaryPropertyService {
             }
 
         } else {
-            //타입에 따라 따로 검증을..
+            //저장 매물 수정은 다음 PR에 확실하게 올리겠습니다
             TemporaryProperty temporaryProperty = temporaryPropertyRepository.findByIdAndMember(id,host)
                     .orElseThrow(() -> new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS));
 
