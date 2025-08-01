@@ -62,9 +62,29 @@ public class TemporaryPropertyService {
 
         //검증
 
-        stepValidationManager.validateUpToStep(dto);
+        //stepValidationManager.validateUpToStep(dto);
 
         //생성 or update. 으악 근데 if-else가 너무 많아....
+
+        TemporaryProperty temporaryProperty;
+
+        if(dto.getKind() == PropertySuperType.RENT) {
+            temporaryProperty = TemporaryRentProperty.create(dto, host);
+            temporaryRentPropertyRepository.save((TemporaryRentProperty) temporaryProperty);
+
+            addTemporaryPropertyOptionItem(dto, temporaryProperty);
+
+
+        } else if (dto.getKind() == PropertySuperType.SHARE) {
+            //
+            temporaryProperty  = TemporaryShareProperty.create(dto, host);
+            temporarySharePropertyRepository.save((TemporaryShareProperty) temporaryProperty);
+            //여기도 옵션아이템
+            addTemporaryPropertyOptionItem(dto, temporaryProperty);
+
+        }
+
+        /*
         if(dto.getId()==null) {
             TemporaryProperty temporaryProperty;
 
@@ -94,6 +114,8 @@ public class TemporaryPropertyService {
 
 
         }
+
+         */
 
     }
 

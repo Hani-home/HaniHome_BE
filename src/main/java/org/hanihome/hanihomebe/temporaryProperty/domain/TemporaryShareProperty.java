@@ -12,17 +12,18 @@ import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
-import org.hanihome.hanihomebe.property.domain.vo.ShareInternalDetails;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryShareInternalDetails;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.AddressAndPhotosDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.ConditionDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.ContractDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.DescriptionDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.RentDetailDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.ShareDetailDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
 
 import static lombok.AccessLevel.PROTECTED;
-import static org.hanihome.hanihomebe.property.domain.enums.PropertySuperType.RENT;
 import static org.hanihome.hanihomebe.property.domain.enums.PropertySuperType.SHARE;
 
 @Entity
@@ -42,64 +43,29 @@ public class TemporaryShareProperty extends TemporaryProperty {
 
     //2. 매물 상세(내부 면적, 총 면적, 총 거주인, 욕실 쉐어자 수, 건물 전체 층, 해당 층)
     @Embedded
-    private ShareInternalDetails shareInternalDetails;
+    private TemporaryShareInternalDetails shareInternalDetails;
 
-    public static TemporaryShareProperty create(TemporaryPropertyStepSaveRequestDTO dto, Member member) {
-        AddressAndPhotosDTO addressAndPhotosDTO = dto.getAddressAndPhotos();
-        ShareDetailDTO detailDTO = (ShareDetailDTO) dto.getDetail();
-        ConditionDTO conditionDTO = dto.getCondition();
-        ContractDTO contractDTO = dto.getContract();
-        DescriptionDTO descriptionDTO = dto.getDescription();
-
-        TemporaryShareProperty.TemporarySharePropertyBuilder builder =
-                TemporaryShareProperty.builder()
-                        .member(member)
-                        .kind(SHARE)
-                        .status(dto.getStepStatus());
-
-        //1단계
-        if(addressAndPhotosDTO != null) {
-            builder
-                    .region(addressAndPhotosDTO.region())
-                    .photoUrls(addressAndPhotosDTO.imageUrls());
-        }
-
-        // 2단계
-        if (detailDTO != null) {
-            builder
-                    .sharePropertySubType(detailDTO.sharePropertySubType())
-                    .capacityShare(detailDTO.capacityShare())
-                    .shareInternalDetails(detailDTO.shareInternalDetails());
-        }
-
-        // 3단계
-        if (conditionDTO != null) {
-            builder
-                    .genderPreference(conditionDTO.genderPreference())
-                    .lgbtAvailable(conditionDTO.lgbtAvailable())
-                    .livingConditions(conditionDTO.livingConditions().toVO())
-                    .moveInInfo(conditionDTO.moveInInfo().toVO());
-        }
-
-        // 4단계
-        if (contractDTO != null) {
-            builder
-                    .costDetails(contractDTO.costDetails().toVO())
-                    .meetingDateFrom(contractDTO.meetingDateFrom())
-                    .meetingDateTo(contractDTO.meetingDateTo())
-                    .timeSlots(contractDTO.timeSlots())
-                    .viewingAlwaysAvailable(contractDTO.viewingAlwaysAvailable());
-        }
-
-        //5단계
-        if(descriptionDTO != null) {
-            builder
-                    .description(descriptionDTO.description());
-        }
-
-        return builder.build();
-
-
+    public static TemporaryShareProperty create(TemporarySharePropertyCreateRequestDTO dto, Member member) {
+        return TemporaryShareProperty.builder()
+                .member(member)
+                .kind(dto.kind())
+                .genderPreference(dto.genderPreference())
+                .lgbtAvailable(dto.lgbtAvailable())
+                .region(dto.region())
+                .photoUrls(dto.photoUrls())
+                .costDetails(dto.costDetails().toTemporaryVO())
+                .livingConditions(dto.livingConditions().toTemporaryVO())
+                .moveInInfo(dto.moveInInfo().toTemporaryVO())
+                .meetingDateFrom(dto.meetingDateFrom())
+                .meetingDateTo(dto.meetingDateTo())
+                .timeSlots(dto.timeSlots())
+                .viewingAvailableDateTimes(dto.viewingAvailableDateTimes())
+                .viewingAlwaysAvailable(dto.viewingAlwaysAvailable())
+                .description(dto.description())
+                .sharePropertySubType(dto.sharePropertySubType())   // 고유필드 1
+                .shareInternalDetails(dto.internalDetails())
+                .capacityShare(dto.capacityShare())               // 고유필드 3
+                .build();
 
     }
 

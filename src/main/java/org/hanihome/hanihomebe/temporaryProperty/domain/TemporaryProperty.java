@@ -35,8 +35,12 @@ import org.hanihome.hanihomebe.property.domain.vo.CostDetails;
 import org.hanihome.hanihomebe.property.domain.vo.LivingConditions;
 import org.hanihome.hanihomebe.property.domain.vo.MoveInInfo;
 import org.hanihome.hanihomebe.property.domain.vo.TimeSlot;
+import org.hanihome.hanihomebe.property.domain.vo.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.temporaryProperty.domain.enums.TemporaryPropertyStepStatus;
 import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOptionItem;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -60,9 +64,6 @@ public abstract class TemporaryProperty {
     @Column(name = "temporary_property_id")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TemporaryPropertyStepStatus status;
 
     @CreatedDate
     @Column(updatable = false)
@@ -102,13 +103,9 @@ public abstract class TemporaryProperty {
     @Column(name = "photo_urls") //저장 단계니 null도 이론상 가능
     private List<String> photoUrls = new ArrayList<>();
 
-    //썸네일이 저장할 때 필요한가?
-    private String thumbnailUrl;
-
     //4. 계약 사항(비용, 빌포함 여부, 빌 설명, 디파짓, Key 디파짓) 빌에 포함된 항목은 없음.
     @Embedded
-    private CostDetails costDetails;
-
+    private TemporaryCostDetails costDetails;
 
     /*
     2. 매물 상세: 이 매물의 장점은 무엇인가요?, 기본 제공 가전과 가구,
@@ -122,11 +119,11 @@ public abstract class TemporaryProperty {
 
     //3. 입주 조건 (노티스, 최소 거주 기간, 계약 형태 설명, 계약 연장 가능 여부)
     @Embedded
-    private LivingConditions livingConditions;
+    private TemporaryLivingConditions livingConditions;
 
     //3. 입주 조건 (언제부터 언제까지, 즉시 입주 가능, 입주 일자 협의 가능)
     @Embedded
-    private MoveInInfo moveInInfo;
+    private TemporaryMoveInInfo moveInInfo;
 
     //4. 계약사항. 뷰잉 가능 날짜
     private LocalDate meetingDateFrom;
@@ -148,6 +145,30 @@ public abstract class TemporaryProperty {
     })
     private List<TimeSlot> timeSlots = new ArrayList<>();
 
+
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "temporary_property_viewing_available_date_time",
+            joinColumns = @JoinColumn(name = "temporary_property_id"))
+    @AttributeOverrides({
+            @AttributeOverride(
+                    name = "date",
+                    column = @Column(name = "date", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "time",
+                    column = @Column(name = "time", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "isReserved",
+                    column = @Column(name = "is_reserved", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "timeInterval",
+                    column = @Column(name = "time_interval", nullable = false)
+            )
+    })
+    private List<ViewingAvailableDateTime> viewingAvailableDateTimes = new ArrayList<>();
 
 
     //4. 계약 사항: 뷰잉 항상 가능 여부 boolean

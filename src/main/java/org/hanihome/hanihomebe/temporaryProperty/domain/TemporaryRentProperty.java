@@ -14,13 +14,15 @@ import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityRent;
 import org.hanihome.hanihomebe.property.domain.enums.RealEstateType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
-import org.hanihome.hanihomebe.property.domain.vo.RentInternalDetails;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryRentInternalDetails;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.AddressAndPhotosDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.DescriptionDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.ConditionDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.ContractDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.RentDetailDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
+
 import static org.hanihome.hanihomebe.property.domain.enums.PropertySuperType.RENT;
 
 
@@ -42,67 +44,36 @@ public class TemporaryRentProperty extends TemporaryProperty {
 
     //2. 매물 상세
     @Embedded
-    private RentInternalDetails rentInternalDetails;
+    private TemporaryRentInternalDetails rentInternalDetails;
 
     //2. 매물 상세
     @Enumerated(EnumType.STRING)
-    private RealEstateType isRealEstateType;
+    private RealEstateType isRealEstateIntervention;
 
+    public static TemporaryRentProperty create (TemporaryRentPropertyCreateRequestDTO dto, Member member) {//DTO에도 memberId가 있는데 따로 멤버를 받는 이유가 있나?
+        //적어도 주소는 다 입력되었는지 검사하는 로직추가
 
-    public static TemporaryRentProperty create(TemporaryPropertyStepSaveRequestDTO dto, Member member) {
-        AddressAndPhotosDTO addressAndPhotosDTO = dto.getAddressAndPhotos();
-        RentDetailDTO detailDTO = (RentDetailDTO) dto.getDetail();
-        ConditionDTO conditionDTO = dto.getCondition();
-        ContractDTO contractDTO = dto.getContract();
-        DescriptionDTO descriptionDTO = dto.getDescription();
+        //근데 얘네들 null이여도 NPE 안뜨고 잘되나?
+        return TemporaryRentProperty.builder()
+                .member(member)
+                .kind(dto.kind())
+                .genderPreference(dto.genderPreference())
+                .lgbtAvailable(dto.lgbtAvailable())
+                .region(dto.region())
+                .photoUrls(dto.photoUrls())
+                .costDetails(dto.costDetails().toTemporaryVO())
+                .livingConditions(dto.livingConditions().toTemporaryVO())
+                .moveInInfo(dto.moveInInfo().toTemporaryVO())
+                .meetingDateFrom(dto.meetingDateFrom())
+                .meetingDateTo(dto.meetingDateTo())
+                .timeSlots(dto.timeSlots())
+                .viewingAvailableDateTimes(dto.viewingAvailableDateTimes())
+                .viewingAlwaysAvailable(dto.viewingAlwaysAvailable())
+                .description(dto.description())
+                .rentPropertySubType(dto.rentPropertySubType())             // 고유필드
+                .rentInternalDetails(dto.internalDetails())                 // 고유필드
+                .capacityRent(dto.capacityRent())                           // 고유필드
+                .build();
 
-        TemporaryRentProperty.TemporaryRentPropertyBuilder builder =
-                TemporaryRentProperty.builder()
-                        .member(member)
-                        .kind(RENT)
-                        .status(dto.getStepStatus());
-
-        if(addressAndPhotosDTO != null) {
-            builder
-                    .region(addressAndPhotosDTO.region())
-                    .photoUrls(addressAndPhotosDTO.imageUrls());
-        }
-
-        // 2단계
-        if (detailDTO != null) {
-            builder
-                    .rentPropertySubType(detailDTO.rentPropertySubType())
-                    .capacityRent(detailDTO.capacityRent())
-                    .rentInternalDetails(detailDTO.rentInternalDetails())
-                    .isRealEstateType(detailDTO.isRealEstateType());
-        }
-
-        // 3단계
-        if (conditionDTO != null) {
-            builder
-                    .genderPreference(conditionDTO.genderPreference())
-                    .lgbtAvailable(conditionDTO.lgbtAvailable())
-                    .livingConditions(conditionDTO.livingConditions().toVO())
-                    .moveInInfo(conditionDTO.moveInInfo().toVO());
-        }
-
-        // 4단계
-        if (contractDTO != null) {
-            builder
-                    .costDetails(contractDTO.costDetails().toVO())
-                    .meetingDateFrom(contractDTO.meetingDateFrom())
-                    .meetingDateTo(contractDTO.meetingDateTo())
-                    .timeSlots(contractDTO.timeSlots())
-                    .viewingAlwaysAvailable(contractDTO.viewingAlwaysAvailable());
-        }
-
-        if(descriptionDTO != null) {
-            builder
-                    .description(descriptionDTO.description());
-        }
-
-        return builder.build();
-
-        //null 기준이 아니고 완료된 단계까지 검사를 해야함...
     }
 }
