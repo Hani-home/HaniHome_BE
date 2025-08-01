@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import org.hanihome.hanihomebe.interest.region.Region;
-import org.hanihome.hanihomebe.property.domain.vo.CostDetails;
-import org.hanihome.hanihomebe.property.domain.vo.LivingConditions;
-import org.hanihome.hanihomebe.property.domain.vo.MoveInInfo;
 import org.hanihome.hanihomebe.property.domain.vo.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
+import org.hanihome.hanihomebe.property.web.dto.request.create.CostDetailsDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.LivingConditionsDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,10 +30,10 @@ public abstract class PropertyPatchRequestDTO {
     private Boolean lgbtAvailable;
     private Region region;
     private List<String> photoUrls;
-    private CostDetails costDetails;
+    private CostDetailsDTO costDetails;
     private List<Long> optionItemIds;     // 포함된 비용 항목 리스트
-    private LivingConditions livingConditions;
-    private MoveInInfo moveInInfo;
+    private LivingConditionsDTO livingConditions;
+    private MoveInInfoDTO moveInInfo;
     private LocalDate meetingDateFrom;
     private LocalDate meetingDateTo;
     private List<TimeSlot> timeSlots;

@@ -21,4 +21,6 @@ public class ShareInternalDetails {
     private Integer totalFloors;     // 2-5. 건물 총 층수
 
     private Integer propertyFloor;   // 2-6. 해당 매물의 층수
+
+    private boolean withPropertyOwner;
 }
