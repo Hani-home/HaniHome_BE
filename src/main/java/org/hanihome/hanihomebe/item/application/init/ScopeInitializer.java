@@ -122,7 +122,6 @@ public class ScopeInitializer {
                 CategoryCode.PROPERTY_CAT3,
                 CategoryCode.PROPERTY_CAT4,
                 CategoryCode.PROPERTY_CAT5,
-                CategoryCode.PROPERTY_CAT6,
         };
     }
 

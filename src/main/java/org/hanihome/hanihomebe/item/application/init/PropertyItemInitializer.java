@@ -26,7 +26,6 @@ public class PropertyItemInitializer extends OptionItemInitializer {
         initializePossibleNotPossibleItems();   // 카테고리3: 가능불가능 여부
         initializeBillItems();                  // 카테고리4: 빌에 포함된 항목
         initializeRealEstateIntervention();     // 카테고리5: 부동산 중개 여부
-        initializePropertySpecOptions();        // 카테고리6: 매물 정보를 입력해주세요 - 부가옵션
     }
 
 
@@ -80,16 +79,6 @@ public class PropertyItemInitializer extends OptionItemInitializer {
         saveCategoryAndOnlyParentItem(CategoryCode.PROPERTY_CAT5, Arrays.asList(
                 "개인 임대",
                 "부동산 중개"
-        ));
-    }
-
-
-    /// 매물 정보를 입력해주세요 - 부가옵션
-    private void initializePropertySpecOptions() {
-        saveCategoryAndOnlyParentItem(CategoryCode.PROPERTY_CAT6, Arrays.asList(
-                "집주인과 함께 거주",
-                "마당 포함",
-                "베란다 포함"
         ));
     }
 
