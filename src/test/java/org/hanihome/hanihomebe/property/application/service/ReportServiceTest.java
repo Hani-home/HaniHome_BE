@@ -13,10 +13,7 @@ import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.domain.vo.*;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
-import org.hanihome.hanihomebe.property.web.dto.request.create.CostDetailsDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.create.LivingConditionsDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
-import org.hanihome.hanihomebe.property.web.dto.request.create.SharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.*;
 import org.hanihome.hanihomebe.report.application.domain.ReportTargetType;
 import org.hanihome.hanihomebe.report.service.ReportService;
 import org.hanihome.hanihomebe.report.web.dto.ReportRequestDTO;
@@ -126,9 +123,9 @@ public class ReportServiceTest {
                         true,                     // viewingAlwaysAvailable
                         "깨끗하고 조용한 마스터룸입니다.",
                         SharePropertySubType.MASTER_ROOM,
-                        new ShareInternalDetails(
+                        new ShareInternalDetailsDTO(
                                 10.0, 50.0,
-                                3, 2, 5, 2
+                                3, 2, 5, 2, true
                         ),                      // internalDetails
                         CapacityShare.DOUBLE       // capacityShare
                 );

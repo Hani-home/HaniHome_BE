@@ -26,4 +26,7 @@ public class RentInternalDetails {
 
     private Integer propertyFloors;
 
+    private boolean yardIncluded;
+
+    private boolean verandaIncluded;
 }

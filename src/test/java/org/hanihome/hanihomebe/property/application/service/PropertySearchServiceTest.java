@@ -130,9 +130,9 @@ class PropertySearchServiceTest {
                         true,                     // viewingAlwaysAvailable
                         "깨끗하고 조용한 마스터룸입니다.",
                         SharePropertySubType.MASTER_ROOM,
-                        new ShareInternalDetails(
+                        new ShareInternalDetailsDTO(
                                 10.0, 50.0,
-                                3, 2, 5, 2
+                                3, 2, 5, 2, true
                         ),                      // internalDetails
                         CapacityShare.DOUBLE       // capacityShare
                 );
@@ -157,9 +157,9 @@ class PropertySearchServiceTest {
                         false,
                         "깨끗하고 조용한 세컨드룸입니다.",
                         SharePropertySubType.SECOND_ROOM,
-                        new ShareInternalDetails(
+                        new ShareInternalDetailsDTO(
                                 2.0, 2.0,
-                                2, 2, 2, 2
+                                2, 2, 2, 2, true
                         ),
                         CapacityShare.DOUBLE
                 );
@@ -184,10 +184,10 @@ class PropertySearchServiceTest {
                         true,
                         "역세권 깔끔한 하우스입니다.",
                         RentPropertySubType.HOUSE,
-                        new RentInternalDetails(
+                        new RentInternalDetailsDTO(
                                 45.0, 60.0,
                                 3, 1,
-                                10, 3
+                                10, 3, true, true
                         ),
                         CapacityRent.FOUR
                 );
@@ -212,10 +212,10 @@ class PropertySearchServiceTest {
                         true,
                         "깔끔한 유닛 매물입니다.",
                         RentPropertySubType.UNIT,
-                        new RentInternalDetails(
+                        new RentInternalDetailsDTO(
                                 30.0, 50.0,
                                 2, 1,
-                                5, 2
+                                5, 2,true, true
                         ),
                         CapacityRent.FOUR
                 );
@@ -437,9 +437,9 @@ class PropertySearchServiceTest {
                         true,                     // viewingAlwaysAvailable
                         "깨끗하고 조용한 마스터룸입니다.",
                         SharePropertySubType.MASTER_ROOM,
-                        new ShareInternalDetails(
+                        new ShareInternalDetailsDTO(
                                 10.0, 50.0,
-                                3, 2, 5, 2
+                                3, 2, 5, 2, true
                         ),                      // internalDetails
                         CapacityShare.DOUBLE       // capacityShare
                 );
