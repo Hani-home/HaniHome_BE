@@ -12,7 +12,6 @@ import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.command.RentPropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityRent;
 import org.hanihome.hanihomebe.property.domain.enums.Exposure;
-import org.hanihome.hanihomebe.property.domain.enums.RealEstateType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
 import org.hanihome.hanihomebe.property.domain.vo.RentInternalDetails;
 import org.hanihome.hanihomebe.property.web.dto.request.create.RentPropertyCreateRequestDTO;
@@ -28,10 +27,6 @@ public class RentProperty extends Property {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private RentPropertySubType rentPropertySubType;
-
-    /**  부동산 중개 여부*/
-    @Enumerated(EnumType.STRING)
-    private RealEstateType isRealEstateIntervention;
 
     /**
      * 매물 정보
@@ -63,7 +58,7 @@ public class RentProperty extends Property {
                 .viewingAlwaysAvailable(dto.viewingAlwaysAvailable())
                 .description(dto.description())
                 .rentPropertySubType(dto.rentPropertySubType())             // 고유필드
-                .rentInternalDetails(dto.internalDetails())                 // 고유필드
+                .rentInternalDetails(dto.internalDetails().toVO())                 // 고유필드
                 .capacityRent(dto.capacityRent())                           // 고유필드
                 .build();
     }

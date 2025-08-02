@@ -9,13 +9,14 @@ import org.hanihome.hanihomebe.property.domain.command.RentPropertyPatchCommand;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityRent;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
+import org.hanihome.hanihomebe.property.web.dto.request.create.RentInternalDetailsDTO;
 
 import java.util.List;
 
 @Getter
 public class RentPropertyPatchRequestDTO extends PropertyPatchRequestDTO {
     private RentPropertySubType rentPropertySubType;    // (RentProperty 고유) 매물 유형
-    private RentInternalDetails internalDetails;
+    private RentInternalDetailsDTO internalDetails;
     private CapacityRent capacityRent;                  // (RentProperty 고유) 수용인원-렌트
 
     @AssertTrue(message = "timeSlot의 timeFrom, timeTo는 30분 단위여야 합니다.")
@@ -40,9 +41,9 @@ public class RentPropertyPatchRequestDTO extends PropertyPatchRequestDTO {
                 .region(super.getRegion())
                 .photoUrls(super.getPhotoUrls())
                 .optionItems(propertyOptionItems)
-                .costDetails(super.getCostDetails())
-                .livingConditions(super.getLivingConditions())
-                .moveInInfo(super.getMoveInInfo())
+                .costDetails(super.getCostDetails().toVO())
+                .livingConditions(super.getLivingConditions().toVO())
+                .moveInInfo(super.getMoveInInfo().toVO())
                 .meetingDateFrom(super.getMeetingDateFrom())
                 .meetingDateTo(super.getMeetingDateTo())
                 .timeSlots(super.getTimeSlots())
@@ -52,9 +53,10 @@ public class RentPropertyPatchRequestDTO extends PropertyPatchRequestDTO {
 
                 // RentProperty 전용 필드
                 .rentPropertySubType(this.rentPropertySubType)
-                .internalDetails(this.internalDetails)
+                .internalDetails(this.internalDetails.toVO())
                 .capacityRent(this.capacityRent)
                 .build();
     }
 
 }
+

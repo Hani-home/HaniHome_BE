@@ -5,6 +5,8 @@ import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
 
 public class TemporarySharePropertyFactory implements TemporaryPropertyFactory {
 
@@ -14,7 +16,8 @@ public class TemporarySharePropertyFactory implements TemporaryPropertyFactory {
     }
 
     @Override
-    public TemporaryProperty create(TemporaryPropertyStepSaveRequestDTO dto, Member member) {
-        return TemporaryShareProperty.create(dto, member);
+    public TemporaryProperty create(TemporaryPropertyCreateRequestDTO dto, Member member) {
+        TemporarySharePropertyCreateRequestDTO shareDto = (TemporarySharePropertyCreateRequestDTO) dto;
+        return TemporaryShareProperty.create(shareDto, member);
     }
 }

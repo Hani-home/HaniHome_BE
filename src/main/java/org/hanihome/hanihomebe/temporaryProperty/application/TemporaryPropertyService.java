@@ -8,7 +8,9 @@ import org.hanihome.hanihomebe.item.domain.OptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
+import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
+import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
 import org.hanihome.hanihomebe.temporaryProperty.application.validator.StepValidationManager;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
@@ -21,6 +23,9 @@ import org.hanihome.hanihomebe.temporaryProperty.web.dto.ConditionDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.ContractDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.DetailDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +50,7 @@ public class TemporaryPropertyService {
 
 
 
-    public void temporaryPropertyCheckAndSave(Long hostId, TemporaryPropertyStepSaveRequestDTO dto, Long id) {
+    public void temporaryPropertyCheckAndSave(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
 
         //해당 멤버 존재하는지 확인
         Member host = memberRepository.findById(hostId)
@@ -68,24 +73,32 @@ public class TemporaryPropertyService {
 
         TemporaryProperty temporaryProperty;
 
-        if(dto.getKind() == PropertySuperType.RENT) {
-            temporaryProperty = TemporaryRentProperty.create(dto, host);
+        if(dto.kind() == PropertySuperType.RENT) {
+            TemporaryRentPropertyCreateRequestDTO rentDto = (TemporaryRentPropertyCreateRequestDTO) dto;
+            temporaryProperty = TemporaryRentProperty.create(rentDto, host);
             temporaryRentPropertyRepository.save((TemporaryRentProperty) temporaryProperty);
 
-            addTemporaryPropertyOptionItem(dto, temporaryProperty);
+            //수정해야함
+            if (dto.optionItemIds() != null) {
+                addTemporaryPropertyOptionItem(dto.optionItemIds(), temporaryProperty);
+            }
 
 
-        } else if (dto.getKind() == PropertySuperType.SHARE) {
-            //
-            temporaryProperty  = TemporaryShareProperty.create(dto, host);
+
+        } else if (dto.kind() == PropertySuperType.SHARE) {
+            TemporarySharePropertyCreateRequestDTO shareDto = (TemporarySharePropertyCreateRequestDTO) dto;
+            temporaryProperty  = TemporaryShareProperty.create(shareDto, host);
             temporarySharePropertyRepository.save((TemporaryShareProperty) temporaryProperty);
+
             //여기도 옵션아이템
-            addTemporaryPropertyOptionItem(dto, temporaryProperty);
+            if (dto.optionItemIds() != null) {
+                addTemporaryPropertyOptionItem(dto.optionItemIds(), temporaryProperty);
+            }
+
 
         }
 
         /*
-        if(dto.getId()==null) {
             TemporaryProperty temporaryProperty;
 
             if(dto.getKind() == PropertySuperType.RENT) {
@@ -94,53 +107,37 @@ public class TemporaryPropertyService {
 
                 addTemporaryPropertyOptionItem(dto, temporaryProperty);
 
-
             } else if (dto.getKind() == PropertySuperType.SHARE) {
                 //
                 temporaryProperty  = TemporaryShareProperty.create(dto, host);
                 temporarySharePropertyRepository.save((TemporaryShareProperty) temporaryProperty);
                 //여기도 옵션아이템
                 addTemporaryPropertyOptionItem(dto, temporaryProperty);
-
             }
-
-        } else {
-            //저장 매물 수정은 다음 PR에 확실하게 올리겠습니다
-            TemporaryProperty temporaryProperty = temporaryPropertyRepository.findByIdAndMember(id,host)
-                    .orElseThrow(() -> new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS));
-
-            temporaryProperty.clearTemporaryPropertyOptionItems();
-            addTemporaryPropertyOptionItem(dto, temporaryProperty);
-
-
         }
-
          */
 
     }
 
-    private void addTemporaryPropertyOptionItem(TemporaryPropertyStepSaveRequestDTO dto, TemporaryProperty temporaryProperty) {
-        DetailDTO detail = dto.getDetail(); //optionItemIds, highlightOptionItemIds
-        ConditionDTO condition = dto.getCondition(); // conditionOptionItemIds
-        ContractDTO contract = dto.getContract(); //IncludedOptionItemIds
+    //OptionItem 우야노
+    private void addTemporaryPropertyOptionItem(List<Long> optionItemIds, TemporaryProperty temporaryProperty) {
+        optionItemIds.forEach(optionItemId -> {
+            OptionItem optionItem = optionItemRepository.findById(optionItemId).orElseThrow(() -> new RuntimeException("해당하는 선택목록 식별자가 없습니다."));
 
+            TemporaryPropertyOptionItem temporaryPropertyOptionItem = TemporaryPropertyOptionItem.builder()
+                    .temporaryProperty(temporaryProperty)
+                    .optionItem(optionItem)
+                    .optionItemName(optionItem.getItemName())
+                    .build();
+            temporaryProperty.addTemporaryPropertyOptionItem(temporaryPropertyOptionItem);
+        });
+    }
+
+    /*
+    private void addTemporaryPropertyOptionItem(TemporaryPropertyCreateRequestDTO dto, TemporaryProperty temporaryProperty) {
         //여기서 위에 주석에 있는 애들 데리고 와서 TemporaryPropertyOptionItem 테이블에 넣어야함
         List<Long> optionItemIds = new ArrayList<>();
         //2단계
-        if (detail != null) {
-            if (detail.optionItemIds() != null) optionItemIds.addAll(detail.optionItemIds());
-            if (detail.highlightOptionItemIds() != null) optionItemIds.addAll(detail.highlightOptionItemIds());
-        }
-
-        // 3단계: 입주 조건 관련 옵션
-        if (condition != null && condition.conditionOptionItemIds() != null) {
-            optionItemIds.addAll(condition.conditionOptionItemIds());
-        }
-
-        // 4단계: 계약 포함 항목 옵션
-        if (contract != null && contract.IncludedOptionItemIds() != null) {
-            optionItemIds.addAll(contract.IncludedOptionItemIds());
-        }
 
         //중복이 생길 수 있을까...?
         Set<Long> uniqueIds = new HashSet<>(optionItemIds);
@@ -155,6 +152,7 @@ public class TemporaryPropertyService {
             temporaryProperty.addTemporaryPropertyOptionItem(propertyOptionItem);
         });
     }
+     */
 
     public void deleteTemporaryProperty(Long hostId, Long temporaryPropertyId) {
 

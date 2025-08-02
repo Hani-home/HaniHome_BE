@@ -34,13 +34,12 @@ public record SharePropertyCreateRequestDTO(
         boolean viewingAlwaysAvailable,
         String description,                         // 매물 소개
         SharePropertySubType sharePropertySubType,  //고유필드 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
-        ShareInternalDetails internalDetails,
+        ShareInternalDetailsDTO internalDetails,
         CapacityShare capacityShare                 //고유필드 3. 수용 인원
 ) implements PropertyCreateRequestDTO {
     public SharePropertyCreateRequestDTO {          // compact 생성자: AllArgsConstructor와 동일
         if (photoUrls == null) {
-            photoUrls = new ArrayList<>();
-        }
+            photoUrls = new ArrayList<>();}
         if (optionItemIds == null) {
             optionItemIds = new ArrayList<>();
         }

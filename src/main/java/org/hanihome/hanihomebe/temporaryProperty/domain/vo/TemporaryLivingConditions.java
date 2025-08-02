@@ -22,5 +22,14 @@ public class TemporaryLivingConditions {
     // 10-3. 계약 형태 설명
     private String contractTerms;
 
-    private boolean isContractExtendable;   // 계약 연장 가능
+    private Boolean isContractExtendable;   // 계약 연장 가능
+
+    public static TemporaryLivingConditions empty() {
+        return new TemporaryLivingConditions().builder()
+                .noticePeriodWeeks(null)
+                .minimumStayWeeks(null)
+                .contractTerms(null)
+                .isContractExtendable(null)
+                .build();
+    }
 }

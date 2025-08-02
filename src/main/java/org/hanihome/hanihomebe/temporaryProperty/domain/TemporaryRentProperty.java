@@ -14,6 +14,9 @@ import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityRent;
 import org.hanihome.hanihomebe.property.domain.enums.RealEstateType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryRentInternalDetails;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.AddressAndPhotosDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.DescriptionDTO;
@@ -61,9 +64,15 @@ public class TemporaryRentProperty extends TemporaryProperty {
                 .lgbtAvailable(dto.lgbtAvailable())
                 .region(dto.region())
                 .photoUrls(dto.photoUrls())
-                .costDetails(dto.costDetails().toTemporaryVO())
-                .livingConditions(dto.livingConditions().toTemporaryVO())
-                .moveInInfo(dto.moveInInfo().toTemporaryVO())
+                .costDetails(dto.costDetails() != null
+                        ? dto.costDetails().toTemporaryVO()
+                        : TemporaryCostDetails.empty())
+                .livingConditions(dto.livingConditions() != null
+                        ? dto.livingConditions().toTemporaryVO()
+                        : TemporaryLivingConditions.empty())
+                .moveInInfo(dto.moveInInfo() != null
+                        ? dto.moveInInfo().toTemporaryVO()
+                        : TemporaryMoveInInfo.empty())
                 .meetingDateFrom(dto.meetingDateFrom())
                 .meetingDateTo(dto.meetingDateTo())
                 .timeSlots(dto.timeSlots())

@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record TemporaryRentPropertyCreateRequestDTO(
-        Long memberId,
         PropertySuperType kind,
         GenderPreference genderPreference,          // 선호 성별
         boolean lgbtAvailable,

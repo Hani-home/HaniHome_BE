@@ -18,7 +18,7 @@ public class TemporaryCostDetails {
     // 8-1. 비용 (주 단위)
     private BigDecimal weeklyCost;
 
-    private boolean isBillIncluded;
+    private Boolean isBillIncluded;
 
     // 8-3. bill 설명
     @Column(columnDefinition = "TEXT")
@@ -30,5 +30,16 @@ public class TemporaryCostDetails {
     // 8-5. 키 보증금
     private BigDecimal keyDeposit;
 
-    private boolean isDepositAdjustable;
+    private Boolean isDepositAdjustable;
+
+    public static TemporaryCostDetails empty() {
+        return TemporaryCostDetails.builder()
+                .weeklyCost(null)
+                .isBillIncluded(null)
+                .costDescription(null)
+                .deposit(null)
+                .keyDeposit(null)
+                .isDepositAdjustable(null)
+                .build();
+    }
 }

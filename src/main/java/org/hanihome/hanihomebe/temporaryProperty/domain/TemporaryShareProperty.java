@@ -12,6 +12,10 @@ import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
+import org.hanihome.hanihomebe.property.domain.vo.LivingConditions;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
+import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryShareInternalDetails;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.AddressAndPhotosDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.ConditionDTO;
@@ -46,6 +50,7 @@ public class TemporaryShareProperty extends TemporaryProperty {
     private TemporaryShareInternalDetails shareInternalDetails;
 
     public static TemporaryShareProperty create(TemporarySharePropertyCreateRequestDTO dto, Member member) {
+        //region 확인
         return TemporaryShareProperty.builder()
                 .member(member)
                 .kind(dto.kind())
@@ -53,9 +58,15 @@ public class TemporaryShareProperty extends TemporaryProperty {
                 .lgbtAvailable(dto.lgbtAvailable())
                 .region(dto.region())
                 .photoUrls(dto.photoUrls())
-                .costDetails(dto.costDetails().toTemporaryVO())
-                .livingConditions(dto.livingConditions().toTemporaryVO())
-                .moveInInfo(dto.moveInInfo().toTemporaryVO())
+                .costDetails(dto.costDetails() != null
+                        ? dto.costDetails().toTemporaryVO()
+                        : TemporaryCostDetails.empty())
+                .livingConditions(dto.livingConditions() != null
+                        ? dto.livingConditions().toTemporaryVO()
+                        : TemporaryLivingConditions.empty())
+                .moveInInfo(dto.moveInInfo() != null
+                        ? dto.moveInInfo().toTemporaryVO()
+                        : TemporaryMoveInInfo.empty())
                 .meetingDateFrom(dto.meetingDateFrom())
                 .meetingDateTo(dto.meetingDateTo())
                 .timeSlots(dto.timeSlots())

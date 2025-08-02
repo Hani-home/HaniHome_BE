@@ -37,7 +37,7 @@ public record RentPropertyCreateRequestDTO(
         boolean viewingAlwaysAvailable,
         String description,                         // 매물 소개
         RentPropertySubType rentPropertySubType,    // (RentProperty 고유) 매물 유형
-        RentInternalDetails internalDetails,
+        RentInternalDetailsDTO internalDetails,
         CapacityRent capacityRent                  // (RentProperty 고유) 수용인원-렌트
 )  implements PropertyCreateRequestDTO {
     public RentPropertyCreateRequestDTO {

@@ -4,7 +4,10 @@ import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
+import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +19,8 @@ public class TemporaryRentPropertyFactory implements TemporaryPropertyFactory {
     }
 
     @Override
-    public TemporaryProperty create(TemporaryPropertyStepSaveRequestDTO dto, Member member) {
-        return TemporaryRentProperty.create(dto, member);
+    public TemporaryProperty create(TemporaryPropertyCreateRequestDTO dto, Member member) {
+        TemporaryRentPropertyCreateRequestDTO RentDto = (TemporaryRentPropertyCreateRequestDTO) dto;
+        return TemporaryRentProperty.create(RentDto, member);
     }
 }

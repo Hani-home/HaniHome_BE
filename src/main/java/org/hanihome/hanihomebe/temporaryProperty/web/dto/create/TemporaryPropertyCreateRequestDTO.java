@@ -1,6 +1,8 @@
 package org.hanihome.hanihomebe.temporaryProperty.web.dto.create;
 
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
@@ -14,10 +16,16 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
 import java.time.LocalDate;
 import java.util.List;
 
-//JackSon 직렬화 설정
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,               // 타입을 문자열 이름으로 구분
+        include = JsonTypeInfo.As.PROPERTY,       // JSON 안에 필드로 포함
+        property = "jsonDiscriminator"            // JSON 안에 들어갈 필드명
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TemporaryRentPropertyCreateRequestDTO.class, name = "RENT"),
+        @JsonSubTypes.Type(value = TemporarySharePropertyCreateRequestDTO.class, name = "SHARE")
+})
 public interface TemporaryPropertyCreateRequestDTO {//seal하면 좋을 듯
-    Long memberId();//getter 명시 record에서 쓸 때 유용
-
     PropertySuperType kind();
 
     GenderPreference genderPreference();

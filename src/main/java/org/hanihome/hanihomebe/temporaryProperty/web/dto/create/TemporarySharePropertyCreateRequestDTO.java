@@ -1,5 +1,7 @@
 package org.hanihome.hanihomebe.temporaryProperty.web.dto.create;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
@@ -16,8 +18,8 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.Temp
 import java.time.LocalDate;
 import java.util.List;
 
+
 public record TemporarySharePropertyCreateRequestDTO(
-        Long memberId,                              // 소유자 회원 ID
         PropertySuperType kind,                     // 매물 종류 (SHARE / RENT)
         GenderPreference genderPreference,          // 선호 성별
         boolean lgbtAvailable,
@@ -36,6 +38,6 @@ public record TemporarySharePropertyCreateRequestDTO(
         SharePropertySubType sharePropertySubType,  //고유필드 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)
         TemporaryShareInternalDetails internalDetails,
         CapacityShare capacityShare
-) {
+) implements TemporaryPropertyCreateRequestDTO {
     //이것도 생성자 커스터마지징 => null 검사 후 기본값
 }
