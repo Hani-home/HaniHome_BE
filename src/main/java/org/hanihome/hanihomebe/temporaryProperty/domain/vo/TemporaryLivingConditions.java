@@ -25,7 +25,7 @@ public class TemporaryLivingConditions {
     private Boolean isContractExtendable;   // 계약 연장 가능
 
     public static TemporaryLivingConditions empty() {
-        return new TemporaryLivingConditions().builder()
+        return TemporaryLivingConditions.builder()
                 .noticePeriodWeeks(null)
                 .minimumStayWeeks(null)
                 .contractTerms(null)

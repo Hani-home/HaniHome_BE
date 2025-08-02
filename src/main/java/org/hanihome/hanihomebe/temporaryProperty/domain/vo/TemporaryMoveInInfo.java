@@ -20,7 +20,7 @@ public class TemporaryMoveInInfo {
     private Boolean isNegotiable;
 
     public static TemporaryMoveInInfo empty() {
-        return new TemporaryMoveInInfo().builder()
+        return TemporaryMoveInInfo.builder()
                 .availableFrom(null)
                 .availableTo(null)
                 .isImmediate(null)

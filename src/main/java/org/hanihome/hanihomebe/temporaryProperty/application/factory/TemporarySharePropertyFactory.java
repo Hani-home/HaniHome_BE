@@ -6,7 +6,9 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TemporarySharePropertyFactory implements TemporaryPropertyFactory {
 
     @Override

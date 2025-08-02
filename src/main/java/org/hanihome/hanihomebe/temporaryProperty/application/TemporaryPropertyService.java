@@ -85,7 +85,7 @@ public class TemporaryPropertyService {
 
     private void addTemporaryPropertyOptionItem(List<Long> optionItemIds, TemporaryProperty temporaryProperty) {
         optionItemIds.forEach(optionItemId -> {
-            OptionItem optionItem = optionItemRepository.findById(optionItemId).orElseThrow(() -> new RuntimeException("해당하는 선택목록 식별자가 없습니다."));
+            OptionItem optionItem = optionItemRepository.findById(optionItemId).orElseThrow(() -> new CustomException(ServiceCode.OPTION_ITEM_NOT_EXISTS));
 
             TemporaryPropertyOptionItem temporaryPropertyOptionItem = TemporaryPropertyOptionItem.builder()
                     .temporaryProperty(temporaryProperty)
