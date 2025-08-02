@@ -282,7 +282,7 @@ class PropertyServiceTest {
                 true,
                 "설명",
                 SharePropertySubType.MASTER_ROOM,
-                new ShareInternalDetails(5.0, 10.0, 1, 2, 3, 4),
+                new ShareInternalDetailsDTO(5.0, 10.0, 1, 2, 3, 4, true),
                 CapacityShare.DOUBLE
         );
     }
@@ -319,7 +319,7 @@ class PropertyServiceTest {
                 true,
                 "설명",
                 RentPropertySubType.UNIT,
-                new RentInternalDetails(5.0, 10.0, 1, 2, 3, 4),
+                new RentInternalDetailsDTO(5.0, 10.0, 1, 2, 3, 4, true, true),
                 CapacityRent.FOUR
         );
     }

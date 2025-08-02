@@ -59,7 +59,7 @@ public class ShareProperty extends Property {
                 .viewingAlwaysAvailable(dto.viewingAlwaysAvailable())
                 .description(dto.description())
                 .sharePropertySubType(dto.sharePropertySubType())   // 고유필드 1
-                .shareInternalDetails(dto.internalDetails())
+                .shareInternalDetails(dto.internalDetails().toVO())
                 .capacityShare(dto.capacityShare())               // 고유필드 3
                 .build();
     }
