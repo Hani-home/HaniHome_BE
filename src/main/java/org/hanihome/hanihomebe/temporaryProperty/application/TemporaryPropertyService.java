@@ -9,6 +9,7 @@ import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
+import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
@@ -17,6 +18,7 @@ import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryPropertyRep
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryRentPropertyRepository;
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporarySharePropertyRepository;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyListResponseDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
 import org.springframework.stereotype.Service;
@@ -94,6 +96,21 @@ public class TemporaryPropertyService {
                     .build();
             temporaryProperty.addTemporaryPropertyOptionItem(temporaryPropertyOptionItem);
         });
+    }
+
+    public List<TemporaryPropertyListResponseDTO> getTemporaryProperties(Long hostId) {
+        Member host = memberRepository.findById(hostId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
+        List<TemporaryProperty> temporaryProperties = temporaryPropertyRepository.findAllByMember(host);
+
+        //최신순 정렬도 해야긋다
+        return temporaryProperties.stream()
+                .map(property -> new TemporaryPropertyListResponseDTO(
+                        property.getId(),
+                        property.getCreatedAt()
+                ))
+                .toList();
     }
 
 
