@@ -39,7 +39,7 @@ public class TemporaryPropertyService {
 
 
 
-    public void temporaryPropertyCheckAndSave(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
+    public void createTemporaryProperty(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
 
         //해당 멤버 존재하는지 확인
         Member host = memberRepository.findById(hostId)
@@ -54,11 +54,6 @@ public class TemporaryPropertyService {
          */
 
 
-        //검증
-
-        //stepValidationManager.validateUpToStep(dto);
-
-        //생성 or update. 으악 근데 if-else가 너무 많아....
 
         TemporaryProperty temporaryProperty;
 
@@ -86,29 +81,8 @@ public class TemporaryPropertyService {
 
 
         }
-
-        /*
-            TemporaryProperty temporaryProperty;
-
-            if(dto.getKind() == PropertySuperType.RENT) {
-                temporaryProperty = TemporaryRentProperty.create(dto, host);
-                temporaryRentPropertyRepository.save((TemporaryRentProperty) temporaryProperty);
-
-                addTemporaryPropertyOptionItem(dto, temporaryProperty);
-
-            } else if (dto.getKind() == PropertySuperType.SHARE) {
-                //
-                temporaryProperty  = TemporaryShareProperty.create(dto, host);
-                temporarySharePropertyRepository.save((TemporaryShareProperty) temporaryProperty);
-                //여기도 옵션아이템
-                addTemporaryPropertyOptionItem(dto, temporaryProperty);
-            }
-        }
-         */
-
     }
 
-    //OptionItem 우야노
     private void addTemporaryPropertyOptionItem(List<Long> optionItemIds, TemporaryProperty temporaryProperty) {
         optionItemIds.forEach(optionItemId -> {
             OptionItem optionItem = optionItemRepository.findById(optionItemId).orElseThrow(() -> new RuntimeException("해당하는 선택목록 식별자가 없습니다."));
@@ -122,26 +96,6 @@ public class TemporaryPropertyService {
         });
     }
 
-    /*
-    private void addTemporaryPropertyOptionItem(TemporaryPropertyCreateRequestDTO dto, TemporaryProperty temporaryProperty) {
-        //여기서 위에 주석에 있는 애들 데리고 와서 TemporaryPropertyOptionItem 테이블에 넣어야함
-        List<Long> optionItemIds = new ArrayList<>();
-        //2단계
-
-        //중복이 생길 수 있을까...?
-        Set<Long> uniqueIds = new HashSet<>(optionItemIds);
-        List<OptionItem> optionItems = optionItemRepository.findAllById(uniqueIds);
-
-        optionItems.forEach(optionItem -> {
-            TemporaryPropertyOptionItem propertyOptionItem = TemporaryPropertyOptionItem.builder()
-                    .temporaryProperty(temporaryProperty)
-                    .optionItem(optionItem)
-                    .optionItemName(optionItem.getItemName())
-                    .build();
-            temporaryProperty.addTemporaryPropertyOptionItem(propertyOptionItem);
-        });
-    }
-     */
 
     public void deleteTemporaryProperty(Long hostId, Long temporaryPropertyId) {
 
