@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 @Embeddable
 public class CostDetails {
     // 8-1. 비용 (주 단위)
+    @Column(nullable = false)
     private BigDecimal weeklyCost;
 
     private boolean isBillIncluded;

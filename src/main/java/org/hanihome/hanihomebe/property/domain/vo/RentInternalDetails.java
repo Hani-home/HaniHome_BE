@@ -11,11 +11,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @Embeddable
 public class RentInternalDetails {
-
+    @Column(nullable = false)
     private Double internalArea;
 
     private Double totalArea;
 
+    @Column(nullable = false)
     private Integer numberOfRoom;
 
 
