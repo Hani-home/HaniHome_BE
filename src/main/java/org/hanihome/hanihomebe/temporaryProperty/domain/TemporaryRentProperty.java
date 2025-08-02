@@ -18,15 +18,7 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryRentInternalDetails;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.AddressAndPhotosDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.DescriptionDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.ConditionDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.ContractDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.RentDetailDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
-
-import static org.hanihome.hanihomebe.property.domain.enums.PropertySuperType.RENT;
 
 
 @Entity

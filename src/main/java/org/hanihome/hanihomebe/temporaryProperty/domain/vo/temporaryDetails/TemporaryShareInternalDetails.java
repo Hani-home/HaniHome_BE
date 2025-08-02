@@ -1,5 +1,15 @@
 package org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails;
 
+
+import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Embeddable
 public class TemporaryShareInternalDetails {
     private Double internalArea;     // 2-1. 실제 사용 면적, 단위: m^2
 
@@ -11,5 +21,7 @@ public class TemporaryShareInternalDetails {
 
     private Integer totalFloors;     // 2-5. 건물 총 층수
 
-    private Integer propertyFloor;   // 2-6. 해당 매물의 층수
+    private Integer propertyFloor;  // 2-6. 해당 매물의 층수
+
+    private boolean withPropertyOwner;
 }

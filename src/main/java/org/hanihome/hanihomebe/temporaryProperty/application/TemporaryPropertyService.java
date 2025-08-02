@@ -8,10 +8,7 @@ import org.hanihome.hanihomebe.item.domain.OptionItem;
 import org.hanihome.hanihomebe.item.repository.OptionItemRepository;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
-import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
-import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
-import org.hanihome.hanihomebe.temporaryProperty.application.validator.StepValidationManager;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
@@ -19,20 +16,13 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOp
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryPropertyRepository;
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryRentPropertyRepository;
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporarySharePropertyRepository;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.ConditionDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.ContractDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.DetailDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.TemporaryPropertyStepSaveRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +30,6 @@ import java.util.Set;
 public class TemporaryPropertyService {
 
     private final MemberRepository memberRepository;
-    private final StepValidationManager stepValidationManager;
 
     private final TemporaryPropertyRepository temporaryPropertyRepository;
     private final TemporaryRentPropertyRepository temporaryRentPropertyRepository;
