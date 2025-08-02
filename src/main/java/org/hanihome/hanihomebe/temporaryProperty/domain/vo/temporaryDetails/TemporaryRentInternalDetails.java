@@ -1,6 +1,5 @@
-package org.hanihome.hanihomebe.property.domain.vo;
+package org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,13 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Embeddable
-public class RentInternalDetails {
-    @Column(nullable = false)
+public class TemporaryRentInternalDetails {
     private Double internalArea;
 
     private Double totalArea;
 
-    @Column(nullable = false)
     private Integer numberOfRoom;
 
 

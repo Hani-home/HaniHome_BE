@@ -46,6 +46,12 @@ public enum ServiceCode {
     PROPERTY_HAS_REQUESTED_VIEWINGS(HttpStatus.BAD_REQUEST, "요청한 매물은 예약확정 상태의 뷰잉이 존재합니다"),
     PROPERTY_DELETE_FAILED_HAS_RELATIONS(HttpStatus.INTERNAL_SERVER_ERROR, "매물과 연관된 엔티티가 남아있으므로 삭제에 실패했습니다."),
 
+    // Temporary_property
+    INVALID_TEMPORARY_PROPERTY(HttpStatus.BAD_REQUEST, "이때까지 진행된 모든 단계에 정보를 입력해주세요"),
+    TEMPORARY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "저장 가능한 매물은 최대 3개입니다."),
+    TEMPORARY_PROPERTY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 저장 매물입니다."),
+
+
     // Viewing
     VIEWING_NUMBER_NOT_SATISFIED(HttpStatus.BAD_REQUEST, "요청 가능한 뷰잉 시간대는 최소 1개 최대 3개입니다"),
     VIEWING_ALREADY_PRESCHEDULED(HttpStatus.BAD_REQUEST, "요청한 뷰잉 시간대는 모두 사용자의 뷰잉 예약 일정과 겹칩니다"),
