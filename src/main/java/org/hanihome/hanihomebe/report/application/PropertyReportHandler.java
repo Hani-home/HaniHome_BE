@@ -45,7 +45,7 @@ public class PropertyReportHandler implements ReportHandler {
     }
 
     @Override
-    public void delete(Long targetId) {
-        propertyReportRepository.deleteById(targetId);
+    public void deleteByTargetId(Long targetId) {
+        propertyReportRepository.deleteByProperty_Id(targetId);
     }
 }

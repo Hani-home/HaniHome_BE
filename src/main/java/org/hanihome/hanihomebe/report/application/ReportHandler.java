@@ -9,5 +9,5 @@ public interface ReportHandler {
     ReportTargetType getTargetType();
     Report createAndSave(Member reporter, ReportRequestDTO dto);
     boolean validate(ReportRequestDTO dto);
-    void delete(Long targetId);
+    void deleteByTargetId(Long targetId);
 }

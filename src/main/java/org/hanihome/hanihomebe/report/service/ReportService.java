@@ -60,7 +60,7 @@ public class ReportService {
     @Transactional
     public void delete(Long targetId, ReportTargetType targetType) {
         ReportHandler handler = reportHandlerMap.get(targetType);
-        handler.delete(targetId);
+        handler.deleteByTargetId(targetId);
     }
 
 }
