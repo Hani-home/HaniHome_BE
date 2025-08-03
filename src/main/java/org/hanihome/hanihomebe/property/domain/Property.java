@@ -29,7 +29,7 @@ import static lombok.AccessLevel.*;
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-@Table(name = "properties")
+@Table(name = "property")
 @Entity
 public abstract class Property {
 
@@ -135,7 +135,7 @@ public abstract class Property {
      * 최소 1개, 최대 3개(아침, 점심, 저녁)
      */
     @ElementCollection
-    @CollectionTable(name = "property_time_slot",
+    @CollectionTable(name = "property_time_slots",
             joinColumns = @JoinColumn(name = "property_id"))
     @AttributeOverrides({   // 컬렉션 테이블의 칼럼 개수가 2개이므로 값 설정
             @AttributeOverride(
@@ -151,7 +151,7 @@ public abstract class Property {
 
     @Builder.Default
     @ElementCollection
-    @CollectionTable(name = "property_viewing_available_date_time",
+    @CollectionTable(name = "property_viewing_available_date_times",
         joinColumns = @JoinColumn(name = "property_id"))
     @AttributeOverrides({
             @AttributeOverride(

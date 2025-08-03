@@ -11,7 +11,7 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
 @Builder(access = PROTECTED)
-@Table(name = "notifications")
+@Table(name = "notification")
 @Entity
 public class Notification extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
