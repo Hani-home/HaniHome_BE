@@ -3,13 +3,13 @@ package org.hanihome.hanihomebe.property.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.deal.application.service.DealService;
+import org.hanihome.hanihomebe.deal.repository.DealRepository;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.global.utility.SecurityContextUtils;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.metro.application.service.NearestMetroStopService;
-import org.hanihome.hanihomebe.metro.repository.NearestMetroStopRepository;
 import org.hanihome.hanihomebe.property.application.factory.PropertyFactory;
 import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
@@ -32,7 +32,6 @@ import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
-import org.springdoc.webmvc.core.service.RequestService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +57,7 @@ public class PropertyService {
     private final ViewingService viewingService;
     private final ViewingRepository viewingRepository;
     private final ReportService reportService;
+    private final DealRepository dealRepository;
 
 
     /// create
@@ -230,6 +230,7 @@ public class PropertyService {
         }
         wishItemRepository.deleteAllByTargetTypeAndTargetId(WishTargetType.PROPERTY, id); //해당 찜하기 삭제
         viewingRepository.deleteByProperty_Id(id);
+        dealRepository.deleteByProperty_Id(id);
         nearestMetroStopService.deleteByPropertyId(id);
         reportService.delete(id, ReportTargetType.PROPERTY);
 

@@ -11,4 +11,6 @@ public interface DealRepository extends JpaRepository<Deal, Long> {
     List<Deal> findByGuest_Id(Long guestId);
 
     List<Deal> findByHost_Id(Long hostId);
+
+    void deleteByProperty_Id(Long propertyId);
 }

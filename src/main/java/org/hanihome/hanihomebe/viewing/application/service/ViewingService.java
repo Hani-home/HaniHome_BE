@@ -53,7 +53,6 @@ public class ViewingService {
     private final OptionItemRepository optionItemRepository;
     private final OptionCategoryRepository optionCategoryRepository;
     private final ViewingConversionService viewingConversionService;
-    private final OptionItemConverterForViewing optionItemConverterForViewing;
 
     /**
      * 뷰잉 생성
