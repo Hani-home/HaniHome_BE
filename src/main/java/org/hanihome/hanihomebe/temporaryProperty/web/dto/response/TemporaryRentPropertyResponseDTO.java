@@ -1,6 +1,5 @@
 package org.hanihome.hanihomebe.temporaryProperty.web.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;

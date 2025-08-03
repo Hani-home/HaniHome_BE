@@ -5,7 +5,6 @@ import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
-import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOptionItem;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryShareInternalDetails;
