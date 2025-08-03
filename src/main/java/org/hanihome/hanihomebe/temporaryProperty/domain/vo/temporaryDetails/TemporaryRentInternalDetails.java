@@ -23,7 +23,7 @@ public class TemporaryRentInternalDetails {
 
     private Integer propertyFloors;
 
-    private boolean yardIncluded;
+    private Boolean yardIncluded;
 
-    private boolean verandaIncluded;
+    private Boolean verandaIncluded;
 }

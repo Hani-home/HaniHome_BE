@@ -23,5 +23,5 @@ public class TemporaryShareInternalDetails {
 
     private Integer propertyFloor;  // 2-6. 해당 매물의 층수
 
-    private boolean withPropertyOwner;
+    private Boolean withPropertyOwner;
 }

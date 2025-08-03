@@ -17,6 +17,8 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingCondit
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryShareInternalDetails;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporarySharePropertyResponseDTO;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -68,6 +70,11 @@ public class TemporaryShareProperty extends TemporaryProperty {
                 .capacityShare(dto.capacityShare())               // 고유필드 3
                 .build();
 
+    }
+
+    @Override
+    public TemporaryPropertyResponseDTO toResponseDTO() {
+        return TemporarySharePropertyResponseDTO.fromEntity(this);
     }
 
 }
