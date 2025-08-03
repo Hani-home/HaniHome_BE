@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.temporaryProperty.application.TemporaryPropertyService;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyListResponseDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/temporary-properties")
@@ -29,6 +33,21 @@ public class TemporaryPropertyController {
         Long hostId = userDetails.getUserId();
         temporaryPropertyService.createTemporaryProperty(hostId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TemporaryPropertyListResponseDTO>> getTemporaryProperties(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long hostId = userDetails.getUserId();
+        List<TemporaryPropertyListResponseDTO> response = temporaryPropertyService.getTemporaryProperties(hostId);
+        return ResponseEntity.ok(response);
+
+    }
+
+    @GetMapping("/{temporaryPropertyId}")
+    public ResponseEntity<TemporaryPropertyResponseDTO> getTemporaryProperty(@AuthenticationPrincipal CustomUserDetails userDetails , @PathVariable Long temporaryPropertyId) {
+        Long hostId = userDetails.getUserId();
+        TemporaryPropertyResponseDTO response = temporaryPropertyService.getTemporaryProperty(hostId, temporaryPropertyId);
+        return ResponseEntity.ok(response);
     }
 
 

@@ -17,11 +17,13 @@ import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryPropertyRep
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryRentPropertyRepository;
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporarySharePropertyRepository;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyListResponseDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -94,6 +96,34 @@ public class TemporaryPropertyService {
                     .build();
             temporaryProperty.addTemporaryPropertyOptionItem(temporaryPropertyOptionItem);
         });
+    }
+
+    public List<TemporaryPropertyListResponseDTO> getTemporaryProperties(Long hostId) {
+        Member host = memberRepository.findById(hostId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
+        List<TemporaryProperty> temporaryProperties = temporaryPropertyRepository.findAllByMember(host);
+
+
+        return temporaryProperties.stream()
+                .sorted(Comparator.comparing(TemporaryProperty::getCreatedAt).reversed()) //최신순 정렬
+                .map(property -> new TemporaryPropertyListResponseDTO(
+                        property.getId(),
+                        property.getCreatedAt()
+                ))
+                .toList();
+    }
+
+    public TemporaryPropertyResponseDTO getTemporaryProperty(Long hostId, Long propertyId) {
+        Member host = memberRepository.findById(hostId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
+        TemporaryProperty temporaryProperty = temporaryPropertyRepository.findByIdAndMember(propertyId, host)
+                .orElseThrow(() -> new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS));
+
+        return temporaryProperty.toResponseDTO();
+
+
     }
 
 
