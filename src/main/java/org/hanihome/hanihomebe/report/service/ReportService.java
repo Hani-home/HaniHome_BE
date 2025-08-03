@@ -9,6 +9,7 @@ import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.report.application.ReportHandler;
 import org.hanihome.hanihomebe.report.application.domain.Report;
 import org.hanihome.hanihomebe.report.application.domain.ReportTargetType;
+import org.hanihome.hanihomebe.report.repository.ReportRepository;
 import org.hanihome.hanihomebe.report.web.dto.ReportRequestDTO;
 import org.hanihome.hanihomebe.report.web.dto.ReportResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class ReportService {
     private final Map<ReportTargetType, ReportHandler> reportHandlerMap;
 
     @Autowired
-    public ReportService(List<ReportHandler> handlers, MemberRepository memberRepository) {
+    public ReportService(List<ReportHandler> handlers, MemberRepository memberRepository, ReportRepository reportRepository) {
         this.memberRepository = memberRepository;
         this.reportHandlerMap = handlers.stream()
                 .collect(Collectors.toMap(ReportHandler::getTargetType, h-> h));
@@ -56,5 +57,10 @@ public class ReportService {
 
     //관리자 조회
 
+    @Transactional
+    public void delete(Long targetId, ReportTargetType targetType) {
+        ReportHandler handler = reportHandlerMap.get(targetType);
+        handler.delete(targetId);
+    }
 
 }
