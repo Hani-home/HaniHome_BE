@@ -13,7 +13,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "option_items",
+@Table(name = "option_item",
         uniqueConstraints = @UniqueConstraint(columnNames = {"option_category_id", "parent_id", "item_name"}) // 유니크 제약조건
 )
 @Entity

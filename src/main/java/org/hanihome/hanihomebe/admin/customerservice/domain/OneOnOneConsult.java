@@ -10,7 +10,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(access = AccessLevel.PROTECTED)
-@Table(name = "one_on_one_consults")
+@Table(name = "one_on_one_consult")
 @Entity
 public class OneOnOneConsult {
     @Id @GeneratedValue(strategy = IDENTITY)
