@@ -127,7 +127,7 @@ public abstract class TemporaryProperty {
 
     //4. 계약 사항:  뷰잉 가능 시간대
     @ElementCollection
-    @CollectionTable(name = "temporary_property_time_slot",
+    @CollectionTable(name = "temporary_property_time_slots",
             joinColumns = @JoinColumn(name = "temporary_property_id"))
     @AttributeOverrides({   // 컬렉션 테이블의 칼럼 개수가 2개이므로 값 설정
             @AttributeOverride(
@@ -144,7 +144,7 @@ public abstract class TemporaryProperty {
 
     @Builder.Default
     @ElementCollection
-    @CollectionTable(name = "temporary_property_viewing_available_date_time",
+    @CollectionTable(name = "temporary_property_viewing_available_date_times",
             joinColumns = @JoinColumn(name = "temporary_property_id"))
     @AttributeOverrides({
             @AttributeOverride(
