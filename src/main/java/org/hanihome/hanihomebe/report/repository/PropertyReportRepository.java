@@ -4,4 +4,5 @@ import org.hanihome.hanihomebe.report.application.domain.PropertyReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PropertyReportRepository extends JpaRepository<PropertyReport, Long> {
+    void deleteByProperty_Id(Long propertyId);
 }

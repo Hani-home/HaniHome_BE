@@ -57,10 +57,14 @@ public class ReportService {
 
     //관리자 조회
 
+    public List<ReportResponseDTO> getReports(ReportTargetType targetType) {
+
+    }
+
     @Transactional
     public void delete(Long targetId, ReportTargetType targetType) {
         ReportHandler handler = reportHandlerMap.get(targetType);
-        handler.delete(targetId);
+        handler.deleteByTargetId(targetId);
     }
 
 }
