@@ -19,6 +19,8 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingCondit
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryRentInternalDetails;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryRentPropertyResponseDTO;
 
 
 @Entity
@@ -76,5 +78,10 @@ public class TemporaryRentProperty extends TemporaryProperty {
                 .capacityRent(dto.capacityRent())                           // 고유필드
                 .build();
 
+    }
+
+    @Override
+    public TemporaryPropertyResponseDTO toResponseDTO() {
+        return TemporaryRentPropertyResponseDTO.fromEntity(this);
     }
 }

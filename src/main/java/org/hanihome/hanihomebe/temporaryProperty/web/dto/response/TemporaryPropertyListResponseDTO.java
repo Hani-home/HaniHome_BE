@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.temporaryProperty.web.dto.create;
+package org.hanihome.hanihomebe.temporaryProperty.web.dto.response;
 
 import java.time.LocalDateTime;
 

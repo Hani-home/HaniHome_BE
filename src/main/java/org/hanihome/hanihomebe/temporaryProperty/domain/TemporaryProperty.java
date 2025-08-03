@@ -36,6 +36,7 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOp
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -85,7 +86,7 @@ public abstract class TemporaryProperty {
     private GenderPreference genderPreference;
 
     //3. 입주 조건
-    private boolean lgbtAvailable;
+    private Boolean lgbtAvailable;
 
     //1. 주소와 사진
     @Embedded
@@ -167,7 +168,7 @@ public abstract class TemporaryProperty {
 
 
     //4. 계약 사항: 뷰잉 항상 가능 여부 boolean
-    boolean viewingAlwaysAvailable;
+    Boolean viewingAlwaysAvailable;
 
     //이건 어떤 단계에 넣어야 할까?
     private String description;
@@ -181,6 +182,8 @@ public abstract class TemporaryProperty {
     public void clearTemporaryPropertyOptionItems() {
         this.optionItems.clear();
     }
+
+    public abstract TemporaryPropertyResponseDTO toResponseDTO();
 
 
 

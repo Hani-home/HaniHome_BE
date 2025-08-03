@@ -1,12 +1,12 @@
 package org.hanihome.hanihomebe.temporaryProperty.web.controller;
 
 
-import com.amazonaws.Response;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.temporaryProperty.application.TemporaryPropertyService;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyListResponseDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyListResponseDTO;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,6 +41,13 @@ public class TemporaryPropertyController {
         List<TemporaryPropertyListResponseDTO> response = temporaryPropertyService.getTemporaryProperties(hostId);
         return ResponseEntity.ok(response);
 
+    }
+
+    @GetMapping("/{temporaryPropertyId}")
+    public ResponseEntity<TemporaryPropertyResponseDTO> getTemporaryProperty(@AuthenticationPrincipal CustomUserDetails userDetails , @PathVariable Long temporaryPropertyId) {
+        Long hostId = userDetails.getUserId();
+        TemporaryPropertyResponseDTO response = temporaryPropertyService.getTemporaryProperty(hostId, temporaryPropertyId);
+        return ResponseEntity.ok(response);
     }
 
 
