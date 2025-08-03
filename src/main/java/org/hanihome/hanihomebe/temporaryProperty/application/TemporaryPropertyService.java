@@ -106,9 +106,9 @@ public class TemporaryPropertyService {
 
         List<TemporaryProperty> temporaryProperties = temporaryPropertyRepository.findAllByMember(host);
 
-        //최신순 정렬도 해야긋다
+
         return temporaryProperties.stream()
-                .sorted(Comparator.comparing(TemporaryProperty::getCreatedAt).reversed())
+                .sorted(Comparator.comparing(TemporaryProperty::getCreatedAt).reversed()) //최신순 정렬
                 .map(property -> new TemporaryPropertyListResponseDTO(
                         property.getId(),
                         property.getCreatedAt()
