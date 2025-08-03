@@ -5,6 +5,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 
@@ -13,12 +14,12 @@ public class GoogleOAuthUtils {
 
     private final GoogleIdTokenVerifier verifier;
 
-    public GoogleOAuthUtils() throws Exception {
+    public GoogleOAuthUtils(@Value("${oauth.google.client-id}") String clientId) throws Exception {
         this.verifier = new GoogleIdTokenVerifier.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance()
         )
-                .setAudience(Collections.singletonList("126736518367-i7nk0mk847u3je5n76qcj6bacdrc8rj2.apps.googleusercontent.com"))
+                .setAudience(Collections.singletonList(clientId))
                 .build();
     }
 

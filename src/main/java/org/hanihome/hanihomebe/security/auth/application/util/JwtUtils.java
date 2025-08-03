@@ -45,7 +45,7 @@ public class JwtUtils {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_MS);
         System.out.println(expiryDate);
-        Map<String, Object> claims = Map.of("role", role, "nickname", nickname);
+        Map<String, Object> claims = Map.of("role", role, "nickname", nickname != null ? nickname : "");
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .addClaims(claims)

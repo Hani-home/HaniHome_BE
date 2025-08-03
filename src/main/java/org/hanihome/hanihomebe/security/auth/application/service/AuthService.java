@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.security.auth.application.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -31,6 +32,7 @@ import org.springframework.http.MediaType;
 import java.util.Optional;
 @Transactional(readOnly = true)
 @Service
+@Slf4j
 public class AuthService {
 
 
