@@ -43,4 +43,9 @@ public class PropertyReportHandler implements ReportHandler {
     public boolean validate(ReportRequestDTO dto) {
         return propertyRepository.existsById(dto.getTargetId());
     }
+
+    @Override
+    public void delete(Long targetId) {
+        propertyReportRepository.deleteById(targetId);
+    }
 }

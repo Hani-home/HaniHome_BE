@@ -25,6 +25,8 @@ import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateReq
 import org.hanihome.hanihomebe.property.web.dto.request.patch.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
+import org.hanihome.hanihomebe.report.application.domain.ReportTargetType;
+import org.hanihome.hanihomebe.report.service.ReportService;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
@@ -55,6 +57,7 @@ public class PropertyService {
     private final DealService dealService;
     private final ViewingService viewingService;
     private final ViewingRepository viewingRepository;
+    private final ReportService reportService;
 
 
     /// create
@@ -219,15 +222,17 @@ public class PropertyService {
     /// delete
     @Transactional
     public void deletePropertyById(Long id) {
-            if (!propertyRepository.existsById(id)) {
-                throw new CustomException(ServiceCode.PROPERTY_NOT_EXISTS);
-            }
-            if (propertyHasViewingsInREQUESTED(id)) {
-                throw new CustomException(ServiceCode.PROPERTY_HAS_REQUESTED_VIEWINGS);
-            }
-            wishItemRepository.deleteAllByTargetTypeAndTargetId(WishTargetType.PROPERTY, id); //해당 찜하기 삭제
-            viewingRepository.deleteByProperty_Id(id);
-            nearestMetroStopService.deleteByPropertyId(id);
+        if (!propertyRepository.existsById(id)) {
+            throw new CustomException(ServiceCode.PROPERTY_NOT_EXISTS);
+        }
+        if (propertyHasViewingsInREQUESTED(id)) {
+            throw new CustomException(ServiceCode.PROPERTY_HAS_REQUESTED_VIEWINGS);
+        }
+        wishItemRepository.deleteAllByTargetTypeAndTargetId(WishTargetType.PROPERTY, id); //해당 찜하기 삭제
+        viewingRepository.deleteByProperty_Id(id);
+        nearestMetroStopService.deleteByPropertyId(id);
+        reportService.delete(id, ReportTargetType.PROPERTY);
+
         try {
             propertyRepository.deleteById(id);
         }catch (DataIntegrityViolationException e){
