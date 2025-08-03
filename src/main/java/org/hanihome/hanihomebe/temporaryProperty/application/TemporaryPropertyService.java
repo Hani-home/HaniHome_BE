@@ -21,10 +21,10 @@ import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPrope
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryRentPropertyResponseDTO;
-import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporarySharePropertyResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Comparator;
+
 
 import java.util.List;
 
@@ -108,6 +108,7 @@ public class TemporaryPropertyService {
 
         //최신순 정렬도 해야긋다
         return temporaryProperties.stream()
+                .sorted(Comparator.comparing(TemporaryProperty::getCreatedAt).reversed())
                 .map(property -> new TemporaryPropertyListResponseDTO(
                         property.getId(),
                         property.getCreatedAt()
