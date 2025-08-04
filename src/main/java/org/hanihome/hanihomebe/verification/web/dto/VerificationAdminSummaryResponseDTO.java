@@ -7,8 +7,9 @@ import java.time.LocalDateTime;
 
 public record VerificationAdminSummaryResponseDTO(
         Long id,
-        VerificationType verificationType,
+        Long memberId,
+        VerificationType type,
         LocalDateTime requestedAt,
-        VerificationStatus verificationStatus
+        VerificationStatus status
 ) {
 }

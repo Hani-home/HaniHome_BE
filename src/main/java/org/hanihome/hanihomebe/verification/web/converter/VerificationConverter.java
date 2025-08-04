@@ -25,6 +25,7 @@ public class VerificationConverter {
     public static VerificationAdminSummaryResponseDTO toVerificationAdminSummaryResponseDTO(Verification verification) {
         return new VerificationAdminSummaryResponseDTO(
                 verification.getId(),
+                verification.getMember().getId(),
                 verification.getType(),
                 verification.getRequestedAt(),
                 verification.getStatus()
