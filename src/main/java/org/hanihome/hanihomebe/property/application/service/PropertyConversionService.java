@@ -118,6 +118,7 @@ public class PropertyConversionService {
                 .map(WishItem::getTargetId)
                 .collect(Collectors.toSet());
 
+
         PropertyConverter<T> converter = getConverterByView(viewType);
 
         return properties.stream()

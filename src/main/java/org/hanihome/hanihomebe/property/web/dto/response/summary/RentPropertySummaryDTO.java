@@ -29,6 +29,9 @@ public record RentPropertySummaryDTO(
     public static RentPropertySummaryDTO from(RentProperty entity,
                                               NearestMetroStopResponseDTO nearestMetroStopResponseDTO,
                                               MetaInfo metaInfo) {
+
+
+
         return new RentPropertySummaryDTO(
                 entity.getId(),
                 entity.getKind(),

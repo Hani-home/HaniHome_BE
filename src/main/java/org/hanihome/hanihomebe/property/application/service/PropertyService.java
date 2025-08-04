@@ -30,6 +30,7 @@ import org.hanihome.hanihomebe.report.service.ReportService;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.repository.ViewingRepository;
+import org.hanihome.hanihomebe.wishItem.PropertyWishItemRepository;
 import org.hanihome.hanihomebe.wishlist.domain.enums.WishTargetType;
 import org.hanihome.hanihomebe.wishlist.repository.WishItemRepository;
 import org.springdoc.webmvc.core.service.RequestService;
@@ -99,6 +100,11 @@ public class PropertyService {
      */
     public <T> List<T> getAllProperties(PropertyViewType view) {
         List<Property> findProperties = propertyRepository.findAll();
+
+        List<Long> propertyIds = findProperties.stream()
+                .map(Property::getId)
+                .toList();
+
 
         return propertyConversionService.convertProperties(findProperties, view);
     }
