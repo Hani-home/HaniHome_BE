@@ -71,6 +71,12 @@ public class VerificationController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/admin/{verificationId}")
+    public ResponseEntity<VerificationResponseDTO> getVerificationForAdmin(@PathVariable Long verificationId) {
+        VerificationResponseDTO response = verificationService.getVerificationById(verificationId);
+        return ResponseEntity.ok(response);
+    }
+
     /*
     Update 관리자가 승인 or 거부
     TODO : 추후 ADMIN 접근 권한 설정

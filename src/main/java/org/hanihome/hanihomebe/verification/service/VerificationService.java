@@ -94,7 +94,6 @@ public class VerificationService {
         return VerificationConverter.toVerificationAdminSummaryResponseDTOList(verifications);
     }
 
-
     //관리자 상세 조회
     public VerificationResponseDTO getVerificationById(Long verificationId) {
         Verification findVerification = verificationRepository.findById(verificationId)
