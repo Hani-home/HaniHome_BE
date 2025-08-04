@@ -5,7 +5,6 @@ import org.hanihome.hanihomebe.metro.web.dto.nearest.NearestMetroStopResponseDTO
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
-import org.hanihome.hanihomebe.property.web.dto.response.PropertyDTOByView;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ public record SharePropertySummaryDTO(
         BigDecimal weeklyCost,
         String suburb,
         Double internalArea,
-        int totalFloors,
+        Integer totalFloors,
         boolean billIncluded,
         NearestMetroStopResponseDTO nearestStation,
         String thumbnailUrl,

@@ -178,6 +178,7 @@ public abstract class Property {
     /**
      * 16. 매물 소개
      */
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     /**
