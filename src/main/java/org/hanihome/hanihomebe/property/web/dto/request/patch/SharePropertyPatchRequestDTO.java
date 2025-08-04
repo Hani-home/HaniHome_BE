@@ -9,6 +9,9 @@ import org.hanihome.hanihomebe.property.domain.command.SharePropertyPatchCommand
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
 import org.hanihome.hanihomebe.property.domain.item.PropertyOptionItem;
+import org.hanihome.hanihomebe.property.web.dto.request.create.CostDetailsDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.LivingConditionsDTO;
+import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.ShareInternalDetailsDTO;
 
 import java.util.List;
@@ -31,6 +34,9 @@ public class SharePropertyPatchRequestDTO extends PropertyPatchRequestDTO {
 
     @Override
     public PropertyPatchCommand toCommand(List<PropertyOptionItem> propertyOptionItems) {
+        CostDetailsDTO costDetailsDTO = super.getCostDetails();
+        LivingConditionsDTO livingConditionsDTO = super.getLivingConditions();
+        MoveInInfoDTO moveInInfoDTO = super.getMoveInInfo();
         return SharePropertyPatchCommand.builder()
                 // 공통 필드
                 .genderPreference(super.getGenderPreference())
@@ -38,9 +44,9 @@ public class SharePropertyPatchRequestDTO extends PropertyPatchRequestDTO {
                 .region(super.getRegion())
                 .photoUrls(super.getPhotoUrls())
                 .optionItems(propertyOptionItems)
-                .costDetails(super.getCostDetails().toVO())
-                .livingConditions(super.getLivingConditions().toVO())
-                .moveInInfo(super.getMoveInInfo().toVO())
+                .costDetails(costDetailsDTO != null ? costDetailsDTO.toVO() : null)
+                .livingConditions(livingConditionsDTO != null ? livingConditionsDTO.toVO() : null)
+                .moveInInfo(moveInInfoDTO != null ? moveInInfoDTO.toVO() : null)
                 .meetingDateFrom(super.getMeetingDateFrom())
                 .meetingDateTo(super.getMeetingDateTo())
                 .timeSlots(super.getTimeSlots())
@@ -50,7 +56,7 @@ public class SharePropertyPatchRequestDTO extends PropertyPatchRequestDTO {
 
                 // ShareProperty 전용 필드
                 .sharePropertySubType(this.sharePropertySubType)
-                .internalDetails(this.internalDetails.toVO())
+                .internalDetails(this.internalDetails != null ? this.internalDetails.toVO() : null)
                 .capacityShare(this.capacityShare)
                 .build();
     }
