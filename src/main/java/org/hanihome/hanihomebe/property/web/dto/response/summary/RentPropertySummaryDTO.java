@@ -17,7 +17,7 @@ public record RentPropertySummaryDTO(
         BigDecimal weeklyCost,
         String suburb,
         Double internalArea,
-        int totalFloors,
+        Integer totalFloors,
         boolean billIncluded,
         NearestMetroStopResponseDTO nearestStation,
         String thumbnailUrl,

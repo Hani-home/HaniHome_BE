@@ -30,7 +30,7 @@ public sealed interface PropertySummaryDTO
 
     Double internalArea();
 
-    int totalFloors();
+    Integer totalFloors();
 
     boolean billIncluded();
 
