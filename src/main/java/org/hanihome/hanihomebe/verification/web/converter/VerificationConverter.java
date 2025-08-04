@@ -26,7 +26,7 @@ public class VerificationConverter {
         return new VerificationAdminSummaryResponseDTO(
                 verification.getId(),
                 verification.getType(),
-                verification.getApprovedAt(),
+                verification.getRequestedAt(),
                 verification.getStatus()
         );
     }
