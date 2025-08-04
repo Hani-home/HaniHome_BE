@@ -187,6 +187,8 @@ public abstract class Property {
     @Column(name = "wish_count", nullable = false)
     private int wishCount = 0;
 
+
+
     // 찜한 수 up => 찜하기 추가 서비스 로직에서 사용
     public void incrementWishCount() {
         this.wishCount++;

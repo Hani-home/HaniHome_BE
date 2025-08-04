@@ -3,6 +3,8 @@ package org.hanihome.hanihomebe.verification.service;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.verification.domain.VerificationStatus;
+import org.hanihome.hanihomebe.verification.web.dto.VerificationAdminSummaryResponseDTO;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.member.domain.Member;
@@ -84,11 +86,15 @@ public class VerificationService {
     }
 
     //Read. 관리자 모든 신원인증 요청 불러오기
-    public List<VerificationResponseDTO> getAllVerificationsForAdmin() {
-        List<Verification> verifications = verificationRepository.findAll();
-        return VerificationConverter.toVerificationResponseDTOList(verifications);
+    public List<VerificationAdminSummaryResponseDTO> getAllVerificationsForAdmin() {
+        List<Verification> verifications = verificationRepository.findAll(
+                Sort.by(Sort.Direction.DESC, "requestedAt") //이런 방법도 있다네요 ㄷㄷ
+        );
+        
+        return VerificationConverter.toVerificationAdminSummaryResponseDTOList(verifications);
     }
 
+    //관리자 상세 조회
     public VerificationResponseDTO getVerificationById(Long verificationId) {
         Verification findVerification = verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));

@@ -7,6 +7,7 @@ import org.hanihome.hanihomebe.notification.application.service.NotificationMess
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.verification.service.VerificationNotificationService;
 import org.hanihome.hanihomebe.verification.service.VerificationService;
+import org.hanihome.hanihomebe.verification.web.dto.VerificationAdminSummaryResponseDTO;
 import org.hanihome.hanihomebe.verification.web.dto.VerificationRejectRequestDTO;
 import org.hanihome.hanihomebe.verification.web.dto.VerificationRequestDTO;
 import org.hanihome.hanihomebe.verification.web.dto.VerificationResponseDTO;
@@ -65,8 +66,14 @@ public class VerificationController {
     @PreAuthorize("hasRole('ADMIN')")
      */
     @GetMapping("/admin")
-    public ResponseEntity<List<VerificationResponseDTO>> getAllVerificationsForAdmin() {
-        List<VerificationResponseDTO> response = verificationService.getAllVerificationsForAdmin();
+    public ResponseEntity<List<VerificationAdminSummaryResponseDTO>> getAllVerificationsForAdmin() {
+        List<VerificationAdminSummaryResponseDTO> response = verificationService.getAllVerificationsForAdmin();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/admin/{verificationId}")
+    public ResponseEntity<VerificationResponseDTO> getVerificationForAdmin(@PathVariable Long verificationId) {
+        VerificationResponseDTO response = verificationService.getVerificationById(verificationId);
         return ResponseEntity.ok(response);
     }
 

@@ -100,6 +100,11 @@ public class PropertyService {
     public <T> List<T> getAllProperties(PropertyViewType view) {
         List<Property> findProperties = propertyRepository.findAll();
 
+        List<Long> propertyIds = findProperties.stream()
+                .map(Property::getId)
+                .toList();
+
+
         return propertyConversionService.convertProperties(findProperties, view);
     }
 
