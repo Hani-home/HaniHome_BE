@@ -42,7 +42,7 @@ public class PropertyWishItemController {
     public ResponseEntity<Void> deletePropertyWishItem(@AuthenticationPrincipal CustomUserDetails userDetails ,@PathVariable("propertyId") Long propertyId) {
         Long memberId = userDetails.getUserId();
         propertyWishItemService.deletePropertyWishItem(memberId, propertyId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); //NO contetn 변경해야함
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     
