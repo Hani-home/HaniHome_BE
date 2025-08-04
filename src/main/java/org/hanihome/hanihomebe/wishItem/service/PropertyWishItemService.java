@@ -29,7 +29,7 @@ public class PropertyWishItemService  {
     private final PropertyRepository propertyRepository;
     private final PropertyConversionService propertyConversionService;
 
-    public void addPropertyWishItem(Long propertyId, Long memberId) {
+    public void addPropertyWishItem(Long memberId,Long propertyId) {
         Member member= memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
@@ -69,7 +69,7 @@ public class PropertyWishItemService  {
         return propertyConversionService.convertProperties(sortedProperties, PropertyViewType.SUMMARY);
     }
 
-    public void deletePropertyWishItem(Long propertyId, Long memberId) {
+    public void deletePropertyWishItem(Long memberId, Long propertyId) {
         Member member= memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
