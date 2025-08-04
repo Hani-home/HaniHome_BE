@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.wishItem;
+package org.hanihome.hanihomebe.wishItem.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -7,7 +7,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hanihome.hanihomebe.member.domain.Member;

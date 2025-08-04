@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.wishItem;
+package org.hanihome.hanihomebe.wishItem.service;
 
 
 import lombok.RequiredArgsConstructor;
@@ -11,14 +11,13 @@ import org.hanihome.hanihomebe.property.domain.Property;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.property.web.dto.enums.PropertyViewType;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
-import org.hanihome.hanihomebe.wishlist.domain.WishItem;
+import org.hanihome.hanihomebe.wishItem.domain.PropertyWishItem;
+import org.hanihome.hanihomebe.wishItem.repository.PropertyWishItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor

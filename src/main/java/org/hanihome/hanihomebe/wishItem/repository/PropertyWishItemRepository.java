@@ -1,14 +1,11 @@
-package org.hanihome.hanihomebe.wishItem;
+package org.hanihome.hanihomebe.wishItem.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.property.domain.Property;
+import org.hanihome.hanihomebe.wishItem.domain.PropertyWishItem;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public interface PropertyWishItemRepository extends JpaRepository<PropertyWishItem, Long> {
     List<PropertyWishItem> findByMember(Member member);

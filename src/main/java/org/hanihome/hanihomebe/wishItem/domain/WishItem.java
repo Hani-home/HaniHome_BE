@@ -1,4 +1,4 @@
-package org.hanihome.hanihomebe.wishItem;
+package org.hanihome.hanihomebe.wishItem.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;

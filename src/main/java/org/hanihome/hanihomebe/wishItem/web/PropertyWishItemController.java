@@ -1,9 +1,9 @@
-package org.hanihome.hanihomebe.wishItem;
+package org.hanihome.hanihomebe.wishItem.web;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.PropertySummaryDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
+import org.hanihome.hanihomebe.wishItem.service.PropertyWishItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
