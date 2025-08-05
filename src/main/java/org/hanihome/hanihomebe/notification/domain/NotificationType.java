@@ -10,6 +10,7 @@ public enum NotificationType {
     VIEWING_CANCELED("뷰잉 취소 알림"),
     ONE_ON_ONE_CONSULT_REPLIED("일대일 상담 답변 완료 알림"),
     VERIFICATION_CHECKED("신원 인증 검수 완료 알림"),
+    PROPERTY("매물 알림")
     ;
     private final String description;
 }

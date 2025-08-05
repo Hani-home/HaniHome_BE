@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.property.web.controller;
 import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.notification.application.service.property.PropertyNotificationService;
 import org.hanihome.hanihomebe.property.application.service.PropertyService;
 import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
@@ -27,12 +28,17 @@ import java.util.Map;
 @RestController
 public class PropertyController {
     private final PropertyService propertyService;
+    private final PropertyNotificationService propertyNotificationService;
 
 
     //create
     @PostMapping("/properties")
-    public PropertyWithMemberResponseDTO createProperty(@RequestBody @Valid PropertyCreateRequestDTO dto) {
-        return propertyService.createProperty(dto);
+    public PropertyWithMemberResponseDTO createProperty(@RequestBody @Valid PropertyCreateRequestDTO dto,
+                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long requesterId = userDetails.getUserId();
+        PropertyWithMemberResponseDTO responseDTO = propertyService.createProperty(dto, requesterId);
+        propertyNotificationService.registerReminderNotification(requesterId, responseDTO.meetingDateTo());
+        return responseDTO;
     }
 
 
