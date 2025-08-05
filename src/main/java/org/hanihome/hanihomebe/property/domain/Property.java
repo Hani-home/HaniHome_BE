@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -201,10 +202,19 @@ public abstract class Property {
         }
     }
 
+    public List<ViewingAvailableDateTime> getViewingAvailableDateTimesAfterNow() {
+        LocalDateTime now = LocalDateTime.now();
+        return viewingAvailableDateTimes
+                .stream()
+                .filter(availableTime -> {
+                    LocalDate date = availableTime.getDate();
+                    LocalTime time = availableTime.getTime();
+                    LocalDateTime dateTime = LocalDateTime.of(date, time);
+                    return dateTime.isEqual(now) || dateTime.isAfter(now);
+                })
+                .toList();
+    }
 
-    /**
-     * 공통 DTO 변환 메서드
-     */
     public void addPropertyOptionItem(PropertyOptionItem propertyOptionItem) {
         optionItems.add(propertyOptionItem);
         propertyOptionItem.setProperty(this);
