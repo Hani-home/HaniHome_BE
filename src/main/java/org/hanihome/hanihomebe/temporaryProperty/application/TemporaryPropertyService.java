@@ -100,11 +100,11 @@ public class TemporaryPropertyService {
             TemporaryRentProperty temporaryRentProperty = temporaryRentPropertyRepository.findById(rentDto.id())
                     .orElseThrow(() -> new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS));
 
-            /*
+
             if (!temporaryRentProperty.getMember().getId().equals(hostId)) {
-                throw new CustomException(ServiceCode.);
+                throw new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_BELONGS_TO_YOU);
             }
-             */
+
 
             // 실제 필드 업데이트
             temporaryRentProperty.update(rentDto); // 이거 아래에서 설명할게
@@ -125,12 +125,10 @@ public class TemporaryPropertyService {
             TemporaryShareProperty temporaryShareProperty = temporarySharePropertyRepository.findById(shareDto.id())
                     .orElseThrow(() -> new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS));
 
-            /*
-            if (!property.getMember().getId().equals(hostId)) {
-                throw new CustomException(ServiceCode.FORBIDDEN);
-            }
 
-             */
+            if (!temporaryShareProperty.getMember().getId().equals(hostId)) {
+                throw new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_BELONGS_TO_YOU);
+            }
 
             temporaryShareProperty.update(shareDto);
 
