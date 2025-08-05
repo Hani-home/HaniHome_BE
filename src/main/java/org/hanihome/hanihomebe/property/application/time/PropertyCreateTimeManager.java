@@ -24,11 +24,8 @@ public class PropertyCreateTimeManager {
     }
 
 
-    public static List<ViewingAvailableDateTime> validateAndGenerateTowMonthsOfViewingAvailableDateTimes(List<TimeSlot> timeSlots) {
+    public static List<ViewingAvailableDateTime> validateAndGenerateTwoMonthsOfViewingAvailableDateTimes(List<TimeSlot> timeSlots, MeetingDatePeriod meetingDatePeriod) {
         validateTimeSlots(timeSlots);
-
-        MeetingDatePeriod meetingDatePeriod = buildTwoMonths();
-
         return generateViewingAvailableDateTimes(timeSlots, meetingDatePeriod);
     }
 
@@ -39,7 +36,7 @@ public class PropertyCreateTimeManager {
         }
     }
 
-    private static MeetingDatePeriod buildTwoMonths() {
+    public static MeetingDatePeriod buildTwoMonths() {
         LocalDate meetingDateFrom = LocalDateTime
                 .now(ZoneId.of("UTC")).
                 toLocalDate() ;

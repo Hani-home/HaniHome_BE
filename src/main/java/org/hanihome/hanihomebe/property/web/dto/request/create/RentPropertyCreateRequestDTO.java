@@ -57,7 +57,10 @@ public record RentPropertyCreateRequestDTO(
 
         // 타임슬롯 검증, 뷰잉 가능 시간 생성
         if (viewingAlwaysAvailable) {
-            viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateTowMonthsOfViewingAvailableDateTimes(timeSlots);
+            MeetingDatePeriod meetingDatePeriod = PropertyCreateTimeManager.buildTwoMonths();
+            meetingDateFrom = meetingDatePeriod.meetingDateFrom();
+            meetingDateTo = meetingDatePeriod.meetingDateTo();
+            viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateTwoMonthsOfViewingAvailableDateTimes(timeSlots, meetingDatePeriod);
         } else {
             MeetingDatePeriod meetingDatePeriod = MeetingDatePeriod.create(meetingDateFrom, meetingDateTo);
             viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateViewingAvailableDateTimes(timeSlots, meetingDatePeriod);
