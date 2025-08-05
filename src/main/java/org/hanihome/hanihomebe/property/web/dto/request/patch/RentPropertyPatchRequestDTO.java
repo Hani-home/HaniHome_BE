@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.property.web.dto.request.patch;
 
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.property.application.time.validator.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.vo.RentInternalDetails;
 import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
@@ -15,7 +16,7 @@ import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.RentInternalDetailsDTO;
 
 import java.util.List;
-
+@SuperBuilder
 @Getter
 public class RentPropertyPatchRequestDTO extends PropertyPatchRequestDTO {
     private RentPropertySubType rentPropertySubType;    // (RentProperty 고유) 매물 유형

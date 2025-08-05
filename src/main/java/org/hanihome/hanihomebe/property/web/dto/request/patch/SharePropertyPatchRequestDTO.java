@@ -1,7 +1,9 @@
 package org.hanihome.hanihomebe.property.web.dto.request.patch;
 
 import jakarta.validation.constraints.AssertTrue;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.property.application.time.validator.TimeSlotValidator;
 import org.hanihome.hanihomebe.property.domain.vo.ShareInternalDetails;
 import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
@@ -16,6 +18,7 @@ import org.hanihome.hanihomebe.property.web.dto.request.create.ShareInternalDeta
 
 import java.util.List;
 
+@SuperBuilder
 @Getter
 public class SharePropertyPatchRequestDTO extends PropertyPatchRequestDTO {
     private SharePropertySubType sharePropertySubType;   // 1. 매물 유형 (세컨드룸/마스터룸/거실쉐어)

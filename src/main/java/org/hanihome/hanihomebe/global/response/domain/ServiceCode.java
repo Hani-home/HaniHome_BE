@@ -60,6 +60,9 @@ public enum ServiceCode {
     VIEWING_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 뷰잉은 존재하지 않습니다"),
     VIEWING_TIME_MISMATCH(HttpStatus.BAD_REQUEST, "선택한 시간대는 예약이 완료되었거나 뷰잉 가능 시간대에 속하지 않습니다."),
     PROPERTY_IN_VIEWING_CONVERT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "뷰잉에 포함된 매물을 DTO로 변환하는 중에 오류가 발생"),
+    VIEWING_NEED_TO_BE_FUTURE(HttpStatus.BAD_REQUEST, "뷰잉 가능한 유일한 시간대가 모두 현재시점 보터 과거입니다."),
+    VIEWING_MADE_BY_HOST(HttpStatus.BAD_REQUEST, "자신의 매물에 뷰잉 요청을 하였습니다."),
+    VIEWING_NOT_AVAILABLE_FOR_PROPERTY_STATUS(HttpStatus.BAD_REQUEST, "요청한 매물의 상태는 숨김이거나 거래완료이기에 뷰잉 불가입니다."),
 
     // Deal
     DEAL_NOT_EXISTS(HttpStatus.BAD_REQUEST, "요청한 거래 내역은 존재하지 않습니다."),
