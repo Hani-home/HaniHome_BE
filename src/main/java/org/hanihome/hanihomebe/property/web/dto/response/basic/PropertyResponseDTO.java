@@ -10,6 +10,7 @@ import org.hanihome.hanihomebe.property.domain.vo.MoveInInfo;
 import org.hanihome.hanihomebe.property.domain.enums.*;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyDTOByView;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public sealed interface PropertyResponseDTO
     CostDetails costDetails();
     LivingConditions livingConditions();
     MoveInInfo moveInInfo();
-    LocalDateTime meetingDateFrom();
-    LocalDateTime meetingDateTo();
+    LocalDate meetingDateFrom();
+    LocalDate meetingDateTo();
     String description();
 }

@@ -9,6 +9,7 @@ import org.hanihome.hanihomebe.property.domain.vo.LivingConditions;
 import org.hanihome.hanihomebe.property.domain.vo.MoveInInfo;
 import org.hanihome.hanihomebe.property.domain.vo.ShareInternalDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -31,8 +32,8 @@ public record SharePropertyResponseDTO(
         CostDetails costDetails,
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
-        LocalDateTime meetingDateFrom,
-        LocalDateTime meetingDateTo,
+        LocalDate meetingDateFrom,
+        LocalDate meetingDateTo,
         String description,
         ShareInternalDetails internalDetails,                       // 2-6. 해당 매물의 층수
         CapacityShare capacityShare                             // 3. 수용 인원
@@ -78,6 +79,8 @@ public record SharePropertyResponseDTO(
                 shareProperty.getCostDetails(),
                 shareProperty.getLivingConditions(),
                 shareProperty.getMoveInInfo(),
+                shareProperty.getMeetingDateFrom(),
+                shareProperty.getMeetingDateTo(),
                 shareProperty.getDescription(),
                 // share 고유정보
                 shareProperty.getShareInternalDetails(),

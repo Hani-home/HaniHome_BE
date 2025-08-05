@@ -16,6 +16,7 @@ import org.hanihome.hanihomebe.property.web.dto.response.basic.RentPropertyRespo
 import org.hanihome.hanihomebe.property.web.dto.response.basic.SharePropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.MetaInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,8 +47,8 @@ public sealed interface PropertyWithMemberResponseDTO extends PropertyDTOByView
     CostDetails costDetails();
     LivingConditions livingConditions();
     MoveInInfo moveInInfo();
-    LocalDateTime meetingDateFrom();
-    LocalDateTime meetingDateTo();
+    LocalDate meetingDateFrom();
+    LocalDate meetingDateTo();
     String description();
     MemberSummaryDTO hostSummary();
     MetaInfo metaInfo();
