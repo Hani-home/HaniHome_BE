@@ -1,20 +1,17 @@
 package org.hanihome.hanihomebe.notification.application.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Date;
 
 @RequiredArgsConstructor
 @Service
-public class ViewingReminderScheduler {
+public class TaskReminderScheduler {
     private final NotificationPushService notificationPushService;
     private final TaskScheduler taskScheduler;
 

@@ -2,8 +2,6 @@ package org.hanihome.hanihomebe.verification.web;
 
 
 import lombok.RequiredArgsConstructor;
-import org.hanihome.hanihomebe.notification.application.service.NotificationFacadeService;
-import org.hanihome.hanihomebe.notification.application.service.NotificationMessageFactory;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.hanihome.hanihomebe.verification.service.VerificationNotificationService;
 import org.hanihome.hanihomebe.verification.service.VerificationService;
@@ -29,8 +27,6 @@ import java.util.List;
 public class VerificationController {
 
     private final VerificationService verificationService;
-    private final NotificationFacadeService notificationFacadeService;
-    private final NotificationMessageFactory messageFactory;
     private final VerificationNotificationService verificationNotificationService;
 
     /*

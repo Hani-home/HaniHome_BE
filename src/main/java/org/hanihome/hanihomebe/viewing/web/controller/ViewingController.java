@@ -3,7 +3,7 @@ package org.hanihome.hanihomebe.viewing.web.controller;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingBelongsToPropertyDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
-import org.hanihome.hanihomebe.viewing.application.service.ViewingNotificationService;
+import org.hanihome.hanihomebe.notification.application.service.viewing.ViewingNotificationService;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.hanihome.hanihomebe.viewing.domain.ViewingStatus;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingDTOByView;
@@ -44,7 +44,7 @@ public class ViewingController {
         Long viewingId = responseDTO.getId();
         viewingNotificationService.sendViewingCreateNotification(userDetails.getUsername(), viewingId);
         // 3. 뷰잉 리마인더 알림 스케줄링
-        viewingNotificationService.sendReminderNotification(viewingId, responseDTO.getMeetingDay());
+        viewingNotificationService.registerReminderNotification(viewingId, responseDTO.getMeetingDay());
         return responseDTO;
     }
 

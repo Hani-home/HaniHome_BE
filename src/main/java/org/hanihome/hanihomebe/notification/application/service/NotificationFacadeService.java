@@ -19,7 +19,8 @@ public class NotificationFacadeService {
     // 컨트롤러에는 서비스 조합을 단순하게 노출시켜 하나의 진입점으로 만든다.
     private final NotificationService notificationService;
     private final NotificationPushService notificationPushService;
-    private final ViewingReminderScheduler viewingReminderScheduler;
+    private final TaskReminderScheduler taskReminderScheduler;
+
 
     public void sendNotification(NotificationCreateDTO dto) {
         // 알림 생성
@@ -35,14 +36,6 @@ public class NotificationFacadeService {
         // 알림생성
         Long notificationId = notificationService.createNotification(dto).id();
         // 알림전송 스케줄링
-        viewingReminderScheduler.scheduleReminder(notificationId, triggerTime);
+        taskReminderScheduler.scheduleReminder(notificationId, triggerTime);
     }
-    /*
-    public void markAllAsRead(Long userId) {
-        notificationService.markAllAsRead(userId);
-        notificationPushService.pushNotification(userId, null);
-    }
-    public void deleteNotification(Long notificationId) {
-        notificationService.deleteNotification(notificationId);
-    }*/
 }
