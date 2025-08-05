@@ -2,7 +2,7 @@ package org.hanihome.hanihomebe.admin.customerservice.application;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.notification.application.service.NotificationFacadeService;
-import org.hanihome.hanihomebe.notification.application.service.NotificationMessageFactory;
+import org.hanihome.hanihomebe.notification.application.service.factory.NotificationMessageFactory;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ public class OneOnOneNotificationService {
     private final NotificationMessageFactory messageFactory;
 
     public void sendOneOnOneConsultRepliedNotification(Long customerId) {
-        NotificationCreateDTO message = messageFactory.createOneOnOneConsultRepliedMessage(customerId);
+        NotificationCreateDTO message = messageFactory.getOneOnOneConsultMessageCreator().createOneOnOneConsultRepliedMessage(customerId);
         notificationFacadeService.sendNotification(message);
     }
 }

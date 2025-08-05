@@ -7,9 +7,6 @@ import org.hanihome.hanihomebe.admin.customerservice.domain.OneOnOneConsultStatu
 import org.hanihome.hanihomebe.admin.customerservice.web.dto.OneOnOneConsultCreateDTO;
 import org.hanihome.hanihomebe.admin.customerservice.web.dto.OneOnOneConsultReplyDTO;
 import org.hanihome.hanihomebe.admin.customerservice.web.dto.OneOnOneConsultResponseDTO;
-import org.hanihome.hanihomebe.notification.application.service.NotificationFacadeService;
-import org.hanihome.hanihomebe.notification.application.service.NotificationMessageFactory;
-import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +18,6 @@ import java.util.List;
 @RestController
 public class OneOnOneController {
     private final OneOnOneService oneOnOneService;
-    private final NotificationFacadeService notificationFacadeService;
-    private final NotificationMessageFactory messageFactory;
     private final OneOnOneNotificationService oneOnOneNotificationService;
 
     // 상담 등록
