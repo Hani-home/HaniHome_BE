@@ -33,6 +33,8 @@ public record SharePropertyWithMemberResponseDTO(
         CostDetails costDetails,
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
+        LocalDateTime meetingDateFrom,
+        LocalDateTime meetingDateTo,
         String description,
         ShareInternalDetails internalDetails,                       // 2-6. 해당 매물의 층수
         CapacityShare capacityShare,                             // 3. 수용 인원
@@ -61,6 +63,8 @@ public record SharePropertyWithMemberResponseDTO(
                 shareDTO.costDetails(),
                 shareDTO.livingConditions(),
                 shareDTO.moveInInfo(),
+                shareDTO.meetingDateFrom(),
+                shareDTO.meetingDateTo(),
                 shareDTO.description(),
                 shareDTO.internalDetails(),
                 shareDTO.capacityShare(),

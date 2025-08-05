@@ -30,6 +30,8 @@ public record RentPropertyResponseDTO(
         CostDetails costDetails,
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
+        LocalDateTime meetingDateFrom,
+        LocalDateTime meetingDateTo,
         String description,
         RentInternalDetails internalDetails,
         CapacityRent capacityRent                  // (RentProperty 고유) 수용인원-렌트

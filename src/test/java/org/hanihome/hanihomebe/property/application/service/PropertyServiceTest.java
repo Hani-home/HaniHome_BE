@@ -116,7 +116,7 @@ class PropertyServiceTest {
         SharePropertyCreateRequestDTO dto = buildSharePropertyDTO(memberId);
 
         // When
-        var result = propertyService.createProperty(dto);
+        var result = propertyService.createProperty(dto, memberId);
 
         // Then
         assertThat(propertyService.getPropertyById(result.id()).memberId())
@@ -128,7 +128,7 @@ class PropertyServiceTest {
     void bookingAndDealFlow() {
         // Given: 호스트가 매물 등록
         SharePropertyCreateRequestDTO dto = buildSharePropertyDTO(memberId);
-        PropertyWithMemberResponseDTO created = propertyService.createProperty(dto);
+        PropertyWithMemberResponseDTO created = propertyService.createProperty(dto, memberId);
         Long propertyId = created.id();
 
         // Given: Member2, Member3 생성
@@ -191,7 +191,7 @@ class PropertyServiceTest {
     void bookingAndDealFlow_RentProperty() {
         // Given: 호스트가 매물 등록
         RentPropertyCreateRequestDTO dto = buildRentPropertyDTO(memberId);
-        PropertyWithMemberResponseDTO created = propertyService.createProperty(dto);
+        PropertyWithMemberResponseDTO created = propertyService.createProperty(dto, memberId);
         Long propertyId = created.id();
 
         // Given: Member2, Member3 생성

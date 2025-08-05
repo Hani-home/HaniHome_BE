@@ -1,8 +1,8 @@
-package org.hanihome.hanihomebe.viewing.application.service;
+package org.hanihome.hanihomebe.notification.application.service.viewing;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.notification.application.service.NotificationFacadeService;
-import org.hanihome.hanihomebe.notification.application.service.NotificationMessageFactory;
+import org.hanihome.hanihomebe.notification.application.service.factory.NotificationMessageFactory;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +17,17 @@ public class ViewingNotificationService {
 
 
     public void sendViewingCanceledNotification(Long actorId, Long viewingId) {
-        NotificationCreateDTO message = messageFactory.createViewingCanceledMessage(actorId, viewingId);
+        NotificationCreateDTO message = messageFactory.getViewingMessageCreator().createViewingCanceledMessage(actorId, viewingId);
         notificationFacadeService.sendNotification(message);
     }
 
     public void sendViewingCreateNotification(String actorName, Long viewingId) {
-        NotificationCreateDTO message = messageFactory.createViewingCreateMessage(actorName, viewingId);
+        NotificationCreateDTO message = messageFactory.getViewingMessageCreator().createViewingCreateMessage(actorName, viewingId);
         notificationFacadeService.sendNotification(message);
     }
 
-    public void sendReminderNotification(Long viewingId, LocalDateTime meetingDay) {
-        List<NotificationCreateDTO> reminderNotifications = messageFactory.createViewingReminderMessage(viewingId);
+    public void registerReminderNotification(Long viewingId, LocalDateTime meetingDay) {
+        List<NotificationCreateDTO> reminderNotifications = messageFactory.getViewingMessageCreator().createViewingReminderMessage(viewingId);
         LocalDateTime triggerTime = meetingDay.minusHours(24);
         reminderNotifications.forEach(
                 reminder->notificationFacadeService.registerReminderNotification(reminder, triggerTime)

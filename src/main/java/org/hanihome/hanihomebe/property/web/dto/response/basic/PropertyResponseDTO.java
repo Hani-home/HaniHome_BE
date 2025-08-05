@@ -41,5 +41,7 @@ public sealed interface PropertyResponseDTO
     CostDetails costDetails();
     LivingConditions livingConditions();
     MoveInInfo moveInInfo();
+    LocalDateTime meetingDateFrom();
+    LocalDateTime meetingDateTo();
     String description();
 }

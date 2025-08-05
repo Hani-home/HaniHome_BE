@@ -62,7 +62,7 @@ public class PropertyService {
 
     /// create
     @Transactional
-    public PropertyWithMemberResponseDTO createProperty(PropertyCreateRequestDTO dto){
+    public PropertyWithMemberResponseDTO createProperty(PropertyCreateRequestDTO dto, Long memberId){
         log.info("property 생성 로직 진입");
 
         Member findMember = memberRepository.findById(dto.memberId()).orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));

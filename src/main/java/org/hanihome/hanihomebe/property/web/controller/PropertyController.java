@@ -44,8 +44,7 @@ public class PropertyController {
 
     //read
     @GetMapping("/properties")
-    public List<?> getAll(
-            @RequestParam(required = false) PropertyViewType view) {
+    public List<?> getAll( @RequestParam(required = false) PropertyViewType view) {
 
         return propertyService.getAllProperties(view);
     }
@@ -58,9 +57,9 @@ public class PropertyController {
     // 내 매물 조회
     @GetMapping("/properties/my-properties")
     public List<?> getMyProperties(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                     @RequestParam(required = false) TradeStatus tradeStatus,
-                                                     @RequestParam(required = false) DisplayStatus displayStatus,
-                                                     @RequestParam(required = false) PropertyViewType view) {
+                                   @RequestParam(required = false) TradeStatus tradeStatus,
+                                   @RequestParam(required = false) DisplayStatus displayStatus,
+                                   @RequestParam(required = false) PropertyViewType view) {
         return propertyService.getMyProperty(userDetails.getUserId(), tradeStatus, displayStatus, view);
     }
 /*

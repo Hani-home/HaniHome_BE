@@ -46,6 +46,8 @@ public sealed interface PropertyWithMemberResponseDTO extends PropertyDTOByView
     CostDetails costDetails();
     LivingConditions livingConditions();
     MoveInInfo moveInInfo();
+    LocalDateTime meetingDateFrom();
+    LocalDateTime meetingDateTo();
     String description();
     MemberSummaryDTO hostSummary();
     MetaInfo metaInfo();
