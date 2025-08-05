@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.property.web.controller;
 import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.hanihome.hanihomebe.notification.application.service.property.PropertyNotificationService;
 import org.hanihome.hanihomebe.property.application.service.PropertyService;
 import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
 import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
@@ -11,7 +12,6 @@ import org.hanihome.hanihomebe.property.web.dto.request.PropertyCompleteTradeDTO
 import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.patch.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,19 +27,23 @@ import java.util.Map;
 @RestController
 public class PropertyController {
     private final PropertyService propertyService;
+    private final PropertyNotificationService propertyNotificationService;
 
 
     //create
     @PostMapping("/properties")
-    public PropertyWithMemberResponseDTO createProperty(@RequestBody @Valid PropertyCreateRequestDTO dto) {
-        return propertyService.createProperty(dto);
+    public PropertyWithMemberResponseDTO createProperty(@RequestBody @Valid PropertyCreateRequestDTO dto,
+                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long requesterId = userDetails.getUserId();
+        PropertyWithMemberResponseDTO responseDTO = propertyService.createProperty(dto, requesterId);
+        propertyNotificationService.registerMeetingDateReminderNotification(requesterId, responseDTO.meetingDateTo());
+        return responseDTO;
     }
 
 
     //read
     @GetMapping("/properties")
-    public List<?> getAll(
-            @RequestParam(required = false) PropertyViewType view) {
+    public List<?> getAll( @RequestParam(required = false) PropertyViewType view) {
 
         return propertyService.getAllProperties(view);
     }
@@ -52,9 +56,9 @@ public class PropertyController {
     // 내 매물 조회
     @GetMapping("/properties/my-properties")
     public List<?> getMyProperties(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                     @RequestParam(required = false) TradeStatus tradeStatus,
-                                                     @RequestParam(required = false) DisplayStatus displayStatus,
-                                                     @RequestParam(required = false) PropertyViewType view) {
+                                   @RequestParam(required = false) TradeStatus tradeStatus,
+                                   @RequestParam(required = false) DisplayStatus displayStatus,
+                                   @RequestParam(required = false) PropertyViewType view) {
         return propertyService.getMyProperty(userDetails.getUserId(), tradeStatus, displayStatus, view);
     }
 /*

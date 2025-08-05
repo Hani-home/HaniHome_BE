@@ -1,10 +1,9 @@
-package org.hanihome.hanihomebe.notification.application.service;
+package org.hanihome.hanihomebe.notification.application.service.factory.creator;
 
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.notification.domain.NotificationType;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.hanihome.hanihomebe.property.application.service.PropertyService;
-import org.hanihome.hanihomebe.verification.service.VerificationService;
 import org.hanihome.hanihomebe.viewing.application.service.ViewingService;
 import org.hanihome.hanihomebe.viewing.web.dto.ViewingResponseDTO;
 import org.springframework.stereotype.Component;
@@ -15,11 +14,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-public class NotificationMessageFactory {
+public class ViewingNotificationMessageCreator implements NotificationMessageCreator {
     private final ViewingService viewingService;
     private final PropertyService propertyService;
-    private final VerificationService verificationService;
 
+    /// viewing
     public NotificationCreateDTO createViewingCanceledMessage(Long actorId, Long viewingId) {
         ViewingResponseDTO findViewing = viewingService.getViewingById(viewingId);
         Long guestId = findViewing.getGuestId();
@@ -69,23 +68,4 @@ public class NotificationMessageFactory {
         return List.of(guestDTO, hostDTO);
     }
 
-    public NotificationCreateDTO createOneOnOneConsultRepliedMessage(Long receiverId) {
-        String title = "1:1 문의에 대한 답변이 완료되었어요";
-        String content = "이메일로 확인해주세요";
-        return NotificationCreateDTO.create(receiverId, title, content, NotificationType.ONE_ON_ONE_CONSULT_REPLIED);
-    }
-
-    public NotificationCreateDTO createVerificationApproveMessage(Long verificationId) {
-        String title = "신원 인증 검수가 완료되었습니다";
-        String content = "신원 인증에 성공했습니다";
-        Long receiverId = verificationService.getVerificationById(verificationId).getMemberId();
-        return NotificationCreateDTO.create(receiverId, title, content, NotificationType.VERIFICATION_CHECKED);
-    }
-
-    public NotificationCreateDTO createVerificationRejectMessage(Long verificationId, String reason) {
-        String title = "신원 인증 검수가 완료되었습니다";
-        String content = "아래와 같은 이유로 신원 인증에 실패했습니다 \n"+reason;
-        Long receiverId = verificationService.getVerificationById(verificationId).getMemberId();
-        return NotificationCreateDTO.create(receiverId, title, content, NotificationType.VERIFICATION_CHECKED);
-    }
 }

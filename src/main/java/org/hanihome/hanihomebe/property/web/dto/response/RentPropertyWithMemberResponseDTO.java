@@ -11,6 +11,7 @@ import org.hanihome.hanihomebe.property.domain.vo.RentInternalDetails;
 import org.hanihome.hanihomebe.property.web.dto.response.basic.RentPropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.summary.MetaInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,6 +34,8 @@ public record RentPropertyWithMemberResponseDTO(
         CostDetails costDetails,
         LivingConditions livingConditions,
         MoveInInfo moveInInfo,
+        LocalDate meetingDateFrom,
+        LocalDate meetingDateTo,
         String description,
         RentInternalDetails internalDetails,
         CapacityRent capacityRent,             // (RentProperty 고유) 수용인원-렌트
@@ -61,6 +64,8 @@ public record RentPropertyWithMemberResponseDTO(
                 rentDTO.costDetails(),
                 rentDTO.livingConditions(),
                 rentDTO.moveInInfo(),
+                rentDTO.meetingDateFrom(),
+                rentDTO.meetingDateTo(),
                 rentDTO.description(),
                 rentDTO.internalDetails(),
                 rentDTO.capacityRent(),

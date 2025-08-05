@@ -220,10 +220,10 @@ class PropertySearchServiceTest {
                         CapacityRent.FOUR
                 );
 
-        propertyService.createProperty(share_masterRoom);
-        propertyService.createProperty(share_secondRoom);
-        propertyService.createProperty(rent_house);
-        propertyService.createProperty(rent_unit);
+        propertyService.createProperty(share_masterRoom, memberId);
+        propertyService.createProperty(share_secondRoom, memberId);
+        propertyService.createProperty(rent_house, memberId);
+        propertyService.createProperty(rent_unit, memberId);
     }
     /// 매물 종류
     @Test
@@ -443,7 +443,7 @@ class PropertySearchServiceTest {
                         ),                      // internalDetails
                         CapacityShare.DOUBLE       // capacityShare
                 );
-        propertyService.createProperty(dto);
+        propertyService.createProperty(dto, memberId);
         List<PropertySummaryDTO> results = propertySearchService.search(
                 PropertySearchConditionDTO.builder()
                         .availableFrom(LocalDateTime.of(2025, 5, 11, 5, 5))
