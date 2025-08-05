@@ -31,8 +31,15 @@ public class TemporaryPropertyController {
     @PostMapping
     public ResponseEntity<Void> createTemporaryProperty(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody TemporaryPropertyCreateRequestDTO dto) {
         Long hostId = userDetails.getUserId();
-        temporaryPropertyService.createTemporaryProperty(hostId, dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        if (dto.id() == null) {
+            temporaryPropertyService.createTemporaryProperty(hostId, dto);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } else {
+            temporaryPropertyService.updateTemporaryProperty(hostId, dto);
+            return ResponseEntity.ok().build(); // 200 OK 또는 204 No Content도 가능
+        }
+
     }
 
     @GetMapping
