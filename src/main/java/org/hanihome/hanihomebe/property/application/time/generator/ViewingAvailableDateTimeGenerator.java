@@ -7,6 +7,7 @@ import org.hanihome.hanihomebe.viewing.domain.ViewingTimeInterval;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +23,16 @@ public class ViewingAvailableDateTimeGenerator {
             LocalDate finalTempDate = pos;
             timeSlots.forEach(timeSlot -> {
                 LocalTime timeFrom = timeSlot.getTimeFrom();
-                LocalTime timeTo = timeSlot.getTimeTo();
-                while(timeFrom.isBefore(timeTo)) {
-                    ViewingAvailableDateTime viewingAvailableDateTime = new ViewingAvailableDateTime(finalTempDate,
-                            timeFrom,
+                LocalDateTime start = LocalDateTime.of(finalTempDate, timeFrom);
+                LocalDateTime end = getEndTime(timeSlot, timeFrom, finalTempDate);
+
+                while(start.isBefore(end)) {
+                    ViewingAvailableDateTime viewingAvailableDateTime = new ViewingAvailableDateTime(start.toLocalDate(),
+                            start.toLocalTime(),
                             false,
                             ViewingTimeInterval.MINUTE30);
                     viewingAvailableDateTimes.add(viewingAvailableDateTime);
-                    timeFrom = timeFrom.plusMinutes(30);
+                    start = start.plusMinutes(30);
                 }
             });
             pos = pos.plusDays(1);
@@ -38,5 +41,16 @@ public class ViewingAvailableDateTimeGenerator {
         log.info("viewingAvailableDateTimes: {}", viewingAvailableDateTimes.stream().map(viewingAvailableDateTime -> viewingAvailableDateTime.getTime()).toList());
 
         return viewingAvailableDateTimes;
+    }
+
+    private static LocalDateTime getEndTime(TimeSlot timeSlot, LocalTime timeFrom, LocalDate finalTempDate) {
+        LocalTime timeTo = timeSlot.getTimeTo();
+        LocalDateTime end;
+        if (timeTo.equals(LocalTime.MIDNIGHT) && timeFrom.isAfter(timeTo)) {
+            end = LocalDateTime.of(finalTempDate.plusDays(1), LocalTime.MIDNIGHT);
+        } else {
+            end = LocalDateTime.of(finalTempDate, timeTo);
+        }
+        return end;
     }
 }
