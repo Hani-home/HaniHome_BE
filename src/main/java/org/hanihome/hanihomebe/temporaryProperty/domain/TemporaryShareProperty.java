@@ -16,6 +16,7 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryShareInternalDetails;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporarySharePropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporarySharePropertyResponseDTO;
@@ -69,6 +70,20 @@ public class TemporaryShareProperty extends TemporaryProperty {
                 .shareInternalDetails(dto.internalDetails())
                 .capacityShare(dto.capacityShare())               // 고유필드 3
                 .build();
+
+    }
+
+    @Override
+    public TemporaryShareProperty update(TemporaryPropertyCreateRequestDTO dto) {
+        TemporarySharePropertyCreateRequestDTO shareDto = (TemporarySharePropertyCreateRequestDTO) dto;
+
+        super.updateBase(dto);
+
+        this.sharePropertySubType = shareDto.sharePropertySubType();
+        this.capacityShare = shareDto.capacityShare();
+        this.shareInternalDetails = shareDto.internalDetails();
+
+        return this;
 
     }
 

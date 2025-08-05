@@ -52,6 +52,7 @@ public enum ServiceCode {
     TEMPORARY_PROPERTY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 저장 매물입니다."),
 
 
+
     // Viewing
     VIEWING_NUMBER_NOT_SATISFIED(HttpStatus.BAD_REQUEST, "요청 가능한 뷰잉 시간대는 최소 1개 최대 3개입니다"),
     VIEWING_ALREADY_PRESCHEDULED(HttpStatus.BAD_REQUEST, "요청한 뷰잉 시간대는 모두 사용자의 뷰잉 예약 일정과 겹칩니다"),

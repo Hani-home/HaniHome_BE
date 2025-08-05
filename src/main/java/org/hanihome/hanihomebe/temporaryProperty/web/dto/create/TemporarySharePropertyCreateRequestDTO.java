@@ -20,6 +20,7 @@ import java.util.List;
 
 
 public record TemporarySharePropertyCreateRequestDTO(
+        Long id,
         PropertySuperType kind,                     // 매물 종류 (SHARE / RENT)
         GenderPreference genderPreference,          // 선호 성별
         boolean lgbtAvailable,

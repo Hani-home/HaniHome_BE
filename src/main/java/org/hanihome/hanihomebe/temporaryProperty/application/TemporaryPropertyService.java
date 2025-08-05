@@ -13,6 +13,7 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOptionItem;
+import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryPropertyOptionItemRepository;
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryPropertyRepository;
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporaryRentPropertyRepository;
 import org.hanihome.hanihomebe.temporaryProperty.repository.TemporarySharePropertyRepository;
@@ -36,11 +37,13 @@ public class TemporaryPropertyService {
     private final TemporaryPropertyRepository temporaryPropertyRepository;
     private final TemporaryRentPropertyRepository temporaryRentPropertyRepository;
     private final TemporarySharePropertyRepository temporarySharePropertyRepository;
+    private final TemporaryPropertyOptionItemRepository temporaryPropertyOptionItemRepository;
+
 
     private final OptionItemRepository optionItemRepository;
 
 
-
+    //생성
     public void createTemporaryProperty(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
 
         //해당 멤버 존재하는지 확인
@@ -54,9 +57,6 @@ public class TemporaryPropertyService {
             throw new CustomException(ServiceCode.TEMPORARY_LIMIT_EXCEEDED);
         }
          */
-
-
-
         TemporaryProperty temporaryProperty;
 
         if(dto.kind() == PropertySuperType.RENT) {
@@ -68,9 +68,6 @@ public class TemporaryPropertyService {
             if (dto.optionItemIds() != null) {
                 addTemporaryPropertyOptionItem(dto.optionItemIds(), temporaryProperty);
             }
-
-
-
         } else if (dto.kind() == PropertySuperType.SHARE) {
             TemporarySharePropertyCreateRequestDTO shareDto = (TemporarySharePropertyCreateRequestDTO) dto;
             temporaryProperty  = TemporaryShareProperty.create(shareDto, host);
@@ -80,8 +77,70 @@ public class TemporaryPropertyService {
             if (dto.optionItemIds() != null) {
                 addTemporaryPropertyOptionItem(dto.optionItemIds(), temporaryProperty);
             }
+        }
+    }
+
+    //수정
+    public void updateTemporaryProperty(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
+        Member host = memberRepository.findById(hostId)
+                .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
+
+        if(dto.id() == null) {
+            throw new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS);
+        }
 
 
+
+        TemporaryProperty temporaryProperty;
+
+
+        if (dto.kind() == PropertySuperType.RENT) {
+            TemporaryRentPropertyCreateRequestDTO rentDto = (TemporaryRentPropertyCreateRequestDTO) dto;
+
+            TemporaryRentProperty temporaryRentProperty = temporaryRentPropertyRepository.findById(rentDto.id())
+                    .orElseThrow(() -> new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS));
+
+            /*
+            if (!temporaryRentProperty.getMember().getId().equals(hostId)) {
+                throw new CustomException(ServiceCode.);
+            }
+             */
+
+            // 실제 필드 업데이트
+            temporaryRentProperty.update(rentDto); // 이거 아래에서 설명할게
+
+            // 옵션 아이템 덮어쓰기
+            temporaryRentProperty.getOptionItems().clear();
+            temporaryPropertyOptionItemRepository.deleteByTemporaryProperty(temporaryRentProperty); // 기존 삭제
+            if (rentDto.optionItemIds() != null) {
+                saveNewTemporaryPropertyOptionItems(rentDto.optionItemIds(), temporaryRentProperty);
+
+            }
+
+            temporaryRentPropertyRepository.save(temporaryRentProperty);
+
+        } else if (dto.kind() == PropertySuperType.SHARE) {
+            TemporarySharePropertyCreateRequestDTO shareDto = (TemporarySharePropertyCreateRequestDTO) dto;
+
+            TemporaryShareProperty temporaryShareProperty = temporarySharePropertyRepository.findById(shareDto.id())
+                    .orElseThrow(() -> new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS));
+
+            /*
+            if (!property.getMember().getId().equals(hostId)) {
+                throw new CustomException(ServiceCode.FORBIDDEN);
+            }
+
+             */
+
+            temporaryShareProperty.update(shareDto);
+
+            temporaryShareProperty.getOptionItems().clear();
+            temporaryPropertyOptionItemRepository.deleteByTemporaryProperty(temporaryShareProperty);
+            if (shareDto.optionItemIds() != null) {
+                saveNewTemporaryPropertyOptionItems(shareDto.optionItemIds(), temporaryShareProperty);
+            }
+
+            temporarySharePropertyRepository.save(temporaryShareProperty);
         }
     }
 
@@ -98,6 +157,24 @@ public class TemporaryPropertyService {
         });
     }
 
+    private void saveNewTemporaryPropertyOptionItems(List<Long> optionItemIds, TemporaryProperty temporaryProperty) {
+        List<TemporaryPropertyOptionItem> newItems = optionItemIds.stream()
+                .map(optionItemId -> {
+                    OptionItem optionItem = optionItemRepository.findById(optionItemId)
+                            .orElseThrow(() -> new CustomException(ServiceCode.OPTION_ITEM_NOT_EXISTS));
+                    return TemporaryPropertyOptionItem.builder()
+                            .temporaryProperty(temporaryProperty)
+                            .optionItem(optionItem)
+                            .optionItemName(optionItem.getItemName())
+                            .build();
+                })
+                .toList();
+
+        temporaryPropertyOptionItemRepository.saveAll(newItems);
+    }
+
+
+    //전체 조회
     public List<TemporaryPropertyListResponseDTO> getTemporaryProperties(Long hostId) {
         Member host = memberRepository.findById(hostId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
@@ -114,6 +191,7 @@ public class TemporaryPropertyService {
                 .toList();
     }
 
+    //상세조회
     public TemporaryPropertyResponseDTO getTemporaryProperty(Long hostId, Long propertyId) {
         Member host = memberRepository.findById(hostId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
