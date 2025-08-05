@@ -50,6 +50,8 @@ public enum ServiceCode {
     INVALID_TEMPORARY_PROPERTY(HttpStatus.BAD_REQUEST, "이때까지 진행된 모든 단계에 정보를 입력해주세요"),
     TEMPORARY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "저장 가능한 매물은 최대 3개입니다."),
     TEMPORARY_PROPERTY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 저장 매물입니다."),
+    TEMPORARY_PROPERTY_NOT_BELONGS_TO_YOU(HttpStatus.BAD_REQUEST, "본인의 임시저장 매물이 아닙니다."),
+
 
 
     // Viewing

@@ -36,6 +36,7 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOp
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -76,17 +77,17 @@ public abstract class TemporaryProperty {
     //젤 처음에 결정
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private PropertySuperType kind;
+    protected PropertySuperType kind;
 
     //저장 상태: 주소와 사진, 매물 상세, 입주 조건, 계약 사항
     //진행 현황에 맞게 데이터가 잘 왔는지 확인도 해야할 듯.... 로직이 복잡해질 것 같네
 
     //3. 입주조건
     @Enumerated(EnumType.STRING)
-    private GenderPreference genderPreference;
+    protected GenderPreference genderPreference;
 
     //3. 입주 조건
-    private Boolean lgbtAvailable;
+    protected Boolean lgbtAvailable;
 
     //1. 주소와 사진
     @Embedded
@@ -178,6 +179,31 @@ public abstract class TemporaryProperty {
         optionItems.add(temporaryPropertyOptionItem);
         temporaryPropertyOptionItem.setTemporaryProperty(this);
     }
+
+    public void updateBase(TemporaryPropertyCreateRequestDTO dto) {
+        this.kind = dto.kind();
+        this.genderPreference = dto.genderPreference();
+        this.lgbtAvailable = dto.lgbtAvailable();
+        this.region = dto.region();
+        this.photoUrls = dto.photoUrls();
+        this.costDetails = dto.costDetails() != null
+                ? dto.costDetails().toTemporaryVO()
+                : TemporaryCostDetails.empty();
+        this.livingConditions = dto.livingConditions() != null
+                ? dto.livingConditions().toTemporaryVO()
+                : TemporaryLivingConditions.empty();
+        this.moveInInfo = dto.moveInInfo() != null
+                ? dto.moveInInfo().toTemporaryVO()
+                : TemporaryMoveInInfo.empty();
+        this.meetingDateFrom = dto.meetingDateFrom();
+        this.meetingDateTo = dto.meetingDateTo();
+        this.timeSlots = dto.timeSlots();
+        this.viewingAvailableDateTimes = dto.viewingAvailableDateTimes();
+        this.viewingAlwaysAvailable = dto.viewingAlwaysAvailable();
+        this.description = dto.description();
+    }
+
+    public abstract TemporaryProperty update(TemporaryPropertyCreateRequestDTO temporaryPropertyCreateRequestDTO);
 
     public void clearTemporaryPropertyOptionItems() {
         this.optionItems.clear();

@@ -26,6 +26,7 @@ import java.util.List;
         @JsonSubTypes.Type(value = TemporarySharePropertyCreateRequestDTO.class, name = "SHARE")
 })
 public interface TemporaryPropertyCreateRequestDTO {//seal하면 좋을 듯
+    Long id();
     PropertySuperType kind();
 
     GenderPreference genderPreference();

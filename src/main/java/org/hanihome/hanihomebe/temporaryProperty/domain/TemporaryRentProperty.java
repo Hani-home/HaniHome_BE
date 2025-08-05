@@ -18,6 +18,7 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryMoveInInfo;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryRentInternalDetails;
+import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.create.TemporaryRentPropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryPropertyResponseDTO;
 import org.hanihome.hanihomebe.temporaryProperty.web.dto.response.TemporaryRentPropertyResponseDTO;
@@ -75,10 +76,30 @@ public class TemporaryRentProperty extends TemporaryProperty {
                 .description(dto.description())
                 .rentPropertySubType(dto.rentPropertySubType())             // 고유필드
                 .rentInternalDetails(dto.internalDetails())                 // 고유필드
-                .capacityRent(dto.capacityRent())                           // 고유필드
+                .capacityRent(dto.capacityRent())
+                .isRealEstateIntervention(dto.isRealEstateIntervention())// 고유필드
                 .build();
 
     }
+
+    @Override
+    public TemporaryRentProperty update(TemporaryPropertyCreateRequestDTO dto) {
+        TemporaryRentPropertyCreateRequestDTO rentDto = (TemporaryRentPropertyCreateRequestDTO) dto;
+        super.updateBase(dto);
+
+        this.rentPropertySubType = rentDto.rentPropertySubType();
+        this.rentInternalDetails = rentDto.internalDetails();
+        this.capacityRent = rentDto.capacityRent();
+        this.isRealEstateIntervention = rentDto.isRealEstateIntervention();
+
+        return this;
+
+
+    }
+
+
+
+
 
     @Override
     public TemporaryPropertyResponseDTO toResponseDTO() {

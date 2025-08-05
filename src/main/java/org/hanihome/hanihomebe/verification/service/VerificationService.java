@@ -108,6 +108,8 @@ public class VerificationService {
         Verification verification = verificationRepository.findById(verificationId)
                 .orElseThrow(() -> new CustomException(ServiceCode.VERIFICATION_NOT_EXISTS));
 
+        //이미 approve인지 확인하는 절차도 필요함.
+
         verification.approve();
 
         return VerificationConverter.toVerificationResponseDTO(verification);
