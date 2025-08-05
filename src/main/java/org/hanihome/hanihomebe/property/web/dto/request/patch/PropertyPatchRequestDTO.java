@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.property.web.dto.request.patch;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.interest.region.Region;
 import org.hanihome.hanihomebe.property.domain.vo.TimeSlot;
 import org.hanihome.hanihomebe.property.domain.command.PropertyPatchCommand;
@@ -15,6 +16,7 @@ import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
 import java.time.LocalDate;
 import java.util.List;
 
+@SuperBuilder
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,

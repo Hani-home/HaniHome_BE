@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
-import org.hanihome.hanihomebe.item.application.converter.OptionItemConverterForViewing;
 import org.hanihome.hanihomebe.item.domain.CategoryCode;
 import org.hanihome.hanihomebe.item.domain.OptionCategory;
 import org.hanihome.hanihomebe.item.domain.OptionItem;
@@ -14,6 +13,8 @@ import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.member.domain.Member;
 import org.hanihome.hanihomebe.member.repository.MemberRepository;
 import org.hanihome.hanihomebe.property.domain.Property;
+import org.hanihome.hanihomebe.property.domain.enums.DisplayStatus;
+import org.hanihome.hanihomebe.property.domain.enums.TradeStatus;
 import org.hanihome.hanihomebe.property.domain.vo.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.repository.PropertyRepository;
 import org.hanihome.hanihomebe.viewing.domain.Viewing;
@@ -68,6 +69,12 @@ public class ViewingService {
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
         Property findProperty = propertyRepository.findById(dto.getPropertyId())
                 .orElseThrow(() -> new CustomException(ServiceCode.PROPERTY_NOT_EXISTS));
+
+        //0-1 validate conditions
+        Member findMemberHost = findProperty.getMember();
+        checkRequesterIsNotHost(findMemberHost, findMemberGuest);
+        checkPropertyHasValidStatusForViewing(findProperty);
+
         // 1. 선택된 시간 개수 검증
         List<LocalDateTime> preferredTimes = dto.getPreferredTimes();
         if (preferredTimes.isEmpty() || preferredTimes.size() > 3) {
@@ -75,21 +82,26 @@ public class ViewingService {
         }
         
         // 2. 게스트의 기존 다가오는 뷰잉 스케줄 조회
-        List<Viewing> existingViewings = viewingRepository.findByMemberAndMeetingDayAfterAndStatus(findMemberGuest, LocalDateTime.now(), ViewingStatus.REQUESTED);
+        LocalDateTime now = LocalDateTime.now();
+        List<Viewing> existingViewings = viewingRepository.findByMemberAndMeetingDayAfterAndStatus(findMemberGuest, now, ViewingStatus.REQUESTED);
 
         // 3. 시간대 중복 체크
         List<LocalDateTime> availableTimes = preferredTimes.stream()
-            .filter(preferredTime -> !isTimeConflict(preferredTime, existingViewings))
-            .toList();
+                .filter(preferredTime -> !isTimeConflict(preferredTime, existingViewings))
+                .toList();
+        if (availableTimes.isEmpty()) {
+            throw new CustomException(ServiceCode.VIEWING_ALREADY_PRESCHEDULED);
+        }
 
         // 4. 가능한 시간대 중 가장 빠른 시간대로 확정
         LocalDateTime confirmedTime = availableTimes.stream()
-            .min(Comparator.naturalOrder())
-            .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_ALREADY_PRESCHEDULED));
+                .filter(availableTime -> availableTime.isAfter(now) || availableTime.isEqual(now))
+                .min(Comparator.naturalOrder())
+                .orElseThrow(() -> new CustomException(ServiceCode.VIEWING_NEED_TO_BE_FUTURE));
         
         // 5. 뷰잉 생성 및 저장
         // 연결된 매물의 뷰잉가능시각 상태를 reserved로 변경
-        ViewingAvailableDateTime viewingAvailableDateTime = findProperty.getViewingAvailableDateTimes()
+        ViewingAvailableDateTime canReserve = findProperty.getViewingAvailableDateTimesAfterNow()
                 .stream()
                 .filter(availableTime -> {
                     LocalDate date = availableTime.getDate();
@@ -99,13 +111,27 @@ public class ViewingService {
                     return availableDay.isEqual(confirmedTime) && availableTime.isReserved() == false;
                 })
                 .findFirst().orElseThrow(() -> new CustomException(ServiceCode.VIEWING_TIME_MISMATCH));
-        viewingAvailableDateTime.updateReservation(true);
+        canReserve.updateReservation(true);
         propertyRepository.save(findProperty);
 
         Viewing viewing = Viewing.create(findMemberGuest, findProperty, confirmedTime);
         viewingRepository.save(viewing);
 
         return viewingConversionService.convert(viewing, ViewingViewType.DEFAULT);
+    }
+
+    private static void checkRequesterIsNotHost(Member findMemberHost, Member findMemberGuest) {
+        if(findMemberHost.getId().equals(findMemberGuest.getId())) {
+            throw new CustomException(ServiceCode.VIEWING_MADE_BY_HOST);
+        }
+    }
+
+    private static void checkPropertyHasValidStatusForViewing(Property findProperty) {
+        DisplayStatus displayStatus = findProperty.getDisplayStatus();
+        TradeStatus tradeStatus = findProperty.getTradeStatus();
+        if (displayStatus.equals(DisplayStatus.INACTIVE) || tradeStatus.equals(TradeStatus.COMPLETED)) {
+            throw new CustomException(ServiceCode.VIEWING_NOT_AVAILABLE_FOR_PROPERTY_STATUS);
+        }
     }
 
     /**

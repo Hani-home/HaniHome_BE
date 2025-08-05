@@ -300,6 +300,7 @@ public class PropertyService {
     }
 
     private static boolean requesterIsPropertyOwner(Property findProperty) {
-        return !(SecurityContextUtils.getHttpRequesterId().isEmpty() || !SecurityContextUtils.getHttpRequesterId().get().equals(findProperty.getMember().getId()));
+        log.info("property owner:{}, requester:{}", findProperty.getMember().getId(), SecurityContextUtils.getHttpRequesterId().orElse(null));
+        return !(SecurityContextUtils.getHttpRequesterId().isEmpty() || !(SecurityContextUtils.getHttpRequesterId().get().equals(findProperty.getMember().getId())));
     }
 }
