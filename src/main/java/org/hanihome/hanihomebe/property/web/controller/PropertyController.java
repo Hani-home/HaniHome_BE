@@ -12,7 +12,6 @@ import org.hanihome.hanihomebe.property.web.dto.request.PropertyCompleteTradeDTO
 import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.patch.PropertyPatchRequestDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.PropertyWithMemberResponseDTO;
-import org.hanihome.hanihomebe.property.web.dto.response.basic.PropertyResponseDTO;
 import org.hanihome.hanihomebe.property.web.dto.response.TimeWithReserved;
 import org.hanihome.hanihomebe.security.auth.user.detail.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +36,7 @@ public class PropertyController {
                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long requesterId = userDetails.getUserId();
         PropertyWithMemberResponseDTO responseDTO = propertyService.createProperty(dto, requesterId);
-        propertyNotificationService.registerReminderNotification(requesterId, responseDTO.meetingDateTo());
+        propertyNotificationService.registerMeetingDateReminderNotification(requesterId, responseDTO.meetingDateTo());
         return responseDTO;
     }
 

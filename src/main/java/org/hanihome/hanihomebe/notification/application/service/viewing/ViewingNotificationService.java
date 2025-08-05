@@ -3,6 +3,7 @@ package org.hanihome.hanihomebe.notification.application.service.viewing;
 import lombok.RequiredArgsConstructor;
 import org.hanihome.hanihomebe.notification.application.service.NotificationFacadeService;
 import org.hanihome.hanihomebe.notification.application.service.factory.NotificationMessageFactory;
+import org.hanihome.hanihomebe.notification.domain.TaskType;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class ViewingNotificationService {
         List<NotificationCreateDTO> reminderNotifications = messageFactory.getViewingMessageCreator().createViewingReminderMessage(viewingId);
         LocalDateTime triggerTime = meetingDay.minusHours(24);
         reminderNotifications.forEach(
-                reminder->notificationFacadeService.registerReminderNotification(reminder, triggerTime)
+                reminder->notificationFacadeService.registerReminderNotification(reminder, triggerTime, TaskType.VIEWING_REMINDER)
         );
     }
 

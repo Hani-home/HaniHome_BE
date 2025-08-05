@@ -2,6 +2,7 @@ package org.hanihome.hanihomebe.notification.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hanihome.hanihomebe.notification.domain.TaskType;
 import org.hanihome.hanihomebe.notification.web.dto.NotificationCreateDTO;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +32,11 @@ public class NotificationFacadeService {
         notificationPushService.pushNotification(notificationId);
     }
 
-    // 3. 24시간 전 리마인더 알림 등록
-    public void registerReminderNotification(NotificationCreateDTO dto, LocalDateTime triggerTime) {
+    // 3. xx시간 전 리마인더 알림 등록
+    public void registerReminderNotification(NotificationCreateDTO dto, LocalDateTime triggerTime , TaskType taskType) {
         // 알림생성
         Long notificationId = notificationService.createNotification(dto).id();
         // 알림전송 스케줄링
-        taskReminderScheduler.scheduleReminder(notificationId, triggerTime);
+        taskReminderScheduler.scheduleReminder(notificationId, triggerTime, taskType);
     }
 }
