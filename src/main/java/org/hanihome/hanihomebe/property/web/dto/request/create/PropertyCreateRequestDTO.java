@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.hanihome.hanihomebe.global.exception.CustomException;
 import org.hanihome.hanihomebe.global.response.domain.ServiceCode;
 import org.hanihome.hanihomebe.interest.region.Region;
+import org.hanihome.hanihomebe.property.application.time.MeetingDatePeriod;
+import org.hanihome.hanihomebe.property.application.time.PropertyCreateTimeManager;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
 import org.hanihome.hanihomebe.property.domain.vo.*;
@@ -63,5 +65,14 @@ public sealed interface PropertyCreateRequestDTO permits
                 latitude.compareTo(BigDecimal.valueOf(90)) <= 0 &&
                 longitude.compareTo(BigDecimal.valueOf(-180)) >= 0 &&
                 longitude.compareTo(BigDecimal.valueOf(180)) <= 0;
+    }
+
+    default ProcessedViewingDatesDTO processViewingDates(List<TimeSlot> timeSlots, MeetingDatePeriod meetingDatePeriod) {
+        List<TimeSlot> processedTimeSlots = PropertyCreateTimeManager.preprocessTimeSlots(timeSlots);
+        LocalDate meetingDateFrom = meetingDatePeriod.meetingDateFrom();
+        LocalDate meetingDateTo = meetingDatePeriod.meetingDateTo();
+        List<ViewingAvailableDateTime> viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateViewingAvailableDateTimes(processedTimeSlots, meetingDatePeriod);
+
+        return new ProcessedViewingDatesDTO(meetingDateFrom, meetingDateTo, processedTimeSlots, viewingAvailableDateTimes);
     }
 }
