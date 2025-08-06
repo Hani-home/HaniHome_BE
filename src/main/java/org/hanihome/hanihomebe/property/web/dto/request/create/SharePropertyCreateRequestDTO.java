@@ -49,14 +49,16 @@ public record SharePropertyCreateRequestDTO(
         }
 
         // 타임슬롯 검증, 뷰잉 가능 시간 생성
+        MeetingDatePeriod meetingDatePeriod;
         if (viewingAlwaysAvailable) {
-            MeetingDatePeriod meetingDatePeriod = PropertyCreateTimeManager.buildTwoMonths();
-            meetingDateFrom = meetingDatePeriod.meetingDateFrom();
-            meetingDateTo = meetingDatePeriod.meetingDateTo();
-            viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateTwoMonthsOfViewingAvailableDateTimes(timeSlots, meetingDatePeriod);
+            meetingDatePeriod = PropertyCreateTimeManager.buildTwoMonths();
         } else {
-            MeetingDatePeriod meetingDatePeriod = MeetingDatePeriod.create(meetingDateFrom, meetingDateTo);
-            viewingAvailableDateTimes = PropertyCreateTimeManager.validateAndGenerateViewingAvailableDateTimes(timeSlots, meetingDatePeriod);
+            meetingDatePeriod = MeetingDatePeriod.create(meetingDateFrom, meetingDateTo);
         }
+        ProcessedViewingDatesDTO processed = processViewingDates(timeSlots, meetingDatePeriod);
+        meetingDateFrom = processed.processedMeetingDateFrom();
+        meetingDateTo = processed.processedMeetingDateTo();
+        timeSlots = processed.processedTimeSlots();
+        viewingAvailableDateTimes = processed.viewingAvailableDateTimes();
     }
 }
