@@ -56,58 +56,6 @@ public class VerificationController {
         return ResponseEntity.ok(response);
     }
 
-    /*
-    Read. 관리자용, 모든 신원 요청 불러오기
-    TODO : 추후 ADMIN 접근 권한 설정
-    @PreAuthorize("hasRole('ADMIN')")
-     */
-    @GetMapping("/admin")
-    public ResponseEntity<List<VerificationAdminSummaryResponseDTO>> getAllVerificationsForAdmin() {
-        List<VerificationAdminSummaryResponseDTO> response = verificationService.getAllVerificationsForAdmin();
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/admin/{verificationId}")
-    public ResponseEntity<VerificationResponseDTO> getVerificationForAdmin(@PathVariable Long verificationId) {
-        VerificationResponseDTO response = verificationService.getVerificationById(verificationId);
-        return ResponseEntity.ok(response);
-    }
-
-    /*
-    Update 관리자가 승인 or 거부
-    TODO : 추후 ADMIN 접근 권한 설정
-    @PreAuthorize("hasRole('ADMIN')")
-     */
-    @PatchMapping("/admin/{verificationId}/approve")
-    public ResponseEntity<Void> approveVerification(@PathVariable Long verificationId) {
-        verificationService.approveVerification(verificationId);
-
-        // 승인 시 문의자에게 알림
-        verificationNotificationService.sendApproveNotification(verificationId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/admin/{verificationId}/reject")
-    public ResponseEntity<Void> rejectVerification(@RequestBody VerificationRejectRequestDTO verificationRejectRequestDTO, @PathVariable Long verificationId) {
-        verificationService.rejectVerification(verificationRejectRequestDTO.getReason(), verificationId);
-
-        // 거부 시 문의자에게 알림
-        verificationNotificationService.sendRejectNotification(verificationId, verificationRejectRequestDTO.getReason());
-        return ResponseEntity.ok().build();
-    }
-
-    /*
-    Delete 얘는 사용자...? 관리자...? 고민이네...
-    추후 프로젝트 진행 방향성에 따라 작성하겠습니다.
-     */
-
-
-
-
-
-
-
-
 
 
 }
