@@ -36,7 +36,11 @@ out/
 ### VS Code ###
 .vscode/
 
+### environment
+*/.env
+**/.env
+**/.env*
 .env
-.env.test
+.env.*
 application-dev.yml
 src/main/resources/application*.yml
