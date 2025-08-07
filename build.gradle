@@ -98,9 +98,12 @@
         implementation 'software.amazon.awssdk:s3control:2.27.3'
         implementation 'software.amazon.awssdk:s3outposts:2.27.3'
 
-        // logging
+        // actuator
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        // aop
         implementation 'org.springframework.boot:spring-boot-starter-aop'
+        //prometheus
+        implementation 'io.micrometer:micrometer-registry-prometheus'
 
         // Spring Java Mail
         implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -116,7 +119,6 @@
 
     // Annotation Processor 출력 경로 설정
     // QueryDSL APT가 이 경로에 Q 파일을 생성하라
-    // 1. JavaCompile 태스크에 직접 설정 (권장)
     tasks.withType(JavaCompile) {
         options.generatedSourceOutputDirectory = file(querydslDir)
     }

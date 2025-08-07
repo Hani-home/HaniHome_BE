@@ -1,0 +1,28 @@
+auth_enabled: false # loki 접근시 인증요구를 끔
+
+server:
+  http_listen_port: ${LOKI_PORT}
+
+ingester:
+  chunk_idle_period: 5m # 5분 지나면 chunk 종료
+  max_chunk_age: 1h     # chunk는 최대 1시간,  *chunk==로그 데이터가 저장되기 전에 메모리에 모이는 단위/압축된 로그 데이터
+
+schema_config:
+  configs:
+    - from: 2025-8-1
+      store: boltdb-shipper     # 인덱스 저장 방식
+      object_store: filesystem  # 로그 chunk 저장 위치
+      schema: v11               # version
+      index:
+        prefix: index_
+        period: 24h             # 인데스 생성 주기
+
+storage_config: # 파일 저장 위치
+  boltdb_shipper:
+    active_index_directory: /loki/index # 인덱스 위치
+    cache_location: /loki/cache         # 캐시 위치
+  filesystem:
+    directory: /loki/chunks             # 청크 위치
+
+limits_config:
+  retention_period: 168h                # 로그 저장 기간: 7일
