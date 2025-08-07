@@ -71,13 +71,6 @@ public abstract class TemporaryProperty {
 
     @Enumerated(EnumType.STRING)
     private TemporaryPropertyStepStatus status;
-    /*
-    1. 이넘작성
-    2. 도메인 연결
-    3. DTO 수정
-    4. 정적 메서드 팩토리 수정
-    5. 서비스 수정
-     */
 
 
     //3개만 가질 수 있도록 이건 Authprincipal로 가져오기
