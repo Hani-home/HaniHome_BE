@@ -15,8 +15,8 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.Temp
 public class TemporaryRentPropertyResponseDTO extends TemporaryPropertyResponseDTO {
     private RentPropertySubType rentPropertySubType;
     private CapacityRent capacityRent;
-    private TemporaryRentInternalDetails rentInternalDetails;
-    private RealEstateType isRealEstateIntervention;
+    private TemporaryRentInternalDetails internalDetails;
+    //private RealEstateType isRealEstateIntervention;
 
     public static TemporaryRentPropertyResponseDTO fromEntity(TemporaryRentProperty entity) {
         return TemporaryRentPropertyResponseDTO.builder()
@@ -43,8 +43,8 @@ public class TemporaryRentPropertyResponseDTO extends TemporaryPropertyResponseD
                 // 자식 고유 필드
                 .rentPropertySubType(entity.getRentPropertySubType())
                 .capacityRent(entity.getCapacityRent())
-                .rentInternalDetails(entity.getRentInternalDetails())
-                .isRealEstateIntervention(entity.getIsRealEstateIntervention())
+                .internalDetails(entity.getRentInternalDetails())
+                //.isRealEstateIntervention(entity.getIsRealEstateIntervention())
                 .build();
     }
 

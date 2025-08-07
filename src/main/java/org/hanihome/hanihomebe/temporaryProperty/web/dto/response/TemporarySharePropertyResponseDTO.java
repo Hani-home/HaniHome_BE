@@ -14,7 +14,7 @@ import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.Temp
 public class TemporarySharePropertyResponseDTO extends TemporaryPropertyResponseDTO {
     private SharePropertySubType sharePropertySubType;
     private CapacityShare capacityShare;
-    private TemporaryShareInternalDetails shareInternalDetails;
+    private TemporaryShareInternalDetails internalDetails;
 
     public static TemporarySharePropertyResponseDTO fromEntity(TemporaryShareProperty entity) {
         return TemporarySharePropertyResponseDTO.builder()
@@ -41,7 +41,7 @@ public class TemporarySharePropertyResponseDTO extends TemporaryPropertyResponse
                 // 자식 고유 필드
                 .sharePropertySubType(entity.getSharePropertySubType())
                 .capacityShare(entity.getCapacityShare())
-                .shareInternalDetails(entity.getShareInternalDetails())
+                .internalDetails(entity.getShareInternalDetails())
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package org.hanihome.hanihomebe.temporaryProperty.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ public class TemporaryCostDetails {
     // 8-1. 비용 (주 단위)
     private BigDecimal weeklyCost;
 
+    @JsonProperty("billIncluded")
     private Boolean isBillIncluded;
 
     // 8-3. bill 설명
@@ -30,6 +32,7 @@ public class TemporaryCostDetails {
     // 8-5. 키 보증금
     private BigDecimal keyDeposit;
 
+    @JsonProperty("depositAdjustable")
     private Boolean isDepositAdjustable;
 
     public static TemporaryCostDetails empty() {
