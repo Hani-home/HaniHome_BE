@@ -1,5 +1,6 @@
 package org.hanihome.hanihomebe.temporaryProperty.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,10 @@ import java.time.LocalDateTime;
 public class TemporaryMoveInInfo {
     private LocalDateTime availableFrom;
     private LocalDateTime availableTo;
+
+    @JsonProperty("immediate")
     private Boolean isImmediate;
+    @JsonProperty("negotiable")
     private Boolean isNegotiable;
 
     public static TemporaryMoveInInfo empty() {

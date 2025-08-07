@@ -44,9 +44,10 @@ public class TemporaryRentProperty extends TemporaryProperty {
     @Embedded
     private TemporaryRentInternalDetails rentInternalDetails;
 
-    //2. 매물 상세
+    /*
     @Enumerated(EnumType.STRING)
     private RealEstateType isRealEstateIntervention;
+     */
 
     public static TemporaryRentProperty create (TemporaryRentPropertyCreateRequestDTO dto, Member member) {//DTO에도 memberId가 있는데 따로 멤버를 받는 이유가 있나?
         //적어도 주소는 다 입력되었는지 검사하는 로직추가
@@ -77,7 +78,7 @@ public class TemporaryRentProperty extends TemporaryProperty {
                 .rentPropertySubType(dto.rentPropertySubType())             // 고유필드
                 .rentInternalDetails(dto.internalDetails())                 // 고유필드
                 .capacityRent(dto.capacityRent())
-                .isRealEstateIntervention(dto.isRealEstateIntervention())// 고유필드
+                //.isRealEstateIntervention(dto.isRealEstateIntervention())// 고유필드
                 .build();
 
     }
@@ -90,7 +91,7 @@ public class TemporaryRentProperty extends TemporaryProperty {
         this.rentPropertySubType = rentDto.rentPropertySubType();
         this.rentInternalDetails = rentDto.internalDetails();
         this.capacityRent = rentDto.capacityRent();
-        this.isRealEstateIntervention = rentDto.isRealEstateIntervention();
+        //this.isRealEstateIntervention = rentDto.isRealEstateIntervention();
 
         return this;
 
