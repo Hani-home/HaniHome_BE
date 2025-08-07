@@ -38,8 +38,7 @@ public record TemporaryRentPropertyCreateRequestDTO(
         String description,                         // 매물 소개
         RentPropertySubType rentPropertySubType,
         TemporaryRentInternalDetails internalDetails,
-        CapacityRent capacityRent,
-        RealEstateType isRealEstateIntervention
+        CapacityRent capacityRent
 ) implements TemporaryPropertyCreateRequestDTO {
     //생성자 커스터마이징해서 array들은 null 경사해서 기본값 넣어줘야 겠네
 
