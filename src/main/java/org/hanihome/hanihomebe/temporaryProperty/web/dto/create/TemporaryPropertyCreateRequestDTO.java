@@ -11,6 +11,7 @@ import org.hanihome.hanihomebe.property.domain.vo.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.web.dto.request.create.CostDetailsDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.LivingConditionsDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
+import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryPropertyStepStatus;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
 
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ import java.util.List;
 public interface TemporaryPropertyCreateRequestDTO {//seal하면 좋을 듯
     Long id();
     PropertySuperType kind();
+    TemporaryPropertyStepStatus status();
 
     GenderPreference genderPreference();
 

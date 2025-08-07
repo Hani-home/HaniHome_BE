@@ -13,6 +13,7 @@ import org.hanihome.hanihomebe.property.domain.vo.ViewingAvailableDateTime;
 import org.hanihome.hanihomebe.property.web.dto.request.create.CostDetailsDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.LivingConditionsDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
+import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryPropertyStepStatus;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryShareInternalDetails;
 
 import java.time.LocalDate;
@@ -21,7 +22,8 @@ import java.util.List;
 
 public record TemporarySharePropertyCreateRequestDTO(
         Long id,
-        PropertySuperType kind,                     // 매물 종류 (SHARE / RENT)
+        PropertySuperType kind, // 매물 종류 (SHARE / RENT)
+        TemporaryPropertyStepStatus status,
         GenderPreference genderPreference,          // 선호 성별
         boolean lgbtAvailable,
         Region region,                              // 주소 정보 (Embedded 타입)

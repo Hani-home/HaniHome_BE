@@ -69,6 +69,17 @@ public abstract class TemporaryProperty {
     @LastModifiedDate
     private LocalDateTime lastModifiedAt;
 
+    @Enumerated(EnumType.STRING)
+    private TemporaryPropertyStepStatus status;
+    /*
+    1. 이넘작성
+    2. 도메인 연결
+    3. DTO 수정
+    4. 정적 메서드 팩토리 수정
+    5. 서비스 수정
+     */
+
+
     //3개만 가질 수 있도록 이건 Authprincipal로 가져오기
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -182,6 +193,7 @@ public abstract class TemporaryProperty {
 
     public void updateBase(TemporaryPropertyCreateRequestDTO dto) {
         this.kind = dto.kind();
+        this.status = dto.status();
         this.genderPreference = dto.genderPreference();
         this.lgbtAvailable = dto.lgbtAvailable();
         this.region = dto.region();
