@@ -47,6 +47,7 @@ public class TemporaryShareProperty extends TemporaryProperty {
         return TemporaryShareProperty.builder()
                 .member(member)
                 .kind(dto.kind())
+                .status(dto.status())
                 .genderPreference(dto.genderPreference())
                 .lgbtAvailable(dto.lgbtAvailable())
                 .region(dto.region())

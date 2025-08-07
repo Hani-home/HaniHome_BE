@@ -184,6 +184,7 @@ public class TemporaryPropertyService {
                 .sorted(Comparator.comparing(TemporaryProperty::getCreatedAt).reversed()) //최신순 정렬
                 .map(property -> new TemporaryPropertyListResponseDTO(
                         property.getId(),
+                        property.getStatus(),
                         property.getCreatedAt()
                 ))
                 .toList();
