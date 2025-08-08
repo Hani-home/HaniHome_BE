@@ -12,6 +12,7 @@ import org.hanihome.hanihomebe.property.web.dto.request.create.CostDetailsDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.LivingConditionsDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.MoveInInfoDTO;
 import org.hanihome.hanihomebe.property.web.dto.request.create.PropertyCreateRequestDTO;
+import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryPropertyStepStatus;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryCostDetails;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.TemporaryLivingConditions;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryRentInternalDetails;
@@ -22,6 +23,7 @@ import java.util.List;
 public record TemporaryRentPropertyCreateRequestDTO(
         Long id,
         PropertySuperType kind,
+        TemporaryPropertyStepStatus status,
         GenderPreference genderPreference,          // 선호 성별
         boolean lgbtAvailable,
         Region region,                              // 주소 정보 (Embedded 타입)
@@ -38,8 +40,7 @@ public record TemporaryRentPropertyCreateRequestDTO(
         String description,                         // 매물 소개
         RentPropertySubType rentPropertySubType,
         TemporaryRentInternalDetails internalDetails,
-        CapacityRent capacityRent,
-        RealEstateType isRealEstateIntervention
+        CapacityRent capacityRent
 ) implements TemporaryPropertyCreateRequestDTO {
     //생성자 커스터마이징해서 array들은 null 경사해서 기본값 넣어줘야 겠네
 

@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.temporaryProperty.domain.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class TemporaryLivingConditions {
     // 10-3. 계약 형태 설명
     private String contractTerms;
 
+    @JsonProperty("contractExtendable")
     private Boolean isContractExtendable;   // 계약 연장 가능
 
     public static TemporaryLivingConditions empty() {
