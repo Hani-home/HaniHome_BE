@@ -179,13 +179,12 @@ public class TemporaryPropertyService {
 
         List<TemporaryProperty> temporaryProperties = temporaryPropertyRepository.findAllByMember(host);
 
-
         return temporaryProperties.stream()
                 .sorted(Comparator.comparing(TemporaryProperty::getCreatedAt).reversed()) //최신순 정렬
                 .map(property -> new TemporaryPropertyListResponseDTO(
                         property.getId(),
                         property.getStatus(),
-                        property.getCreatedAt()
+                        property.getLastModifiedAt()    //TODO: 이거 DTO 필드 변경해야하는데 데모데이라 시간없어서 그냥 냅둠
                 ))
                 .toList();
     }

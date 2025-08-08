@@ -37,7 +37,7 @@ public class TemporarySharePropertyResponseDTO extends TemporaryPropertyResponse
                 .viewingAvailableDateTimes(entity.getViewingAvailableDateTimes())
                 .viewingAlwaysAvailable(entity.getViewingAlwaysAvailable())
                 .description(entity.getDescription())
-                .createdAt(entity.getCreatedAt())
+                .createdAt(entity.getLastModifiedAt())
                 // 자식 고유 필드
                 .sharePropertySubType(entity.getSharePropertySubType())
                 .capacityShare(entity.getCapacityShare())
