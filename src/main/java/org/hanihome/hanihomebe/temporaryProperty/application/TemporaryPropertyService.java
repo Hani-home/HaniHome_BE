@@ -44,7 +44,7 @@ public class TemporaryPropertyService {
 
 
     //생성
-    public void createTemporaryProperty(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
+    public TemporaryPropertyListResponseDTO createTemporaryProperty(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
 
         //해당 멤버 존재하는지 확인
         Member host = memberRepository.findById(hostId)
@@ -68,6 +68,12 @@ public class TemporaryPropertyService {
             if (dto.optionItemIds() != null) {
                 addTemporaryPropertyOptionItem(dto.optionItemIds(), temporaryProperty);
             }
+
+            return new TemporaryPropertyListResponseDTO(
+                    temporaryProperty.getId(),
+                    temporaryProperty.getStatus(),
+                    temporaryProperty.getLastModifiedAt()
+            );
         } else if (dto.kind() == PropertySuperType.SHARE) {
             TemporarySharePropertyCreateRequestDTO shareDto = (TemporarySharePropertyCreateRequestDTO) dto;
             temporaryProperty  = TemporaryShareProperty.create(shareDto, host);
@@ -77,21 +83,25 @@ public class TemporaryPropertyService {
             if (dto.optionItemIds() != null) {
                 addTemporaryPropertyOptionItem(dto.optionItemIds(), temporaryProperty);
             }
+
+            return new TemporaryPropertyListResponseDTO(
+                    temporaryProperty.getId(),
+                    temporaryProperty.getStatus(),
+                    temporaryProperty.getLastModifiedAt()
+            );
+        } else {
+            throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
         }
     }
 
     //수정
-    public void updateTemporaryProperty(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
+    public TemporaryPropertyListResponseDTO updateTemporaryProperty(Long hostId, TemporaryPropertyCreateRequestDTO dto) {
         Member host = memberRepository.findById(hostId)
                 .orElseThrow(() -> new CustomException(ServiceCode.MEMBER_NOT_EXISTS));
 
         if(dto.id() == null) {
             throw new CustomException(ServiceCode.TEMPORARY_PROPERTY_NOT_EXISTS);
         }
-
-
-
-        TemporaryProperty temporaryProperty;
 
 
         if (dto.kind() == PropertySuperType.RENT) {
@@ -117,7 +127,13 @@ public class TemporaryPropertyService {
 
             }
 
-            temporaryRentPropertyRepository.save(temporaryRentProperty);
+            TemporaryRentProperty temporaryProperty= temporaryRentPropertyRepository.save(temporaryRentProperty);
+
+            return new TemporaryPropertyListResponseDTO(
+                    temporaryProperty.getId(),
+                    temporaryProperty.getStatus(),
+                    temporaryProperty.getLastModifiedAt()
+            );
 
         } else if (dto.kind() == PropertySuperType.SHARE) {
             TemporarySharePropertyCreateRequestDTO shareDto = (TemporarySharePropertyCreateRequestDTO) dto;
@@ -138,8 +154,17 @@ public class TemporaryPropertyService {
                 saveNewTemporaryPropertyOptionItems(shareDto.optionItemIds(), temporaryShareProperty);
             }
 
-            temporarySharePropertyRepository.save(temporaryShareProperty);
+            TemporaryShareProperty temporaryProperty = temporarySharePropertyRepository.save(temporaryShareProperty);
+
+            return new TemporaryPropertyListResponseDTO(
+                    temporaryProperty.getId(),
+                    temporaryProperty.getStatus(),
+                    temporaryProperty.getLastModifiedAt()
+            );
+
         }
+
+        throw new CustomException(ServiceCode.INVALID_PROPERTY_TYPE);
     }
 
     private void addTemporaryPropertyOptionItem(List<Long> optionItemIds, TemporaryProperty temporaryProperty) {
@@ -180,7 +205,7 @@ public class TemporaryPropertyService {
         List<TemporaryProperty> temporaryProperties = temporaryPropertyRepository.findAllByMember(host);
 
         return temporaryProperties.stream()
-                .sorted(Comparator.comparing(TemporaryProperty::getCreatedAt).reversed()) //최신순 정렬
+                .sorted(Comparator.comparing(TemporaryProperty::getLastModifiedAt).reversed()) //최신순 정렬
                 .map(property -> new TemporaryPropertyListResponseDTO(
                         property.getId(),
                         property.getStatus(),
