@@ -131,6 +131,7 @@ public abstract class TemporaryProperty {
     private LocalDate meetingDateTo;
 
     //4. 계약 사항:  뷰잉 가능 시간대
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "temporary_property_time_slots",
             joinColumns = @JoinColumn(name = "temporary_property_id"))
@@ -203,7 +204,6 @@ public abstract class TemporaryProperty {
         this.meetingDateFrom = dto.meetingDateFrom();
         this.meetingDateTo = dto.meetingDateTo();
         this.timeSlots = dto.timeSlots();
-        this.viewingAvailableDateTimes = dto.viewingAvailableDateTimes();
         this.viewingAlwaysAvailable = dto.viewingAlwaysAvailable();
         this.description = dto.description();
     }
