@@ -23,6 +23,16 @@
         mavenCentral()
     }
 
+    version = '1.0.0'
+    bootJar {
+        archiveFileName = "hani-home-be-${version}-${new Date().format('yyyyMMdd')}-${System.getenv('GIT_COMMIT') ?: 'local'}.jar"
+    }
+
+    jar {
+        enabled = false
+    }
+
+
     dependencies {
         // jpa
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
