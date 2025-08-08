@@ -5,9 +5,13 @@ import lombok.experimental.SuperBuilder;
 import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityShare;
 import org.hanihome.hanihomebe.property.domain.enums.SharePropertySubType;
+import org.hanihome.hanihomebe.property.domain.vo.TimeSlot;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryShareProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOptionItem;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryShareInternalDetails;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @SuperBuilder
@@ -17,6 +21,10 @@ public class TemporarySharePropertyResponseDTO extends TemporaryPropertyResponse
     private TemporaryShareInternalDetails internalDetails;
 
     public static TemporarySharePropertyResponseDTO fromEntity(TemporaryShareProperty entity) {
+        List<TimeSlot> timeSlots = entity.getTimeSlots();
+        List<TimeSlot> processedTimeSlots = new ArrayList<>();
+        formattingTimeSlotToSize3(timeSlots, processedTimeSlots);
+
         return TemporarySharePropertyResponseDTO.builder()
                 .id(entity.getId())
                 .kind(entity.getKind())
@@ -33,7 +41,7 @@ public class TemporarySharePropertyResponseDTO extends TemporaryPropertyResponse
                 .moveInInfo(entity.getMoveInInfo())
                 .meetingDateFrom(entity.getMeetingDateFrom())
                 .meetingDateTo(entity.getMeetingDateTo())
-                .timeSlots(entity.getTimeSlots())
+                .timeSlots(processedTimeSlots)
                 .viewingAvailableDateTimes(entity.getViewingAvailableDateTimes())
                 .viewingAlwaysAvailable(entity.getViewingAlwaysAvailable())
                 .description(entity.getDescription())
@@ -43,5 +51,18 @@ public class TemporarySharePropertyResponseDTO extends TemporaryPropertyResponse
                 .capacityShare(entity.getCapacityShare())
                 .internalDetails(entity.getShareInternalDetails())
                 .build();
+    }
+
+    private static void formattingTimeSlotToSize3(List<TimeSlot> timeSlots, List<TimeSlot> processedTimeSlots) {
+        if (!(timeSlots.size() == 3)) {
+            timeSlots.forEach(timeSlot -> {
+                processedTimeSlots.add(timeSlot);
+            });
+            while (processedTimeSlots.size() < 3) {
+                processedTimeSlots.add(TimeSlot.getEmptyTimeSlot());
+            }
+        } else {
+            processedTimeSlots.addAll(timeSlots);
+        }
     }
 }

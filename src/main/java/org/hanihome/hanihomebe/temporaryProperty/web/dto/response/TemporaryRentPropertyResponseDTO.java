@@ -6,9 +6,13 @@ import org.hanihome.hanihomebe.item.web.dto.OptionItemResponseDTO;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityRent;
 import org.hanihome.hanihomebe.property.domain.enums.RealEstateType;
 import org.hanihome.hanihomebe.property.domain.enums.RentPropertySubType;
+import org.hanihome.hanihomebe.property.domain.vo.TimeSlot;
 import org.hanihome.hanihomebe.temporaryProperty.domain.TemporaryRentProperty;
 import org.hanihome.hanihomebe.temporaryProperty.domain.item.TemporaryPropertyOptionItem;
 import org.hanihome.hanihomebe.temporaryProperty.domain.vo.temporaryDetails.TemporaryRentInternalDetails;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @SuperBuilder
@@ -16,9 +20,11 @@ public class TemporaryRentPropertyResponseDTO extends TemporaryPropertyResponseD
     private RentPropertySubType rentPropertySubType;
     private CapacityRent capacityRent;
     private TemporaryRentInternalDetails internalDetails;
-    //private RealEstateType isRealEstateIntervention;
 
     public static TemporaryRentPropertyResponseDTO fromEntity(TemporaryRentProperty entity) {
+        List<TimeSlot> timeSlots = entity.getTimeSlots();
+        List<TimeSlot> processedTimeSlots = new ArrayList<>();
+        formattingTimeSlotToSize3(timeSlots, processedTimeSlots);
         return TemporaryRentPropertyResponseDTO.builder()
                 .id(entity.getId())
                 .kind(entity.getKind())
@@ -35,7 +41,7 @@ public class TemporaryRentPropertyResponseDTO extends TemporaryPropertyResponseD
                 .moveInInfo(entity.getMoveInInfo())
                 .meetingDateFrom(entity.getMeetingDateFrom())
                 .meetingDateTo(entity.getMeetingDateTo())
-                .timeSlots(entity.getTimeSlots())
+                .timeSlots(processedTimeSlots)
                 .viewingAvailableDateTimes(entity.getViewingAvailableDateTimes())
                 .viewingAlwaysAvailable(entity.getViewingAlwaysAvailable())
                 .description(entity.getDescription())
@@ -46,6 +52,19 @@ public class TemporaryRentPropertyResponseDTO extends TemporaryPropertyResponseD
                 .internalDetails(entity.getRentInternalDetails())
                 //.isRealEstateIntervention(entity.getIsRealEstateIntervention())
                 .build();
+    }
+
+    private static void formattingTimeSlotToSize3(List<TimeSlot> timeSlots, List<TimeSlot> processedTimeSlots) {
+        if (!(timeSlots.size() == 3)) {
+            timeSlots.forEach(timeSlot -> {
+                processedTimeSlots.add(timeSlot);
+            });
+            while (processedTimeSlots.size() < 3) {
+                processedTimeSlots.add(TimeSlot.getEmptyTimeSlot());
+            }
+        } else {
+            processedTimeSlots.addAll(timeSlots);
+        }
     }
 
 }

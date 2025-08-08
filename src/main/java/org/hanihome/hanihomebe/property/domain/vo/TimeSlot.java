@@ -14,4 +14,8 @@ import java.time.LocalTime;
 public class TimeSlot {
     private LocalTime timeFrom; // 30분 단위:
     private LocalTime timeTo;   // 00:00, 00:30, 01:00, ...
+
+    public static TimeSlot getEmptyTimeSlot() {
+        return new TimeSlot(null, null);
+    }
 }
