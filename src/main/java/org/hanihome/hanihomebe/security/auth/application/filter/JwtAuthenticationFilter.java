@@ -94,7 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     processAccessToken(newAccessToken, filterChain, request, response);
                 } else {
                     log.info("Refresh token is expired");
-                    throw new CustomException(ServiceCode.ACCESS_TOKEN_EXPIRED);
+                    throw new CustomException(ServiceCode.ACCESS_REFRESH_TOKEN_EXPIRED);
                 } //refresh 토큰이 null인 경우도 고려해야할까
             }
         } catch (CustomException e) {

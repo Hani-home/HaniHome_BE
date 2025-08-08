@@ -29,15 +29,15 @@ public class TemporaryPropertyController {
 
 
     @PostMapping
-    public ResponseEntity<Void> createTemporaryProperty(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody TemporaryPropertyCreateRequestDTO dto) {
+    public ResponseEntity<TemporaryPropertyListResponseDTO> createTemporaryProperty(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody TemporaryPropertyCreateRequestDTO dto) {
         Long hostId = userDetails.getUserId();
 
         if (dto.id() == null) {
-            temporaryPropertyService.createTemporaryProperty(hostId, dto);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            TemporaryPropertyListResponseDTO response = temporaryPropertyService.createTemporaryProperty(hostId, dto);
+            return ResponseEntity.ok(response);
         } else {
-            temporaryPropertyService.updateTemporaryProperty(hostId, dto);
-            return ResponseEntity.ok().build(); // 200 OK 또는 204 No Content도 가능
+            TemporaryPropertyListResponseDTO response = temporaryPropertyService.updateTemporaryProperty(hostId, dto);
+            return ResponseEntity.ok(response);// 200 OK 또는 204 No Content도 가능
         }
 
     }
