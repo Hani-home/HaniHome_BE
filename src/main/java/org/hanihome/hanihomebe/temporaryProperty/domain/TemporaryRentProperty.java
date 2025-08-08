@@ -73,7 +73,6 @@ public class TemporaryRentProperty extends TemporaryProperty {
                 .meetingDateFrom(dto.meetingDateFrom())
                 .meetingDateTo(dto.meetingDateTo())
                 .timeSlots(dto.timeSlots())
-                .viewingAvailableDateTimes(dto.viewingAvailableDateTimes())
                 .viewingAlwaysAvailable(dto.viewingAlwaysAvailable())
                 .description(dto.description())
                 .rentPropertySubType(dto.rentPropertySubType())             // 고유필드

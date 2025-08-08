@@ -1,6 +1,7 @@
 package org.hanihome.hanihomebe.temporaryProperty.web.dto.create;
 
 import org.hanihome.hanihomebe.interest.region.Region;
+import org.hanihome.hanihomebe.property.application.time.PropertyCreateTimeManager;
 import org.hanihome.hanihomebe.property.domain.enums.CapacityRent;
 import org.hanihome.hanihomebe.property.domain.enums.GenderPreference;
 import org.hanihome.hanihomebe.property.domain.enums.PropertySuperType;
@@ -35,7 +36,6 @@ public record TemporaryRentPropertyCreateRequestDTO(
         LocalDate meetingDateFrom,
         LocalDate meetingDateTo,
         List<TimeSlot> timeSlots,
-        List<ViewingAvailableDateTime> viewingAvailableDateTimes,
         boolean viewingAlwaysAvailable,
         String description,                         // 매물 소개
         RentPropertySubType rentPropertySubType,
@@ -43,5 +43,8 @@ public record TemporaryRentPropertyCreateRequestDTO(
         CapacityRent capacityRent
 ) implements TemporaryPropertyCreateRequestDTO {
     //생성자 커스터마이징해서 array들은 null 경사해서 기본값 넣어줘야 겠네
+    public TemporaryRentPropertyCreateRequestDTO {
+        timeSlots = PropertyCreateTimeManager.preprocessTimeSlots(timeSlots);
+    }
 
 }

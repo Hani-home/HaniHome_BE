@@ -64,7 +64,6 @@ public class TemporaryShareProperty extends TemporaryProperty {
                 .meetingDateFrom(dto.meetingDateFrom())
                 .meetingDateTo(dto.meetingDateTo())
                 .timeSlots(dto.timeSlots())
-                .viewingAvailableDateTimes(dto.viewingAvailableDateTimes())
                 .viewingAlwaysAvailable(dto.viewingAlwaysAvailable())
                 .description(dto.description())
                 .sharePropertySubType(dto.sharePropertySubType())   // 고유필드 1

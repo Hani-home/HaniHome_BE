@@ -39,7 +39,7 @@ public class TemporaryRentPropertyResponseDTO extends TemporaryPropertyResponseD
                 .viewingAvailableDateTimes(entity.getViewingAvailableDateTimes())
                 .viewingAlwaysAvailable(entity.getViewingAlwaysAvailable())
                 .description(entity.getDescription())
-                .createdAt(entity.getCreatedAt())
+                .createdAt(entity.getLastModifiedAt())
                 // 자식 고유 필드
                 .rentPropertySubType(entity.getRentPropertySubType())
                 .capacityRent(entity.getCapacityRent())

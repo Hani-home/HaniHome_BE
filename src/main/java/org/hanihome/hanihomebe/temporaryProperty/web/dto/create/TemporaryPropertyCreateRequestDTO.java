@@ -26,9 +26,12 @@ import java.util.List;
         @JsonSubTypes.Type(value = TemporaryRentPropertyCreateRequestDTO.class, name = "RENT"),
         @JsonSubTypes.Type(value = TemporarySharePropertyCreateRequestDTO.class, name = "SHARE")
 })
-public interface TemporaryPropertyCreateRequestDTO {//seal하면 좋을 듯
+public sealed interface TemporaryPropertyCreateRequestDTO
+        permits TemporarySharePropertyCreateRequestDTO, TemporaryRentPropertyCreateRequestDTO {//seal하면 좋을 듯
     Long id();
+
     PropertySuperType kind();
+
     TemporaryPropertyStepStatus status();
 
     GenderPreference genderPreference();
@@ -49,9 +52,11 @@ public interface TemporaryPropertyCreateRequestDTO {//seal하면 좋을 듯
     MoveInInfoDTO moveInInfo();
 
     LocalDate meetingDateFrom();
+
     LocalDate meetingDateTo();
+
     List<TimeSlot> timeSlots();
-    List<ViewingAvailableDateTime> viewingAvailableDateTimes();
+
     boolean viewingAlwaysAvailable();
 
     String description();
